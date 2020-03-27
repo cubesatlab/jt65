@@ -1,13 +1,11 @@
+pragma SPARK_Mode(On);
+
 with Ada.Characters.Handling; use Ada.Characters.Handling;
-with Ada.Text_IO; use Ada.Text_IO;
-with Ada.Characters.Latin_1;
-with Ada.Numerics.Real_Arrays; use Ada.Numerics.Real_Arrays;
 with Interfaces; use Interfaces;
-with Ada.Numerics.Generic_Real_Arrays;
 
 package body General_JT is
 
-   function Fmtmsg (Msg : in out String) return String is
+   function Fmtmsg (Msg : in String) return String is
       Formatted_Msg : String := Msg;
    begin
 
@@ -89,14 +87,14 @@ package body General_JT is
 
    procedure Interleave63 ( Sent : in out Unsigned_Array; Num : in Integer; Holder : in out Unsigned_Array) is
 
-      procedure Move (First : in out Unsigned_Array; Second : in out Unsigned_Array; Num : Integer) is
+      procedure Move (First : in Unsigned_Array; Second : in out Unsigned_Array; Num : Integer) is
       begin
          for I in 1 .. Num loop
              Second(I) := First(I);
          end loop;
       end Move;
 
-      procedure Sent_Into_Matrix ( Sent_Matrix : in out Unsigned_Array_Sent; Sent : in out Unsigned_Array) is
+      procedure Sent_Into_Matrix ( Sent_Matrix : out Unsigned_Array_Sent; Sent : in Unsigned_Array) is
       Index : Integer := 1;
       begin
          for M in 0 .. 6 loop
@@ -107,7 +105,7 @@ package body General_JT is
          end loop;
       end Sent_Into_Matrix;
 
-      procedure Matrix_Into_Sent ( Sent : in out Unsigned_Array; Sent_Matrix : in out Unsigned_Array_sent) is
+      procedure Matrix_Into_Sent ( Sent : in out Unsigned_Array; Sent_Matrix : in Unsigned_Array_sent) is
       Index : Integer := 1;
       begin
           for M in 0 .. 6 loop
@@ -173,27 +171,28 @@ package body General_JT is
 
    end Interleave63;
 
-   procedure Graycode ( Sent : in out Unsigned_Array; Num : in Integer; Dir : in  Integer; Output : in out Unsigned_Array) is
+   procedure Graycode ( Sent : in Unsigned_Array; Num : in Integer; Dir : in  Integer; Output : in out Unsigned_Array) is
 
-      function Igray (Num : in out Unsigned_8; Dir : in Integer) return Unsigned_8 is
-         Sh : Unsigned_8;
-         Nn : Unsigned_8;
+      function Igray (Num : in Unsigned_8; Dir : in Integer) return Unsigned_8 is
+         New_Num : Unsigned_8 := Num;
+         Sh  : Unsigned_8;
+         Nn  : Unsigned_8;
          Tmp : Natural;
       begin
 
-         if (Dir > 0) then return Num or (Shift_Right (Num, 1)); end if;
+         if (Dir > 0) then return New_Num or (Shift_Right (New_Num, 1)); end if;
 
          Sh := 1;
-         Nn := Interfaces.Shift_Right(Num, 1);
+         Nn := Interfaces.Shift_Right(New_Num, 1);
 
          While (Nn > 0) loop
-            Num := Num or Nn;
+            New_Num := New_Num or Nn;
             Sh := Shift_Left(Sh, 1);
             Tmp := Integer(Sh);
-            Nn := Shift_Right(Num, Tmp);
+            Nn := Shift_Right(New_Num, Tmp);
          end loop;
 
-         return Num;
+         return New_Num;
 
       end Igray;
 

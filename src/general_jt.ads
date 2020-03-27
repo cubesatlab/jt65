@@ -1,3 +1,11 @@
+--------------------------------------------------------------------------------
+-- FILE   : general_jt.ads
+-- SUBJECT: Specification of a package for ...
+-- AUTHOR : (C) Copyright 2020 by Vermont Technical College
+--
+--------------------------------------------------------------------------------
+pragma SPARK_Mode(On);
+
 with Pack_JT; use Pack_JT;
 with Interfaces; use Interfaces;
 
@@ -11,7 +19,7 @@ package General_JT is
    type Unsigned_Array is array(Natural range <>) of Unsigned_8;
 
    -- Formats a message by converting all letters to upper case and collapsing multiple blanks into one
-   function Fmtmsg (Msg : in out String) return String;
+   function Fmtmsg (Msg : in String) return String;
 
    -- Converted subroutines from References to be added here
    procedure Chkmsg (Msg : in out String; Nspecial : in out Integer)
@@ -24,6 +32,6 @@ package General_JT is
    procedure Interleave63 ( Sent : in out Unsigned_Array; Num : in Integer; Holder : in out Unsigned_Array);
 
    -- Performs Graycode and applys the graycode to Output
-   procedure Graycode ( Sent : in out Unsigned_Array; Num : in Integer; Dir : in Integer; Output : in out Unsigned_Array);
+   procedure Graycode ( Sent : in Unsigned_Array; Num : in Integer; Dir : in Integer; Output : in out Unsigned_Array);
 
 end General_JT;

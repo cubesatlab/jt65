@@ -18,8 +18,8 @@ check style(casing_keyword, lowercase);
 check style(compound_statement);           -- Disallow single line control structures.
 
 -- Magic numbers should be avoided. Use named number or constant declarations.
-check style(exposed_literal, integer, max 2, number, constant, type);
-check style(exposed_literal, real, 0.0, 1.0, 2.0);
+--check style(exposed_literal, integer, max 2, number, constant, type);
+--check style(exposed_literal, real, 0.0, 1.0, 2.0);
 
 check style(multiple_elements);  -- Disallow putting multiple entities on the same line.
 check style(no_closing_name);    -- All 'end's should be decorated with a name if appropriate.
