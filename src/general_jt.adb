@@ -10,31 +10,25 @@ package body General_JT is
    begin
 
       for I in Formatted_Msg'Range loop
-
          if Formatted_Msg(I) = ' ' then
             if I = Formatted_Msg'Length then
                exit;
             else
-               if Formatted_Msg(I+1) = ' ' then
+               if Formatted_Msg(+1) = ' ' then
                   Formatted_Msg(I) := Character'Val (127);
                   Formatted_Msg := Formatted_Msg;
                end if;
             end if;
-
          else
             null;
          end if;
-
       end loop;
-
       Formatted_Msg := To_Upper(Formatted_Msg);
-
       return Formatted_Msg;
-
    end Fmtmsg;
 
    procedure Chkmsg (Msg : in out String; Nspecial : in out Integer) is
-      Cok : String (1 .. 3);
+      Cok  : String (1 .. 3);
       Flip : Float;
       --Nspecial : Integer;
 
@@ -44,28 +38,18 @@ package body General_JT is
       Cok := "   ";
 
       for I in reverse Msg'Range loop
-
-         if ( Msg(I) /= ' ') then
-
-            if (I > 11) then
-
-               if (Msg(I-3 .. I) = " 000" or Msg(Msg'First + 19 .. Msg'First + 21) = " 00") then
-
+         if Msg(I) /= ' ' then
+            if I > 11 then
+               if Msg(I-3 .. I) = " 000" or Msg(Msg'First + 19 .. Msg'First + 21) = " 00" then
                   Cok := "000";
                   Flip :=-1.0;
-
                   if (Msg(Msg'First + 19 .. Msg'First + 21) = " 00") then
-
                      Msg := Msg(Msg'First .. Msg'First + 18);
-
                   else
-
                      Msg := Msg(Msg'First .. I-4);
-
                   end if;
                end if;
             end if;
-
          else
 
          if (Msg = "RO                    ") then Nspecial := 2; end if;
@@ -78,23 +62,25 @@ package body General_JT is
 
    end ChkMsg;
 
-   procedure Rs_Encode ( Dgen : in out Integer_Array; Sent : in out Unsigned_Array)
+   procedure Rs_Encode (Dgen : in out Integer_Array; Sent : in out Unsigned_Array)
    is
    begin
       null;
    end Rs_Encode;
 
+   procedure Interleave63 (Sent : in out Unsigned_Array; Num : in Integer;
+                           Holder : in out Unsigned_Array) is
 
-   procedure Interleave63 ( Sent : in out Unsigned_Array; Num : in Integer; Holder : in out Unsigned_Array) is
-
-      procedure Move (First : in Unsigned_Array; Second : in out Unsigned_Array; Num : Integer) is
+      procedure Move (First : in Unsigned_Array; Second : in out Unsigned_Array;
+                      Num : Integer) is
       begin
          for I in 1 .. Num loop
              Second(I) := First(I);
          end loop;
       end Move;
 
-      procedure Sent_Into_Matrix ( Sent_Matrix : out Unsigned_Array_Sent; Sent : in Unsigned_Array) is
+      procedure Sent_Into_Matrix (Sent_Matrix : out Unsigned_Array_Sent;
+                                  Sent : in Unsigned_Array) is
       Index : Integer := 1;
       begin
          for M in 0 .. 6 loop
@@ -105,7 +91,8 @@ package body General_JT is
          end loop;
       end Sent_Into_Matrix;
 
-      procedure Matrix_Into_Sent ( Sent : in out Unsigned_Array; Sent_Matrix : in Unsigned_Array_sent) is
+      procedure Matrix_Into_Sent (Sent : in out Unsigned_Array;
+                                  Sent_Matrix : in Unsigned_Array_sent) is
       Index : Integer := 1;
       begin
           for M in 0 .. 6 loop
@@ -116,13 +103,13 @@ package body General_JT is
          end loop;
       end Matrix_Into_Sent;
 
-      Sent_Matrix : Unsigned_Array_Sent;
+      Sent_Matrix   : Unsigned_Array_Sent;
       Holder_Matrix : Unsigned_Array_Holder;
-      Index : Integer;
+      Index         : Integer;
 
    begin
 
-      if (Num > 0) then
+      if Num > 0 then
 
          Sent_Into_Matrix(Sent_Matrix, Sent);
 
@@ -131,8 +118,6 @@ package body General_JT is
                Holder_Matrix(J, I) := Sent_Matrix(I, J);
             end loop;
          end loop;
-
-         Matrix_Into_Sent(Sent, Sent_Matrix);
 
          Index := 1;
          for C in 0 .. 8 loop
@@ -145,8 +130,6 @@ package body General_JT is
          Move(Holder, Sent, 63);
 
       else
-
-        Sent_Into_Matrix(Sent_Matrix, Sent);
 
          Index := 1;
 
@@ -165,27 +148,28 @@ package body General_JT is
             end loop;
          end loop;
 
-        Matrix_Into_Sent(Sent, Sent_Matrix);
+         Matrix_Into_Sent(Sent, Sent_Matrix);
 
       end if;
 
    end Interleave63;
 
-   procedure Graycode ( Sent : in Unsigned_Array; Num : in Integer; Dir : in  Integer; Output : in out Unsigned_Array) is
+   procedure Graycode (Sent : in Unsigned_Array; Num : in Integer;
+                       Dir : in  Integer; Output : in out Unsigned_Array) is
 
-      function Igray (Num : in Unsigned_8; Dir : in Integer) return Unsigned_8 is
+      function Igray (Num : in Unsigned_8; Dir : in Integer)return Unsigned_8 is
          New_Num : Unsigned_8 := Num;
          Sh  : Unsigned_8;
          Nn  : Unsigned_8;
          Tmp : Natural;
       begin
 
-         if (Dir > 0) then return New_Num or (Shift_Right (New_Num, 1)); end if;
+         if Dir > 0 then return New_Num or Shift_Right (New_Num, 1); end if;
 
          Sh := 1;
          Nn := Interfaces.Shift_Right(New_Num, 1);
 
-         While (Nn > 0) loop
+         While Nn > 0 loop
             New_Num := New_Num or Nn;
             Sh := Shift_Left(Sh, 1);
             Tmp := Integer(Sh);
