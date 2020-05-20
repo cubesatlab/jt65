@@ -9,7 +9,6 @@ package Pack_JT is
 
    type Octet is new Unsigned_8;
    type Octet_Array is array(Positive range <>) of Octet;
-   type Integer_Array is array(Positive range <>) of Integer;
 
    -- Pack 0s and 1s from DBits into Sym with M0 bits per word.
    -- NB: NSymd is the number of packed output words.
