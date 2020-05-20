@@ -1,15 +1,19 @@
+with Interfaces; use Interfaces;
+with General_JT; use General_JT;
+with pfx; use pfx;
 
 package Pack_JT is
 
    Not_Implemented : exception;
+   Invalid_Callsign : exception;
 
-   type Octet is mod 8;
+   type Octet is new Unsigned_8;
    type Octet_Array is array(Positive range <>) of Octet;
    type Integer_Array is array(Positive range <>) of Integer;
 
    -- Pack 0s and 1s from DBits into Sym with M0 bits per word.
    -- NB: NSymd is the number of packed output words.
-   procedure Pack_Bits(DBits : Octet_Array; NSymd : Integer; M0 : Integer; Sym : Integer_Array);
+   procedure Pack_Bits(DBits : in out Octet_Array; NSymd : in out Integer; M0 : in out Integer; Sym : in out Integer_Array);
 
    -- Unpack bits from Sym into DBits, one bit per byte.
    -- NB: NSymd is the number of input words, and M0 their length.
@@ -17,11 +21,11 @@ package Pack_JT is
    procedure Unpack_Bits(Sym : Integer_Array; NSymd : Integer; M0 : Integer; DBits : Octet_Array);
 
    -- Pack a valid callsign into a 28-bit integer.
-   procedure Pack_Call(Call : String; NCall : Integer; Text : Boolean);
+   procedure Pack_Call(Call : String; NCall : Unsigned_32; Text : Boolean);
 
    procedure Unpack_Call(NCall : Integer; Word : String; Iv2 : Integer; Psfx : String);
 
-   procedure Pack_Grid(Grid : String; C1 : Character; Text : Boolean);
+   procedure Pack_Grid(Grid : String; C1 : Unsigned_32; Text : Boolean);
 
    procedure Unpack_Grid(Ng : Integer; Grid : String);
 
@@ -36,21 +40,21 @@ package Pack_JT is
    --   5   Type 2 suffix
    --   6   Free text
    --  -1   Does not decode correctly
-   procedure Pack_Msg(Msg0 : String; Dat : Integer_Array; IType : Integer);
+   procedure Pack_Msg(Msg0 : in out String; Dat : out Integer_Array; IType : out Integer);
 
    procedure Unpack_Msg(Dat : Integer_Array; Msg : String);
 
-   procedure Pack_Text(Msg : String; Nc1, Nc2, Nc3 : Integer);
+   procedure Pack_Text(Msg : String; Nc1, Nc2, Nc3 : out Unsigned_32);
 
    procedure Unpack_Text(Nc1a, Nc2a, Nc3a : Integer; Msg : String);
 
-   procedure Get_Pfx1(Callsign : String; K : Integer; Nv2 : Integer);
+   procedure Get_Pfx1(Callsign : in out String; K : out Integer; Nv2 : Integer);
 
    procedure Get_Pfx2(K0 : Integer; Callsign : String);
 
    procedure Grid2k(Grid : String; K : Integer);
 
-   procedure K2Grid(K : Integer; Grid : String);
+   procedure K2Grid(K : Integer; Grid : out String);
 
    procedure Grid2N(Grid : String; N : Integer);
 
