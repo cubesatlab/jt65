@@ -6,7 +6,7 @@
 --------------------------------------------------------------------------------
 pragma SPARK_Mode(On);
 
-with Pack_JT; use Pack_JT;
+
 with Interfaces; use Interfaces;
 
 package General_JT is
@@ -15,6 +15,7 @@ package General_JT is
    subtype Range_9 is Natural range 0 .. 8;
    type Unsigned_Array_Sent is array ( Range_7, Range_9 ) of Integer;
    type Unsigned_Array_Holder is array (Range_9, Range_7 ) of Integer;
+   type Integer_Array is array(Positive range <>) of Integer;
 
    -- Formats a message by converting all letters to upper case and
    -- collapsing multiple blanks into one
