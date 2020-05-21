@@ -36,6 +36,7 @@ package body Pack_JT is
       NBASE : constant Integer := 37*36*10*27*27*27;
       C : Character;
       TMP : String;
+      N1, N2, N3, N4, N5 , N6 : Integer;
 
    begin
 
@@ -50,10 +51,67 @@ package body Pack_JT is
          NCall := NBASE + 1;
 
          if Call(4) >= "0" and Call(4) <= "9" and Call(5) >= "0" and Call(5) <= "9" and Call(6) >= "0" and Call(6) <= "9" then
+            NFreq := Integer'Value(Call(4 ..6));
+            NCall := NBASE + 3 + NFreq;
+         end if;
+         return;
+      elsif Call(1 .. 4) = "QRZ " then
+         NCall := NBASE + 2;
+         return;
+      elsif Call(1 ..3) = "DE " then
+         NCall := 267796945;
+         return;
+      end if;
 
+      TMP := "      ";
 
+      if Call(3) >= "0" and Call(3) <= "9" then
+         tmp := Call;
+      elsif Call(2) >= "0" and Call (2) <= "9" then
+         if Call(6) /= " " then
+            Text := True;
+            return;
+         end if;
+         TMP := " " & Call(1 .. 5);
+      else
+         Text := True;
+         return;
+      end if;
 
-      raise Not_Implemented with "Pack_Call";
+      for I in 1 .. 6 loop
+         C := TMP(I);
+         if C >= 'a' and C <= 'z' then
+            TMP(I) := Character'Image(Integer'Value(C)-Integer'Value('a') + Integer'Value('A'));
+         end if;
+      end loop;
+
+      N1 := 0;
+      if (TMP(1) >= "A" and TMP(1) <= Z) or TMP(1) = " " then N1 := 1; end if;
+      if TMP(1) >= "0" and TMP(1) <= "9" then N1 := 1; end if;
+      N2 := 0;
+      if TMP(2) >= "A" and TMP(2) <= "Z" then N2 := 1; end if;
+      if TMP(2) >= "0" and TMP(2) <= "9" then N2 := 1; end if;
+      N3 := 0;
+      if TMP(3) >= "0" and TMP(3) <= "9" then N3 := 1; end if;
+      N4 := 0;
+      if (TMP(4) >= "A" and TMP(4) <= "Z") or TMP(4) = " " then N4 := 1; end if;
+      N5 := 0;
+      if (TMP(5) >= "A" and TMP(5) <= "Z") or TMP(5) = " " then N5 := 1; end if;
+      N6 := 0;
+      if (TMP(6) >= "A" and TMP(6) <= "Z") or TMP(6) = " " then N6 := 1; end if;
+
+      if N1 + N2 + N3 + N4 + N5 + N6 /= 6 then
+         text := True;
+         return;
+      end if;
+
+      NCall := NChar(TMP(1));
+      NCall := 36 * NCall + NChar(TMP(2));
+      NCall := 10 * NCall + NChar(TMP(3));
+      NCall := 27 * NCall + NChar(TMP(4)) - 10;
+      NCall := 27 * NCall + NChar(TMP(5)) - 10;
+      NCall := 27 * NCall + NChar(TMP(6)) - 10;
+
    end Pack_Call;
 
 
@@ -64,8 +122,10 @@ package body Pack_JT is
 
 
    procedure Pack_Grid(Grid : String; C1 : Unsigned_32; Text : Boolean) is
+
    begin
-      raise Not_Implemented with "Pack_Grid";
+
+
    end Pack_Grid;
 
 
@@ -290,7 +350,16 @@ package body Pack_JT is
 
 
    procedure Unpack_Msg(Dat : Integer_Array; Msg : String) is
+      NBASE : Integer := 37*36*10*27*27*27;
+      NGBASE : Integer := 180*180;
+      c1, c2 : String(1 .. 12);
+      grid, psfx , junk2 : String(1..4);
+      grid6 : String(1..6);
+      cqnnn : Boolean := False;
+      nc1, nc2, ng : Integer;
    begin
+      nc1 :=
+
       raise Not_Implemented with "Unpack_Msg";
    end Unpack_Msg;
 
