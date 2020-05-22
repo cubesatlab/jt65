@@ -20,11 +20,11 @@ package Pack_JT is
    procedure Unpack_Bits(Sym : Integer_Array; NSymd : Integer; M0 : Integer; DBits : Octet_Array);
 
    -- Pack a valid callsign into a 28-bit integer.
-   procedure Pack_Call(Call : String; NCall : Unsigned_32; Text : Boolean);
+   procedure Pack_Call(Call : in out String; NCall : in out  Unsigned_32; Text : out Boolean);
 
    procedure Unpack_Call(NCall : Integer; Word : String; Iv2 : Integer; Psfx : String);
 
-   procedure Pack_Grid(Grid : String; C1 : Unsigned_32; Text : Boolean);
+   procedure Pack_Grid(Grid : String; NG : in out Unsigned_32; Text : in out Boolean);
 
    procedure Unpack_Grid(Ng : Integer; Grid : String);
 
@@ -47,7 +47,7 @@ package Pack_JT is
 
    procedure Unpack_Text(Nc1a, Nc2a, Nc3a : Integer; Msg : String);
 
-   procedure Get_Pfx1(Callsign : in out String; K : out Integer; Nv2 : Integer);
+   procedure Get_Pfx1(Callsign : in out String; K : out Integer; Nv2 : in out Integer);
 
    procedure Get_Pfx2(K0 : Integer; Callsign : String);
 
@@ -65,5 +65,8 @@ package Pack_JT is
    procedure Pack50(N1, N2 : Integer; Dat : Integer_Array);
 
    procedure Pack_Pfx(Call1 : String; N1 : Integer; Ng : Integer; Nadd : Integer);
+
+   -- Converts Maidenhead grid locator to degrees of West longitude and North latitude
+   procedure Grid2Deg(Grid0 : String; DLong : out Float; DLat : out Float);
 
 end Pack_JT;

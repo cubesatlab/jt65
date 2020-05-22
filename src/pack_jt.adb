@@ -31,48 +31,48 @@ package body Pack_JT is
    end Unpack_Bits;
 
    --Packs a valid callsign into a 28-bit integer
-   procedure Pack_Call(Call : String; NCall : Unsigned_32; Text : out Boolean) is
+   procedure Pack_Call(Call : in out String; NCall : in out Unsigned_32; Text : out Boolean) is
 
-      NBASE : constant Integer := 37*36*10*27*27*27;
+      NBASE : constant Unsigned_32 := 37*36*10*27*27*27;
       C : Character;
-      TMP : String;
-      N1, N2, N3, N4, N5 , N6 : Integer;
+      TMP : String(1 .. 6);
+      N1, N2, N3, N4, N5 , N6, NFreq : Integer;
 
    begin
 
       Text := False;
 
-      if Call(1 .. 4) = "3DA0" then Call := "3D0" & Call(5 .. 6); end if;
+      if Call(Call'First .. Call'First + 3) = "3DA0" then Call := "3D0" & Call(Call'First + 4 .. Call'First + 5); end if;
 
-      if Call(1 .. 2) = "3X" and Call(3) >= "A" and Call(3) <= "Z" then Call := "Q" & Call(3 .. 6); end if;
+      if Call(Call'First .. Call'First + 1) = "3X" and Call(Call'First + 2) >= 'A' and Call(Call'First + 2) <= 'Z' then Call := 'Q' & Call(Call'First + 2 .. Call'First + 5); end if;
 
-      if Call(1 .. 3) = "CQ " then
+      if Call(Call'First .. Call'First + 2) = "CQ " then
 
          NCall := NBASE + 1;
 
-         if Call(4) >= "0" and Call(4) <= "9" and Call(5) >= "0" and Call(5) <= "9" and Call(6) >= "0" and Call(6) <= "9" then
-            NFreq := Integer'Value(Call(4 ..6));
-            NCall := NBASE + 3 + NFreq;
+         if Call(Call'First + 3) >= '0' and Call(Call'First + 3) <= '9' and Call(Call'First + 4) >= '0' and Call(Call'First + 4) <= '9' and Call(Call'First + 5) >= '0' and Call(Call'First + 5) <= '9' then
+            NFreq := Integer'Value(Call(Call'First + 3 .. Call'First + 5));
+            NCall := NBASE + 3 + Unsigned_32(NFreq);
          end if;
          return;
-      elsif Call(1 .. 4) = "QRZ " then
+      elsif Call(Call'First .. Call'First + 3) = "QRZ " then
          NCall := NBASE + 2;
          return;
-      elsif Call(1 ..3) = "DE " then
+      elsif Call(Call'First .. Call'First + 2) = "DE " then
          NCall := 267796945;
          return;
       end if;
 
       TMP := "      ";
 
-      if Call(3) >= "0" and Call(3) <= "9" then
+      if Call(Call'First + 2) >= '0' and Call(Call'First + 2) <= '9' then
          tmp := Call;
-      elsif Call(2) >= "0" and Call (2) <= "9" then
-         if Call(6) /= " " then
+      elsif Call(Call'First + 1) >= '0' and Call (Call'First + 1) <= '9' then
+         if Call(Call'First + 5) /= ' ' then
             Text := True;
             return;
          end if;
-         TMP := " " & Call(1 .. 5);
+         TMP := ' ' & Call(Call'First .. Call'First + 4);
       else
          Text := True;
          return;
@@ -81,36 +81,36 @@ package body Pack_JT is
       for I in 1 .. 6 loop
          C := TMP(I);
          if C >= 'a' and C <= 'z' then
-            TMP(I) := Character'Image(Integer'Value(C)-Integer'Value('a') + Integer'Value('A'));
+            TMP(I) := Character'Val(Character'Pos(C)-Character'Pos('a') + Character'Pos('A'));
          end if;
       end loop;
 
       N1 := 0;
-      if (TMP(1) >= "A" and TMP(1) <= Z) or TMP(1) = " " then N1 := 1; end if;
-      if TMP(1) >= "0" and TMP(1) <= "9" then N1 := 1; end if;
+      if (TMP(1) >= 'A' and TMP(1) <= 'Z') or TMP(1) = ' ' then N1 := 1; end if;
+      if TMP(1) >= '0' and TMP(1) <= '9' then N1 := 1; end if;
       N2 := 0;
-      if TMP(2) >= "A" and TMP(2) <= "Z" then N2 := 1; end if;
-      if TMP(2) >= "0" and TMP(2) <= "9" then N2 := 1; end if;
+      if TMP(2) >= 'A' and TMP(2) <= 'Z' then N2 := 1; end if;
+      if TMP(2) >= '0' and TMP(2) <= '9' then N2 := 1; end if;
       N3 := 0;
-      if TMP(3) >= "0" and TMP(3) <= "9" then N3 := 1; end if;
+      if TMP(3) >= '0' and TMP(3) <= '9' then N3 := 1; end if;
       N4 := 0;
-      if (TMP(4) >= "A" and TMP(4) <= "Z") or TMP(4) = " " then N4 := 1; end if;
+      if (TMP(4) >= 'A' and TMP(4) <= 'Z') or TMP(4) = ' ' then N4 := 1; end if;
       N5 := 0;
-      if (TMP(5) >= "A" and TMP(5) <= "Z") or TMP(5) = " " then N5 := 1; end if;
+      if (TMP(5) >= 'A' and TMP(5) <= 'Z') or TMP(5) = ' ' then N5 := 1; end if;
       N6 := 0;
-      if (TMP(6) >= "A" and TMP(6) <= "Z") or TMP(6) = " " then N6 := 1; end if;
+      if (TMP(6) >= 'A' and TMP(6) <= 'Z') or TMP(6) = ' ' then N6 := 1; end if;
 
       if N1 + N2 + N3 + N4 + N5 + N6 /= 6 then
          text := True;
          return;
       end if;
 
-      NCall := NChar(TMP(1));
-      NCall := 36 * NCall + NChar(TMP(2));
-      NCall := 10 * NCall + NChar(TMP(3));
-      NCall := 27 * NCall + NChar(TMP(4)) - 10;
-      NCall := 27 * NCall + NChar(TMP(5)) - 10;
-      NCall := 27 * NCall + NChar(TMP(6)) - 10;
+      NCall := Unsigned_32(NChar(TMP(1)));
+      NCall := 36 * NCall + Unsigned_32(NChar(TMP(2)));
+      NCall := 10 * NCall + Unsigned_32(NChar(TMP(3)));
+      NCall := 27 * NCall + Unsigned_32(NChar(TMP(4))) - 10;
+      NCall := 27 * NCall + Unsigned_32(NChar(TMP(5))) - 10;
+      NCall := 27 * NCall + Unsigned_32(NChar(TMP(6))) - 10;
 
    end Pack_Call;
 
@@ -120,11 +120,84 @@ package body Pack_JT is
       raise Not_Implemented with "Unpack_Call";
    end Unpack_Call;
 
-
-   procedure Pack_Grid(Grid : String; C1 : Unsigned_32; Text : Boolean) is
-
+   --Need help tanslating some of these lines
+   procedure Pack_Grid(Grid : String; NG : in out Unsigned_32; Text : in out Boolean) is
+      NGBASE : constant Unsigned_32 := 180 * 180;
+      C1 : Character;
+      N, Long, Lat : Integer;
+      DLong, DLat : Float;
    begin
+      Text := False;
+      if Grid = "    " then goto Ninety; end if;
 
+      if Grid(Grid'First) = '-' then
+         --read(grid(2:3),*,err=800,end=800) n
+         if N >= 1 and N <= 30 then
+            NG := NGBASE + 1 + Unsigned_32(N);
+            goto Nine_Hundred;
+         end if;
+         goto Ten;
+      elsif Grid(Grid'First .. Grid'First + 1) = "R-" then
+         --read(grid(3:4),*,err=800,end=800) n
+         if N >= 1 and N <= 30 then
+            NG := NGBASE + 31 + Unsigned_32(N);
+            goto Nine_Hundred;
+         end if;
+         goto Ten;
+      elsif Grid(Grid'First .. Grid'First + 3) = "RO  " then
+         NG := NGBASE + 62;
+         goto Nine_Hundred;
+      elsif Grid(Grid'First .. Grid'First + 3) = "RRR " then
+         NG := NGBASE + 63;
+         goto Nine_Hundred;
+      elsif Grid(Grid'First .. Grid'First + 3) = "73  " then
+         NG := NGBASE + 64;
+         goto Nine_Hundred;
+      end if;
+
+      <<Ten>>
+      N := 99;
+      C1 := Grid(Grid'First);
+      --read(grid,*,err=20,end=20) n
+      goto Thirty;
+      <<Twenty>>
+      --read(grid(2:4),*,err=30,end=30) n
+      <<Thirty>>
+      if N >= -50 and N <= 49 then
+         if C1 = 'R' then
+            --write(grid,1002) n+50
+            --format('LA',i2.2)
+            raise Not_Implemented with "Pack_Call";
+         else
+            --write(grid,1003) n+50
+            --format('KA',i2.2)
+            raise Not_Implemented with "Pack_Call";
+         end if;
+         goto Forty;
+      end if;
+
+      if Grid(Grid'First) < 'A' or Grid(Grid'First) > 'R' then Text := True; end if;
+      if Grid(Grid'First + 1) < 'A' or Grid(Grid'First + 1) > 'R' then Text := True; end if;
+      if Grid(Grid'First + 2) < '0' or Grid(Grid'First + 2) > '9' then Text := True; end if;
+      if Grid(Grid'First + 3) < '0' or Grid(Grid'First + 3) > '9' then Text := True; end if;
+      if Text then goto Nine_Hundred; end if;
+
+      <<Forty>>
+      Grid2Deg(Grid & "mm", DLong, DLat);
+      Long := Integer(Float'Floor(DLong));
+      Lat := Integer(Float'Floor(DLat + 90.0));
+      NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+      goto Nine_Hundred;
+
+      <<Ninety>>
+      NG := NGBASE + 1;
+      goto Nine_Hundred;
+
+      <<Eight_Hundred>>
+      Text := True;
+
+      <<Nine_Hundred>>
+      return;
 
    end Pack_Grid;
 
@@ -284,7 +357,7 @@ package body Pack_JT is
       IType := 1;
       Msg := Msg0;
 
-      Msg := Fmtmsg(Msg);
+      Fmtmsg(Msg);
 
       if Msg(1..3) = "CQ " and Msg(4) >= '0' and Msg(4) <= '9' and Msg(5) = ' ' then
          Msg := "CQ 00" & Msg(4..Msg'Last);
@@ -358,7 +431,7 @@ package body Pack_JT is
       cqnnn : Boolean := False;
       nc1, nc2, ng : Integer;
    begin
-      nc1 :=
+
 
       raise Not_Implemented with "Unpack_Msg";
    end Unpack_Msg;
@@ -457,7 +530,7 @@ package body Pack_JT is
    end Unpack_Text;
 
 
-   procedure Get_Pfx1(Callsign : in out String; K : out Integer; Nv2 : Integer) is
+   procedure Get_Pfx1(Callsign : in out String; K : out Integer; Nv2 : in out Integer) is
       Suffixes : sfx_array;
       Prefixes : pfx_array;
       Callsign0, lof, rof : String (1..12);
@@ -510,7 +583,7 @@ package body Pack_JT is
                   Callsign := Callsign0(I+1 .. Callsign0'Length);
                end if;
                if is_sfx then
-                  t_sfxs := rof(1 .. 3);
+                  t_sfx := rof(1 .. 3);
                   K := NChar(t_sfx(1));
                   K := 37 * K + NChar(t_sfx(2));
                   K := 37 * K + NChar(t_sfx(3));
@@ -525,7 +598,7 @@ package body Pack_JT is
 
 
 
-      --Need to find a way to implement common/pfxcom/addpfx
+      --Need to find a way to implement common/pfxcom/addpfx im not sure how it effects the behavior of the procedure
    begin
       Init_Pfx(Prefixes, Suffixes);
 
@@ -549,7 +622,7 @@ package body Pack_JT is
                return;
             end if;
          end loop;
-         if addpfx = C then
+         if add_pfx = C then
             K := 449;
             Nv2 := 2;
             Ten;
@@ -617,7 +690,7 @@ package body Pack_JT is
       elsif C >= ' ' then
          N := 36;
       else
-         raise Invalid_Callsign with "Invalid chaaracter in callsign: " & C;
+         raise Invalid_Callsign with "Invalid character in callsign: " & C;
       end if;
 
       return N;
@@ -635,5 +708,47 @@ package body Pack_JT is
    begin
       raise Not_Implemented with "Pack_Pfx";
    end Pack_Pfx;
+
+   procedure Grid2Deg(Grid0 : String; DLong : out Float; DLat : out Float) is
+      Grid : String := Grid0;
+      G1, G2, G3, G4, G5, G6 : Character;
+      I, NLong, NLat, N20d : Integer;
+      XMinLong, XMinLat : Float;
+   begin
+      --Grid := Grid0;
+      I := Character'Pos(Grid(5));
+      if Grid(5) = ' ' or I <= 64 or I >= 128 then
+         Grid(5 .. 6) := "mm";
+      end if;
+      if Grid(1) >= 'a' and Grid(1) <= 'z' then
+         Grid(1) := Character'Val(Character'Pos(Grid(1)) + Character'Pos('A') - Character'Pos('a'));
+      end if;
+      if Grid(2) >= 'a' and Grid(2) <= 'z' then
+         Grid(2) := Character'Val(Character'Pos(Grid(2)) + Character'Pos('A') - Character'Pos('a'));
+      end if;
+      if Grid(5) >= 'A' and Grid(5) <= 'Z' then
+         Grid(5) := Character'Val(Character'Pos(Grid(5)) - Character'Pos('A') + Character'Pos('a'));
+      end if;
+      if Grid(6) >= 'A' and Grid(6) <= 'Z' then
+         Grid(6) := Character'Val(Character'Pos(Grid(6)) - Character'Pos('A') + Character'Pos('a'));
+      end if;
+
+      G1 := Grid(1);
+      G2 := Grid(2);
+      G3 := Grid(3);
+      G4 := Grid(4);
+      G5 := Grid(5);
+      G6 := Grid(6);
+
+      NLong := 180 - 20 * (Character'Pos(G1) - Character'Pos('A'));
+      N20d := 2 * (Character'Pos(G3) - Character'Pos('0'));
+      XMinLong := 5.0 * (Float(Character'Pos(G5)) - Float(Character'Pos('a')) + 0.5);
+      DLong := Float(NLong) - Float(N20d) - XMinLong/60.0;
+      NLat := -90 + 10 * (Character'Pos(G2) - Character'Pos('A')) + Character'Pos(G4) - Character'Pos('0');
+      XMinLat := 2.5 * (Float(Character'Pos(G6)) - Float(Character'Pos('a')) + 0.5);
+      DLat := Float(NLat) + XMinLat/60.0;
+
+   end Grid2Deg;
+
 
 end Pack_JT;
