@@ -120,8 +120,7 @@ package body Pack_JT is
       raise Not_Implemented with "Unpack_Call";
    end Unpack_Call;
 
-   --Need help tanslating some of these lines
-   procedure Pack_Grid(Grid : String; NG : in out Unsigned_32; Text : in out Boolean) is
+   procedure Pack_Grid(Grid : in out String; NG : in out Unsigned_32; Text : in out Boolean) is
       NGBASE : constant Unsigned_32 := 180 * 180;
       C1 : Character;
       N, Long, Lat : Integer;
@@ -131,14 +130,26 @@ package body Pack_JT is
       if Grid = "    " then goto Ninety; end if;
 
       if Grid(Grid'First) = '-' then
-         --read(grid(2:3),*,err=800,end=800) n
+         begin
+            N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 2));
+         exception
+            when E : Constraint_Error =>
+               goto Eight_Hundred;
+         end;
+
          if N >= 1 and N <= 30 then
             NG := NGBASE + 1 + Unsigned_32(N);
             goto Nine_Hundred;
          end if;
          goto Ten;
       elsif Grid(Grid'First .. Grid'First + 1) = "R-" then
-         --read(grid(3:4),*,err=800,end=800) n
+         begin
+            N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
+         exception
+            when E : Constraint_Error =>
+               goto Eight_Hundred;
+         end;
+
          if N >= 1 and N <= 30 then
             NG := NGBASE + 31 + Unsigned_32(N);
             goto Nine_Hundred;
@@ -158,20 +169,33 @@ package body Pack_JT is
       <<Ten>>
       N := 99;
       C1 := Grid(Grid'First);
-      --read(grid,*,err=20,end=20) n
+      begin
+         N := Integer'Value(Grid);
+      exception
+         when E : Constraint_Error =>
+            goto Twenty;
+      end;
+
       goto Thirty;
+
       <<Twenty>>
-      --read(grid(2:4),*,err=30,end=30) n
+      begin
+         N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 3));
+      exception
+         when E : Constraint_Error =>
+            goto Thirty;
+      end;
+
       <<Thirty>>
       if N >= -50 and N <= 49 then
          if C1 = 'R' then
             --write(grid,1002) n+50
             --format('LA',i2.2)
-            raise Not_Implemented with "Pack_Call";
+            Grid := "LA" & Integer'Image(N + 50);
          else
             --write(grid,1003) n+50
             --format('KA',i2.2)
-            raise Not_Implemented with "Pack_Call";
+            Grid := "KA" & Integer'Image(N + 50);
          end if;
          goto Forty;
       end if;
@@ -208,8 +232,8 @@ package body Pack_JT is
    end Unpack_Grid;
 
 
-   procedure Pack_Msg(Msg0 : in out String; Dat : out Integer_Array; IType : out Integer) is
-      Msg : String(1..22);
+   procedure Pack_Msg(Msg0 : String; Dat : out Integer_Array; IType : out Integer) is
+      Msg : String := Msg0;
       NBASE : constant Integer := 37*36*10*27*27*27;
       NBASE2 : constant Integer := 262178562;
       C1,C2 : String(1..12);
@@ -355,7 +379,7 @@ package body Pack_JT is
 
    begin
       IType := 1;
-      Msg := Msg0;
+      --Msg := Msg0;
 
       Fmtmsg(Msg);
 
@@ -372,22 +396,22 @@ package body Pack_JT is
       end if;
 
       --Check if it"s a CQ message - We proably wont need to do this in the final version
---        if Msg(1..3) = "CQ " then
---           I_Start := 3;
---           if Msg(4) >= '0' and Msg(4) <= '9' and Msg(5) >= '0' and Msg(5) <= '9' and Msg(6) >= '0' and Msg(6) <= '9' then
---              I_Start := 7;
---           end if;
---           One;
---        else
---           --Gets the first blank space
---           for I in I_Start .. 22 loop
---              I_Start := I;
---              if Msg(I) = ' ' then
---                 One;
---                 exit;
---              end if;
---           end loop;
---        end if;
+      if Msg(1..3) = "CQ " then
+         I_Start := 3;
+         if Msg(4) >= '0' and Msg(4) <= '9' and Msg(5) >= '0' and Msg(5) <= '9' and Msg(6) >= '0' and Msg(6) <= '9' then
+            I_Start := 7;
+         end if;
+         One;
+      else
+         --Gets the first blank space
+         for I in I_Start .. 22 loop
+            I_Start := I;
+            if Msg(I) = ' ' then
+               One;
+               exit;
+            end if;
+         end loop;
+      end if;
 
       if Skip_Ten = False then
             Ten;
@@ -549,8 +573,8 @@ package body Pack_JT is
          if islash /= 0 and K = 0 then
             lof := Callsign0(1 .. islash -1);
             rof := Callsign0(islash +1 .. Callsign0'Last);
-            llof := Trim(lof, Right);
-            lrof := Trim(rof, Right);
+            llof := Trim(lof, Right)'Length;
+            lrof := Trim(rof, Right)'Length;
             is_pfx := llof > 0 and llof <= 4;
             is_sfx := lrof > 0 and lrof <= 3;
             invalid := not (is_pfx or is_sfx);
@@ -749,6 +773,24 @@ package body Pack_JT is
       DLat := Float(NLat) + XMinLat/60.0;
 
    end Grid2Deg;
+
+   procedure Fmtmsg ( Msg : in out String ) is
+   begin
+      for I in Msg'Range loop
+         if Msg(I) = ' ' then
+            if I = Msg'Length then
+               exit;
+            else
+               if Msg(I+1) = ' ' then
+                  Msg(I) := Character'Val (127);
+               end if;
+            end if;
+         else
+            null;
+         end if;
+      end loop;
+      Msg := To_Upper(Msg);
+   end Fmtmsg;
 
 
 end Pack_JT;

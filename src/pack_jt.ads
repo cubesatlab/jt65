@@ -1,6 +1,9 @@
 with Interfaces; use Interfaces;
-with General_JT; use General_JT;
+--with General_JT; use General_JT;
+with Ada.Strings.Fixed; use Ada.Strings.Fixed;
+with Ada.Strings; use Ada.Strings;
 with pfx; use pfx;
+with Ada.Characters.Handling; use Ada.Characters.Handling;
 
 package Pack_JT is
 
@@ -9,6 +12,7 @@ package Pack_JT is
 
    type Octet is new Unsigned_8;
    type Octet_Array is array(Positive range <>) of Octet;
+   type Integer_Array is array(Positive range <>) of Integer;
 
    -- Pack 0s and 1s from DBits into Sym with M0 bits per word.
    -- NB: NSymd is the number of packed output words.
@@ -24,7 +28,7 @@ package Pack_JT is
 
    procedure Unpack_Call(NCall : Integer; Word : String; Iv2 : Integer; Psfx : String);
 
-   procedure Pack_Grid(Grid : String; NG : in out Unsigned_32; Text : in out Boolean);
+   procedure Pack_Grid(Grid : in out String; NG : in out Unsigned_32; Text : in out Boolean);
 
    procedure Unpack_Grid(Ng : Integer; Grid : String);
 
@@ -39,7 +43,7 @@ package Pack_JT is
    --   5   Type 2 suffix
    --   6   Free text
    --  -1   Does not decode correctly
-   procedure Pack_Msg(Msg0 : in out String; Dat : out Integer_Array; IType : out Integer);
+   procedure Pack_Msg(Msg0 : String; Dat : out Integer_Array; IType : out Integer);
 
    procedure Unpack_Msg(Dat : Integer_Array; Msg : String);
 
@@ -68,5 +72,11 @@ package Pack_JT is
 
    -- Converts Maidenhead grid locator to degrees of West longitude and North latitude
    procedure Grid2Deg(Grid0 : String; DLong : out Float; DLat : out Float);
+
+   -- Formats a message by converting all letters to upper case and
+   -- collapsing multiple blanks into one
+   procedure Fmtmsg( Msg : in out String )
+     with
+       Pre => Msg'Length >= 1 and Msg'Length <= 22;
 
 end Pack_JT;
