@@ -66,7 +66,8 @@ package body Pack_JT is
       TMP := "      ";
 
       if Call(Call'First + 2) >= '0' and Call(Call'First + 2) <= '9' then
-         tmp := Call;
+         --TMP := Call;
+         Move(Call,TMP, Right, Left, Space);
       elsif Call(Call'First + 1) >= '0' and Call (Call'First + 1) <= '9' then
          if Call(Call'First + 5) /= ' ' then
             Text := True;
@@ -156,6 +157,7 @@ package body Pack_JT is
          end if;
          goto Ten;
       elsif Grid(Grid'First .. Grid'First + 3) = "RO  " then
+
          NG := NGBASE + 62;
          goto Nine_Hundred;
       elsif Grid(Grid'First .. Grid'First + 3) = "RRR " then
@@ -233,7 +235,7 @@ package body Pack_JT is
 
 
    procedure Pack_Msg(Msg0 : String; Dat : out Integer_Array; IType : out Integer) is
-      Msg : String := Msg0;
+      Msg : String(1 .. 22);
       NBASE : constant Integer := 37*36*10*27*27*27;
       NBASE2 : constant Integer := 262178562;
       C1,C2 : String(1..12);
@@ -248,9 +250,11 @@ package body Pack_JT is
         K, K1, K2 : Integer;
       begin
          ic := I_Start;
-         c3 := "    ";
+         C3 := "    ";
          if ic >= ib + 1 then
-            c3 := Msg(ib+1 ..ic);
+            --C3 := Msg(ib+1 ..ic);
+            Move(Msg(ib+1 ..ic), C3, Right, Left, Space);
+
          end if;
 
          if C3 = "000 " then
@@ -295,6 +299,7 @@ package body Pack_JT is
             if K > 0 then
                K2Grid(K, Grid6);
                C3 := Grid6(1 .. 4);
+
             end if;
 
          end if;
@@ -344,7 +349,8 @@ package body Pack_JT is
      procedure Two is
       begin
          ib := I_Start;
-         C2 := Msg(ia+1 .. ib-1);
+         --C2 := Msg(ia+1 .. ib-1);
+         Move(Msg(ia+1 .. ib-1), C2, Right, Left, Space);
          I_Start := ib + 1;
          for I in I_Start .. 22 loop
             I_Start := I;
@@ -359,7 +365,8 @@ package body Pack_JT is
       procedure One is
       begin
          ia := I_Start;
-         C1 := Msg(1 .. ia-1);
+         --C1 := Msg(1 .. ia-1);
+         Move(Msg(1 .. ia-1), C1, Right, Left, Space);
          I_Start := ia + 1;
          for I in I_Start .. 22 loop
             I_Start := I;
@@ -380,8 +387,11 @@ package body Pack_JT is
    begin
       IType := 1;
       --Msg := Msg0;
+      Move(Msg0, Msg, Right, Left, Space);
 
-      Fmtmsg(Msg);
+      --Fmtmsg(Msg); --This Needs to be fixed for now I am just using To_Upper
+      --Msg := To_Upper(Msg); --Something is wrong with this too
+
 
       if Msg(1..3) = "CQ " and Msg(4) >= '0' and Msg(4) <= '9' and Msg(5) = ' ' then
          Msg := "CQ 00" & Msg(4..Msg'Last);
@@ -406,10 +416,13 @@ package body Pack_JT is
          --Gets the first blank space
          for I in I_Start .. 22 loop
             I_Start := I;
-            if Msg(I) = ' ' then
-               One;
-               exit;
+            if I_Start in Msg'Range then
+               if Msg(I) = ' ' then
+                  One;
+                  exit;
+               end if;
             end if;
+
          end loop;
       end if;
 
@@ -478,16 +491,16 @@ package body Pack_JT is
             J_Count := J_Count + 1;
             if Msg(I) = C(J) then
                Skip_Step := True;
-               J_Count := J_Count - 1;
+
                exit;
             end if;
          end loop;
 
          if not Skip_Step then
-            J_Count := 36;
+            J_Count := 37; --was 36 for some reason
             Skip_Step := False;
          end if;
-
+         J_Count := J_Count - 1;
          Nc1 := 42 * Nc1 + J_Count;
       end loop;
 
@@ -498,16 +511,16 @@ package body Pack_JT is
             J_Count := J_Count + 1;
             if Msg(I) = C(J) then
                Skip_Step := True;
-               J_Count := J_Count - 1;
+
                exit;
             end if;
          end loop;
 
          if not Skip_Step then
-            J_Count := 36;
+            J_Count := 37;
             Skip_Step := False;
          end if;
-
+         J_Count := J_Count - 1;
          Nc2 := 42 * Nc2 + J_Count;
       end loop;
 
@@ -518,16 +531,16 @@ package body Pack_JT is
             J_Count := J_Count + 1;
             if Msg(I) = C(J) then
                Skip_Step := True;
-               J_Count := J_Count - 1;
+
                exit;
             end if;
          end loop;
 
          if not Skip_Step then
-            J_Count := 36;
+            J_Count := 37;
             Skip_Step := False;
          end if;
-
+         J_Count := J_Count - 1;
          Nc3 := 42 * Nc3 + J_Count;
       end loop;
 
@@ -553,7 +566,7 @@ package body Pack_JT is
       raise Not_Implemented with "Unpack_Text";
    end Unpack_Text;
 
-
+   --Something is broken in this
    procedure Get_Pfx1(Callsign : in out String; K : out Integer; Nv2 : in out Integer) is
       Suffixes : sfx_array;
       Prefixes : pfx_array;
@@ -633,11 +646,13 @@ package body Pack_JT is
       islash := Index(Callsign(1 .. iz), "/");
       K := 0;
 
-      C := "   ";
+      --C := "   ";
 
       if islash > 0 and islash <= iz - 4 then
-         C := Callsign(1 .. islash - 1);
-         Callsign := Callsign(islash + 1 .. iz);
+         --C := Callsign(1 .. islash - 1);
+         Move(Callsign(1 .. islash - 1), C, Right, Left, Space);
+         --Callsign := Callsign(islash + 1 .. iz);
+         Move(Callsign(islash + 1 .. iz), Callsign, Right, Left, Space);
          for I in Prefixes'Range loop
             if Prefixes(I)(1 .. 4) = C then
                K := I;
@@ -774,6 +789,7 @@ package body Pack_JT is
 
    end Grid2Deg;
 
+   --Something is Wrong here
    procedure Fmtmsg ( Msg : in out String ) is
    begin
       for I in Msg'Range loop
