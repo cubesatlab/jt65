@@ -14,7 +14,7 @@ package General_JT is
    subtype Range_9 is Natural range 0 .. 8;
    type Unsigned_Array_Sent is array ( Range_7, Range_9 ) of Integer;
    type Unsigned_Array_Holder is array (Range_9, Range_7 ) of Integer;
-   type Integer_Array is array(Natural range <>) of Integer;
+   type Integer_Array is array(Positive range <>) of Integer;
 
    -- Converted subroutines from References to be added here
    procedure Chkmsg( Msg : in out String; Cok : in out String; Nspecial : out Integer )
