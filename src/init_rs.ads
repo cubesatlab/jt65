@@ -7,6 +7,7 @@
 pragma SPARK_Mode(On);
 
 with Ada.Unchecked_Deallocation;
+with System.Memory; use System.Memory;
 
 package Init_Rs is
 
@@ -32,11 +33,11 @@ package Init_Rs is
 
    type Rs_Access is access Rs;
 
-
    function Init_Rs_Int ( Symsize : in out Integer; Gfpoly : in out Integer; Fcr : in out Integer;
                           Prim : in out Integer; Nroots : in out Integer; Pad : in out Integer)
-                         return Rs_Access;
+                            return Rs_Access;
 
-   function Modnn ( Rs : in Rs_Access; X : in out Integer) return Integer;
+   function Modnn ( Rs : in Rs_Access; A : in Integer) return Integer;
+
 
 end Init_Rs;

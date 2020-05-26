@@ -9,26 +9,10 @@ pragma SPARK_Mode(On);
 with Ada.Characters.Handling; use Ada.Characters.Handling;
 with Interfaces; use Interfaces;
 with Ada.Unchecked_Conversion;
+with Ada.Numerics.Real_Arrays; use Ada.Numerics.Real_Arrays;
+with Ada.Text_IO; use Ada.Text_IO;
 
 package body General_JT is
-
-   procedure Fmtmsg ( Msg : in out String ) is
-   begin
-      for I in Msg'Range loop
-         if Msg(I) = ' ' then
-            if I = Msg'Length then
-               exit;
-            else
-               if Msg(I+1) = ' ' then
-                  Msg(I) := Character'Val (127);
-               end if;
-            end if;
-         else
-            null;
-         end if;
-      end loop;
-      Msg := To_Upper(Msg);
-   end Fmtmsg;
 
    procedure Chkmsg( Msg : in out String; Cok : in out String; Nspecial : out Integer ) is
       Flip : Float;
@@ -61,112 +45,85 @@ package body General_JT is
    procedure Interleave63( Sent : in out Integer_Array; Num : in Integer;
                            Holder : in out Integer_Array ) is
 
-      procedure Move( First : in Integer_Array; Second : in out Integer_Array;
-                      Num : Integer ) is
-      begin
-         for I in 1 .. Num loop
-             Second(I) := First(I);
-         end loop;
-      end Move;
+      Index: Integer;
 
-      procedure Sent_Into_Matrix( Sent_Matrix : out Unsigned_Array_Sent;
-                                  Sent : in Integer_Array ) is
-      Index : Integer := 1;
-      begin
-         for M in 0 .. 6 loop
-            for N in 0 .. 8 loop
-            Sent_Matrix(M,N) := Sent(Index);
-            Index := Index + 1;
-            end loop;
-         end loop;
-      end Sent_Into_Matrix;
+      Sent_Tmp, Sent_Tmp2 : Integer_Array(0 .. 62);
 
-      procedure Matrix_Into_Sent( Sent : in out Integer_Array;
-                                  Sent_Matrix : in Unsigned_Array_Sent ) is
-      Index : Integer := 1;
-      begin
-          for M in 0 .. 6 loop
-            for N in 0 .. 8 loop
-               Sent(Index) := Sent_Matrix(M,N);
-               Index := Index + 1;
-            end loop;
-         end loop;
-      end Matrix_Into_Sent;
+      type Interleave_Array is array(0 .. 6, 0 .. 8) of Integer;
+      type Interleave_Array_Tmp is array(0 .. 8, 0 .. 6) of Integer;
 
-      Sent_Matrix   : Unsigned_Array_Sent;
-      Holder_Matrix : Unsigned_Array_Holder;
-      Index         : Integer;
+      D1 : Interleave_Array;
+      D2 : Interleave_Array_Tmp;
 
    begin
-
+      Sent_Tmp(0 .. 62) := Sent(1 .. 63);
+      Sent_Tmp2(0 .. 62) := Sent(1 .. 63);
       if Num > 0 then
-
-         Sent_Into_Matrix(Sent_Matrix, Sent);
-         for I in 0 .. 6 loop
-            for J in 0 .. 8 loop
-               Holder_Matrix(J, I) := Sent_Matrix(I, J);
+         for I in D1'Range(1) loop
+            for J in D1'Range(2) loop
+               D1(I, J) := Sent_Tmp(I + 7*J);
             end loop;
          end loop;
-
+         for I in D1'Range(1) loop
+            for J in D1'Range(2) loop
+               D2(J, I) := D1(I, J);
+            end loop;
+         end loop;
+          for I in D1'Range(1) loop
+            for J in D1'Range(2) loop
+               Sent_Tmp2(I + 7*J) := D1(I,J);
+            end loop;
+         end loop;
          Index := 1;
-         for C in 0 .. 8 loop
-            for D in 0 .. 6 loop
-               Holder(Index) := Holder_Matrix(C,D);
+         for I in D1'Range(1) loop
+            for J in D1'Range(2) loop
+               Sent(Index) := Sent_Tmp2(I + 7*J);
                Index := Index + 1;
             end loop;
          end loop;
-         Move(Holder, Sent, 63);
       else
-
-         Index := 1;
-         for M in 0 .. 8 loop
-            for N in 0 .. 6 loop
-            Holder_Matrix(M,N) := Holder(Index);
-            Index := Index + 1;
+         Index := 0;
+          for I in D2'Range(1) loop
+            for J in D2'Range(2) loop
+               Sent_Tmp2(Index) := Sent_Tmp(I + 9*J);
+                Index := Index + 1;
             end loop;
          end loop;
-
-         Move(Sent, Holder, 63);
-         for I in 0 .. 6 loop
-            for J in 0 .. 8 loop
-               Sent_Matrix(I, J) := Holder_Matrix(J, I);
-            end loop;
-         end loop;
-         Matrix_Into_Sent(Sent, Sent_Matrix);
+         Sent(1 .. 63) := Sent_Tmp2(0 .. 62);
       end if;
-
    end Interleave63;
 
-   procedure Graycode( Sent : in Integer_Array; Num : in Integer;
-                        Dir : in  Integer; Output : out Integer_Array ) is
-      My_Num : Unsigned_8;
-      To_Output : Unsigned_8;
+   procedure Graycode( Sent : in out Integer_Array; Num : in Integer;
+                        Dir : in Integer) is
+      To_Output : Integer;
+      Tmp_Array : Integer_Array(1 .. 63);
 
-      function Igray( Num : in Unsigned_8; Dir : in Integer ) return Unsigned_8 is
-         New_Num : Unsigned_8 := Num;
+      function Igray( Num : in out Integer; Dir : in Integer ) return Integer is
+         Num_8: Unsigned_8;
          Sh  : Unsigned_8;
          Nn  : Unsigned_8;
-         Tmp : Natural;
-
       begin
-         if Dir > 0 then return New_Num or Shift_Right( New_Num, 1 ); end if;
+         Num_8 := Interfaces.Unsigned_8(Num);
+         if Dir > 0 then return Integer(Num_8 xor Shift_Right( Num_8, 1 )); end if;
          Sh := 1;
-         Nn := Interfaces.Shift_Right(New_Num, 1);
-         While Nn > 0 loop
-            New_Num := New_Num or Nn;
-            Sh := Shift_Left( Sh, 1 );
-            Tmp := Integer( Sh );
-            Nn := Shift_Right( New_Num, Tmp );
-         end loop;
-         return New_Num;
+         Nn := Interfaces.Shift_Right(Num_8, 1);
+           While Nn > 0 loop
+              Num_8 := Num_8 xor Nn;
+              Sh := Shift_Left( Sh, 1 );
+              Nn := Shift_Right( Num_8, Integer(Sh) );
+           end loop;
+         Num := Integer(Num_8);
+         return Num;
       end Igray;
 
    begin
+
       for I in 1 .. Num loop
-         My_Num := Unsigned_8(Sent(I));
-         To_Output := Igray ( My_Num, Dir );
-         Output(I) := Integer(To_Output);
+         To_Output := Igray ( Sent(I), Dir );
+         Tmp_Array(I) := To_Output;
+      end loop;
+      for I in 1 .. Num loop
+         Sent(I) := Tmp_Array(I);
       end loop;
    end Graycode;
-
 end General_JT;
