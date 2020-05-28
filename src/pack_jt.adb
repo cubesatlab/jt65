@@ -1,3 +1,5 @@
+pragma SPARK_Mode(On);
+
 with Interfaces; use Interfaces;
 package body Pack_JT is
 

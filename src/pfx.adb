@@ -1,7 +1,9 @@
+pragma SPARK_Mode(On);
+
 package body pfx is
 
-   procedure Init_Pfx(Prefixes : out pfx_array; Suffixes : out sfx_array) is 
-   begin 
+   procedure Init_Pfx(Prefixes : out pfx_array; Suffixes : out sfx_array) is
+   begin
       Prefixes := ("1A   ","1S   ","3A   ","3B6  ","3B8  ","3B9  ","3C   ","3C0  ",
                    "3D2  ","3D2C ","3D2R ","3DA  ","3V   ","3W   ","3X   ","3Y   ",
                    "3YB  ","3YP  ","4J   ","4L   ","4S   ","4U1I ","4U1U ","4W   ",
@@ -23,7 +25,7 @@ package body pfx is
                    "HB   ","HB0  ","HC   ","HC8  ","HH   ","HI   ","HK   ","HK0  ",
                    "HK0M ","HL   ","HM   ","HP   ","HR   ","HS   ","HV   ","HZ   ",
                    "I    ","IS   ","IS0  ",        "J2   ","J3   ","J5   ","J6   ",
-                   "J7   ","J8   ","JA   ","JDM  ","JDO  ","JT   ","JW   ",        
+                   "J7   ","J8   ","JA   ","JDM  ","JDO  ","JT   ","JW   ",
                    "JX   ","JY   ","K    ","KG4  ","KH0  ","KH1  ","KH2  ","KH3  ",
                    "KH4  ","KH5  ","KH5K ","KH6  ","KH7  ","KH8  ","KH9  ","KL   ",
                    "KP1  ","KP2  ","KP4  ","KP5  ","LA   ","LU   ","LX   ","LY   ",
@@ -45,11 +47,11 @@ package body pfx is
                    "YV0  ","Z2   ","Z3   ","ZA   ","ZB   ","ZC4  ","ZD7  ","ZD8  ",
                    "ZD9  ","ZF   ","ZK1N ","ZK1S ","ZK2  ","ZK3  ","ZL   ","ZL7  ",
                    "ZL8  ","ZL9  ","ZP   ","ZS   ","ZS8  ","KC4  ","E5   ");
-      
+
       Suffixes := ('P','0','1','2','3','4','5','6','7','8','9','A');
-      
+
    end Init_Pfx;
-   
-                   
+
+
 
 end pfx;

@@ -1,3 +1,6 @@
+
+pragma SPARK_Mode(On);
+
 with Interfaces; use Interfaces;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 with Ada.Strings; use Ada.Strings;

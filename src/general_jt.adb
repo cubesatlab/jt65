@@ -6,19 +6,13 @@
 --------------------------------------------------------------------------------
 pragma SPARK_Mode(On);
 
-with Ada.Characters.Handling; use Ada.Characters.Handling;
 with Interfaces; use Interfaces;
-with Ada.Unchecked_Conversion;
-with Ada.Numerics.Real_Arrays; use Ada.Numerics.Real_Arrays;
-with Ada.Text_IO; use Ada.Text_IO;
 
 package body General_JT is
 
-   procedure Chkmsg( Msg : in out String; Cok : in out String; Nspecial : out Integer ) is
-      Flip : Float;
+   procedure Chkmsg(Msg : in out String; Cok : out String; NSpecial : out Integer) is
    begin
-      Nspecial := 0;
-      Flip := 1.0;
+      NSpecial := 0;
       Cok := "   ";
 
       for I in reverse Msg'Range loop
@@ -26,7 +20,6 @@ package body General_JT is
             if I > 11 then
                if Msg(I-3 .. I) = " 000" or Msg(Msg'First + 19 .. Msg'First + 21) = " 00" then
                   Cok := "000";
-                  Flip :=-1.0;
                   if (Msg(Msg'First + 19 .. Msg'First + 21) = " 00") then
                      Msg := Msg(Msg'First .. Msg'First + 18);
                   else
@@ -35,95 +28,93 @@ package body General_JT is
                end if;
             end if;
          else
-         if (Msg = "RO                    ") then Nspecial := 2; end if;
-         if (Msg = "RRR                   ") then Nspecial := 3; end if;
-         if (Msg = "73                    ") then Nspecial := 4; end if;
+         if (Msg = "RO                    ") then NSpecial := 2; end if;
+         if (Msg = "RRR                   ") then NSpecial := 3; end if;
+         if (Msg = "73                    ") then NSpecial := 4; end if;
          end if;
       end loop;
    end ChkMsg;
 
-   procedure Interleave63( Sent : in out Integer_Array; Num : in Integer;
-                           Holder : in out Integer_Array ) is
 
-      Index: Integer;
+   procedure Interleave63(Sent : in out Integer_Array; IDir : in Integer) is
 
-      Sent_Tmp, Sent_Tmp2 : Integer_Array(0 .. 62);
+      type Interleave_Array_7by9 is array(0 .. 6, 0 .. 8) of Integer;
+      type Interleave_Array_9by7 is array(0 .. 8, 0 .. 6) of Integer;
 
-      type Interleave_Array is array(0 .. 6, 0 .. 8) of Integer;
-      type Interleave_Array_Tmp is array(0 .. 8, 0 .. 6) of Integer;
-
-      D1 : Interleave_Array;
-      D2 : Interleave_Array_Tmp;
-
+      D1 : Interleave_Array_7by9;
+      D2 : Interleave_Array_9by7;
    begin
-      Sent_Tmp(0 .. 62) := Sent(1 .. 63);
-      Sent_Tmp2(0 .. 62) := Sent(1 .. 63);
-      if Num > 0 then
-         for I in D1'Range(1) loop
-            for J in D1'Range(2) loop
-               D1(I, J) := Sent_Tmp(I + 7*J);
+      if IDir > 0 then
+         -- Copy Sent into D1 (column major order).
+         for I in 0 .. 6 loop
+            for J in 0 .. 8 loop
+               D1(I, J) := Sent(I + 7*J);
             end loop;
          end loop;
-         for I in D1'Range(1) loop
-            for J in D1'Range(2) loop
+
+         -- Do the interleave
+         for I in 0 .. 6 loop
+            for J in 0 .. 8 loop
                D2(J, I) := D1(I, J);
             end loop;
          end loop;
-          for I in D1'Range(1) loop
-            for J in D1'Range(2) loop
-               Sent_Tmp2(I + 7*J) := D1(I,J);
-            end loop;
-         end loop;
-         Index := 1;
-         for I in D1'Range(1) loop
-            for J in D1'Range(2) loop
-               Sent(Index) := Sent_Tmp2(I + 7*J);
-               Index := Index + 1;
+
+         -- Copy D2 back into Sent (column major order).
+         for I in 0 .. 8 loop
+            for J in 0 .. 6 loop
+               Sent(I + 9*J) := D2(I, J);
             end loop;
          end loop;
       else
-         Index := 0;
-          for I in D2'Range(1) loop
-            for J in D2'Range(2) loop
-               Sent_Tmp2(Index) := Sent_Tmp(I + 9*J);
-                Index := Index + 1;
+         -- Copy Sent into D2 (column major order).
+         for I in 0 .. 8 loop
+            for J in 0 .. 6 loop
+               D2(I, J) := Sent(I + 9*J);
             end loop;
          end loop;
-         Sent(1 .. 63) := Sent_Tmp2(0 .. 62);
+
+         -- Do the de-interleave
+         for I in 0 .. 6 loop
+            for J in 0 .. 8 loop
+               D1(I, J) := D2(J, I);
+            end loop;
+         end loop;
+
+         -- Copy D1 back into Sent (column major order).
+         for I in 0 .. 6 loop
+            for J in 0 .. 8 loop
+               Sent(I + 7*J) := D1(I, J);
+            end loop;
+         end loop;
       end if;
    end Interleave63;
 
-   procedure Graycode( Sent : in out Integer_Array; Num : in Integer;
-                        Dir : in Integer) is
-      To_Output : Integer;
-      Tmp_Array : Integer_Array(1 .. 63);
 
-      function Igray( Num : in out Integer; Dir : in Integer ) return Integer is
+   procedure Graycode(Sent : in out Integer_Array; Dir : in Integer) is
+      Temporary_Array : Integer_Array(Sent'Range);
+
+      function IGray(Num : in Integer; Dir : in Integer) return Integer is
          Num_8: Unsigned_8;
-         Sh  : Unsigned_8;
-         Nn  : Unsigned_8;
+         Sh   : Unsigned_8;
+         Nn   : Unsigned_8;
       begin
          Num_8 := Interfaces.Unsigned_8(Num);
-         if Dir > 0 then return Integer(Num_8 xor Shift_Right( Num_8, 1 )); end if;
+         if Dir > 0 then return Integer(Num_8 xor Shift_Right(Num_8, 1)); end if;
          Sh := 1;
          Nn := Interfaces.Shift_Right(Num_8, 1);
            While Nn > 0 loop
               Num_8 := Num_8 xor Nn;
-              Sh := Shift_Left( Sh, 1 );
-              Nn := Shift_Right( Num_8, Integer(Sh) );
+              Sh := Shift_Left(Sh, 1);
+              Nn := Shift_Right(Num_8, Integer(Sh));
            end loop;
-         Num := Integer(Num_8);
-         return Num;
-      end Igray;
+         return Integer(Num_8);
+      end IGray;
 
    begin
-
-      for I in 1 .. Num loop
-         To_Output := Igray ( Sent(I), Dir );
-         Tmp_Array(I) := To_Output;
+      for I in Sent'Range loop
+         Temporary_Array(I) := IGray(Sent(I), Dir);
       end loop;
-      for I in 1 .. Num loop
-         Sent(I) := Tmp_Array(I);
-      end loop;
+      Sent := Temporary_Array;
    end Graycode;
+
 end General_JT;

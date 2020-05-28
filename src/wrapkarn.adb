@@ -4,7 +4,7 @@
 -- AUTHOR : (C) Copyright 2020 by Vermont Technical College
 --
 --------------------------------------------------------------------------------
---pragma SPARK_Mode(On);
+pragma SPARK_Mode(On);
 
 with Init_Rs; use Init_Rs;
 with Ada.Text_IO; use Ada.Text_IO;
