@@ -1,9 +1,9 @@
 with Interfaces; use Interfaces;
---with General_JT; use General_JT;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 with Ada.Strings; use Ada.Strings;
 with pfx; use pfx;
 with Ada.Characters.Handling; use Ada.Characters.Handling;
+
 
 package Pack_JT is
 
@@ -26,11 +26,11 @@ package Pack_JT is
    -- Pack a valid callsign into a 28-bit integer.
    procedure Pack_Call(Call : in out String; NCall : in out  Unsigned_32; Text : out Boolean);
 
-   procedure Unpack_Call(NCall : Integer; Word : String; Iv2 : Integer; Psfx : String);
+   procedure Unpack_Call(NCall : Unsigned_32; Word : out String; Iv2 : out Integer; Psfx : out String);
 
    procedure Pack_Grid(Grid : in out String; NG : in out Unsigned_32; Text : in out Boolean);
 
-   procedure Unpack_Grid(Ng : Integer; Grid : String);
+   procedure Unpack_Grid(Ng : Integer; Grid : out String);
 
    -- Packs a JT4/JT9/JT65 message into twelve 6-bit symbols
    --
@@ -45,17 +45,17 @@ package Pack_JT is
    --  -1   Does not decode correctly
    procedure Pack_Msg(Msg0 : String; Dat : out Integer_Array; IType : out Integer);
 
-   procedure Unpack_Msg(Dat : Integer_Array; Msg : String);
+   procedure Unpack_Msg(Dat : Integer_Array; Msg : in out String);
 
    procedure Pack_Text(Msg : String; Nc1, Nc2, Nc3 : out Unsigned_32);
 
-   procedure Unpack_Text(Nc1a, Nc2a, Nc3a : Integer; Msg : String);
+   procedure Unpack_Text(Nc1a, Nc2a, Nc3a : Unsigned_32; Msg : in out String);
 
    procedure Get_Pfx1(Callsign : in out String; K : out Integer; Nv2 : in out Integer);
 
-   procedure Get_Pfx2(K0 : Integer; Callsign : String);
+   procedure Get_Pfx2(K0 : Integer; Callsign : in out String);
 
-   procedure Grid2k(Grid : String; K : Integer);
+   procedure Grid2k(Grid : String; K : out Integer);
 
    procedure K2Grid(K : Integer; Grid : out String);
 
@@ -72,6 +72,8 @@ package Pack_JT is
 
    -- Converts Maidenhead grid locator to degrees of West longitude and North latitude
    procedure Grid2Deg(Grid0 : String; DLong : out Float; DLat : out Float);
+
+   procedure Deg2Grid(DLong0 : Float; DLat : Float; Grid : out String);
 
    -- Formats a message by converting all letters to upper case and
    -- collapsing multiple blanks into one

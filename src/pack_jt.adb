@@ -3,6 +3,7 @@ package body Pack_JT is
 
    --JT_IType, JT_Nc1, JT_Nc2, JT_Ng, JT_K1, JT_K2 : Integer;
    --JT_C1, JT_C2, JT_C3 : String(1 .. 6);
+   add_pfx : String (1 ..8);
 
    procedure Pack_Bits(DBits : in out Octet_Array; NSymd : in out Integer; M0 : in out Integer; Sym : in out Integer_Array) is
       -- Might need to change the types for n and m
@@ -116,9 +117,170 @@ package body Pack_JT is
    end Pack_Call;
 
 
-   procedure Unpack_Call(NCall : Integer; Word : String; Iv2 : Integer; Psfx : String) is
-   begin
-      raise Not_Implemented with "Unpack_Call";
+   procedure Unpack_Call(NCall : Unsigned_32; Word : out String; Iv2 : out Integer; Psfx : out String) is
+      NBASE : constant Integer := 37 * 36 * 10 * 27 * 27 * 27;
+      C : constant String := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
+      N, I : Integer := Integer(NCall);
+      begin
+      --Word := "......";
+      Move("......", Word, Right, Left, Space);
+      --Psfx := "    ";
+      Move("    ", Psfx, Right, Left, Space);
+      Iv2 := 0;
+
+      if N >= 262177560 then goto Twenty; end if;
+
+      I := (N mod 27) + 11;
+      Word(6) := C(I);
+      N := N / 27;
+
+      I := (N mod 27) + 11;
+      Word(5) := C(I);
+      N := N / 27;
+
+      I := (N mod 27) + 11;
+      Word(4) := C(I);
+      N := n / 27;
+
+      I := (N mod 10) + 1;
+      Word(3) := C(I);
+      N := N / 10;
+
+      I := (N mod 36) + 1;
+      Word(2) := C(I);
+      N := N / 36;
+
+      I := N + 1;
+      Word(1) := C(I);
+
+      for X in 1 .. 4 loop
+         if Word(X) /= ' ' then
+            Word := Word(X .. Word'Last);
+            goto NineNineNine;
+         end if;
+      end loop;
+
+      goto NineNineNine;
+
+      <<Twenty>>
+      if N >= 267796946 then goto NineNineNine; end if;
+
+      if N >= 262178563 and N <= 264002071 then
+         Iv2 := 1;
+         N := N - 262178563;
+
+         I := (N mod 37) + 1;
+         Psfx(4) := C(I);
+         N := N / 37;
+
+         I := (N mod 37) + 1;
+         Psfx(3) := C(I);
+         N := N / 37;
+
+         I := (N mod 37) + 1;
+         Psfx(2) := C(I);
+         N := N / 37;
+
+         I := N + 1;
+         Psfx(1) := C(I);
+
+      elsif N >= 264002072 and N <= 265825580 then
+         Iv2 := 2;
+         N := N - 264002072;
+
+         I := (N mod 37) + 1;
+         Psfx(4) := C(I);
+         N := N / 37;
+
+         I := (N mod 37) + 1;
+         Psfx(3) := C(I);
+         N := N / 37;
+
+         I := (N mod 37) + 1;
+         Psfx(2) := C(I);
+         N := N / 37;
+
+         I := N + 1;
+         Psfx(1) := C(I);
+
+      elsif N >= 265825581 and N <= 267649089 then
+         Iv2 := 3;
+         N := N - 265825581;
+
+         I := (N mod 37) + 1;
+         Psfx(4) := C(I);
+         N := N / 37;
+
+         I := (N mod 37) + 1;
+         Psfx(3) := C(I);
+         N := N / 37;
+
+         I := (N mod 37) + 1;
+         Psfx(2) := C(I);
+         N := N / 37;
+
+         I := N + 1;
+         Psfx(1) := C(I);
+
+      elsif N >= 267649090 and N <= 267698374 then
+         Iv2 := 4;
+         N := N - 267649090;
+
+         I := (N mod 37) + 1;
+         Psfx(3) := C(I);
+         N := N / 37;
+
+         I := (N mod 37) + 1;
+         Psfx(2) := C(I);
+         N := N / 37;
+
+         I := N + 1;
+         Psfx(1) := C(I);
+
+      elsif N >= 267698375 and N <= 267747659 then
+         Iv2 := 5;
+         N := N - 267698375;
+
+         I := (N mod 37) + 1;
+         Psfx(3) := C(I);
+         N := N / 37;
+
+         I := (N mod 37) + 1;
+         Psfx(2) := C(I);
+         N := N / 37;
+
+         I := N + 1;
+         Psfx(1) := C(I);
+
+      elsif N >= 267747660 and N <= 267796944 then
+         Iv2 := 6;
+         N := N - 267747660;
+
+         I := (N mod 37) + 1;
+         Psfx(3) := C(I);
+         N := N / 37;
+
+         I := (N mod 37) + 1;
+         Psfx(2) := C(I);
+         N := N / 37;
+
+         I := N + 1;
+         Psfx(1) := C(I);
+
+      elsif N = 267796945 then
+         Iv2 := 7;
+         Psfx := "    ";
+
+      end if;
+
+      <<NineNineNine>>
+      if Word(1 .. 3) = "3D0" then
+         Word := "3DA0" & Word(4 .. Word'Last);
+      end if;
+      if Word(1) = 'Q' and Word(2) >= 'A' and Word(2) <= 'Z' then
+         Word := "3X" & Word(2 .. Word'Last);
+      end if;
+
    end Unpack_Call;
 
    procedure Pack_Grid(Grid : in out String; NG : in out Unsigned_32; Text : in out Boolean) is
@@ -228,9 +390,55 @@ package body Pack_JT is
    end Pack_Grid;
 
 
-   procedure Unpack_Grid(Ng : Integer; Grid : String) is
+   procedure Unpack_Grid(Ng : Integer; Grid : out String) is
+      NGBASE : constant Integer := 180 * 180;
+      Grid6 : String(1 .. 6);
+      DLat, DLong : Float;
+      N : Integer;
    begin
-      raise Not_Implemented with "Unpack_Grid";
+      Grid := "    ";
+
+      if Ng >= 32400 then goto Ten; end if;
+
+      DLat := Float((Ng mod 180) - 90);
+      DLong := Float((Ng / 180) * 2 - 180 + 2);
+      Deg2Grid(DLong, DLat, Grid6);
+      Grid := Grid6(Grid6'First .. Grid6'First + 3);
+
+      if Grid(1 .. 2) = "KA" then
+         N := Integer'Value(Grid(3 .. 4));
+         N := N - 50;
+         Grid := Integer'Image(N);
+         if Grid(1) = ' ' then Grid(1) := '+'; end if;
+      elsif Grid(3 .. 4) = "LA" then
+         N := Integer'Value(Grid(3 .. 4));
+         N := N - 50;
+         Grid := "R" & Integer'Image(N);
+         if Grid(2) = ' ' then Grid(2) := '+'; end if;
+      end if;
+
+      goto Nine_Hundred;
+
+      <<Ten>>
+      N := Ng - NGBASE - 1;
+
+      if N >= 1 and N <= 30 then
+         Grid := Integer'Image(-N);
+      elsif N >= 31 and N <= 60 then
+         N := N - 30;
+         Grid := "R" & Integer'Image(-N);
+      elsif N = 61 then
+         Grid := "RO";
+      elsif N = 62 then
+         Grid := "RRR";
+      elsif N = 63 then
+         Grid := "73";
+      end if;
+
+
+      <<Nine_Hundred>>
+      return;
+
    end Unpack_Grid;
 
 
@@ -459,18 +667,183 @@ package body Pack_JT is
    end Pack_Msg;
 
 
-   procedure Unpack_Msg(Dat : Integer_Array; Msg : String) is
+   procedure Unpack_Msg(Dat : Integer_Array; Msg : in out String) is
       NBASE : Integer := 37*36*10*27*27*27;
       NGBASE : Integer := 180*180;
       c1, c2 : String(1 .. 12);
       grid, psfx , junk2 : String(1..4);
       grid6 : String(1..6);
       cqnnn : Boolean := False;
-      nc1, nc2, ng : Integer;
+      nc1, nc2, ng : Unsigned_32;
+      iv2, NFreq, junk1, n1, n2, K, Index_Val, J : Integer;
    begin
+      nc1 := Shift_Left(Unsigned_32(Dat(1)), 22) + Shift_Left(Unsigned_32(Dat(2)), 16) + Shift_Left(Unsigned_32(Dat(3)), 10) +
+        Shift_Left(Unsigned_32(Dat(4)), 4) + (Shift_Right(Unsigned_32(Dat(5)), 2) and 15);
+
+      nc2 := Shift_Left((Unsigned_32(Dat(5)) and 3), 26) + Shift_Left(Unsigned_32(Dat(6)), 20) + Shift_Left(Unsigned_32(Dat(7)), 14) +
+        Shift_Left(Unsigned_32(Dat(8)), 8) + Shift_Left(Unsigned_32(Dat(9)), 2) + (Shift_Right(Unsigned_32(Dat(10)), 4) and 3);
+
+      ng := Shift_Left((Unsigned_32(Dat(10)) and 15), 12) + Shift_Left(Unsigned_32(Dat(11)), 6) + Unsigned_32(Dat(12));
+
+      if ng >= 32768 then
+         Unpack_Text(nc1, nc2, ng, Msg);
+         goto One_Hundred;
+      end if;
+
+      Unpack_Call(nc1, c1, iv2, psfx);
+
+      if iv2 = 0 then
+         if Integer(nc1) = NBASE + 1 then
+            --c1 := "CQ    ";
+            Move("CQ    ", c1, Right, Left, Space);
+         end if;
+
+         if Integer(nc1) = NBASE + 2 then
+            Move("QRZ   ", c1, Right, Left, Space);
+         end if;
+
+         NFreq := Integer(nc1) - NBASE - 3;
+
+         if NFreq >= 0 and NFreq <= 999 then
+            --write(c1,1002) nfreq
+            --format('CQ ',i3.3)
+            c1 := "CQ " & Integer'Image(NFreq);
+            cqnnn := True;
+         end if;
+      end if;
+
+      Unpack_Call(nc2, c2, junk1, junk2);
+      Unpack_Grid(Integer(ng), grid);
+
+      if iv2 >= 0 then
+         for I in 1 .. 4 loop
+            if Character'Pos(psfx(I)) = 0 then
+               psfx(I) := ' ';
+            end if;
+         end loop;
+
+         n1 := Trim(psfx, Right)'Length;
+         n2 := Trim(c2, Right)'Length;
+
+         if iv2 = 1 then
+            Msg := "CQ " & psfx(psfx'First .. n1) & '/' & c2(c2'First .. n2) & ' ' & grid;
+         end if;
+
+         if iv2 = 2 then
+            Msg := "QRZ " & psfx(psfx'First .. n1) & '/' & c2(c2'First .. n2) & ' ' & grid;
+         end if;
+
+         if iv2 = 3 then
+            Msg := "DE " & psfx(psfx'First .. n1) & '/' & c2(c2'First .. n2) & ' ' & grid;
+         end if;
+
+         if iv2 = 4 then
+            Msg := "CQ " & c2(c2'First .. n2) & '/' & psfx(psfx'First .. n1) & ' ' & grid;
+         end if;
+
+         if iv2 = 5 then
+            Msg := "QRZ " & c2(c2'First .. n2) & '/' & psfx(psfx'First .. n1) & ' ' & grid;
+         end if;
+
+         if iv2 = 6 then
+            Msg := "DE " & c2(c2'First .. n2) & '/' & psfx(psfx'First .. n1) & ' ' & grid;
+         end if;
+
+         if iv2 = 7 then
+            grid6 := grid & "ma";
+            Grid2k(grid6, K);
+
+            if K >= 451 and K <= 900 then
+               Get_Pfx2(K, c2);
+               n2 := Trim(c2, Right)'Length;
+               Msg := "DE " & c2(c2'First .. n2);
+            else
+               Msg := "DE " & c2(c2'First .. n2) & ' ' & grid;
+            end if;
+         end if;
+
+         if iv2 = 8 then
+            Msg := " ";
+         end if;
+
+         goto One_Hundred;
+      end if;
+
+         grid6 := grid & "ma";
+
+         Grid2k(grid6, K);
+
+         if K >= 1 and K <= 450 then
+            Get_Pfx2(K, c1);
+         end if;
+
+         if K >= 451 and K <= 900 then
+            Get_Pfx2(K, c2);
+         end if;
+
+         Index_Val := Index(c1, " "); -- This Might not work. In fortran it looks for null characters but hopefully this works the same
+
+         if Index_Val >= 3 then
+            c1 := c1(1 .. Index_Val - 1) & "            ";
+         end if;
+
+         Index_Val := Index(c2, " ");
+
+         if Index_Val >= 3 then
+            c2 := c2(1 .. Index_Val - 1) & "            ";
+         end if;
+
+         Msg := "                      ";
+
+         J := 0;
+
+         if cqnnn then
+            Msg := c1 & "          ";
+            J := 7;
+            goto Ten;
+         end if;
+
+         for I in 1 .. 12 loop
+            J := J + 1;
+            Msg(J) := c1(I);
+            if c1(I) = ' ' then goto Ten; end if;
+         end loop;
+
+         J := J + 1;
+         Msg(J) := ' ';
+
+         <<Ten>>
+         for I in 1 .. 12 loop
+            if J <= 21 then J := J + 1; end if;
+            Msg(J) := c2(I);
+            if c2(I) = ' ' then goto Twenty; end if;
+         end loop;
+
+         if J <= 21 then J := J + 1; end if;
+         Msg(J) := ' ';
+
+         <<Twenty>>
+         if K = 0 then
+            for I in 1 .. 4 loop
+               if J <= 21 then J := J + 1; end if;
+               Msg(J) := grid(I);
+            end loop;
+
+            if J <= 21 then J := J + 1; end if;
+            Msg(J) := ' ';
+         end if;
 
 
-      raise Not_Implemented with "Unpack_Msg";
+         <<One_Hundred>>
+         if Msg(Msg'First .. Msg'First + 5) = "CQ9DX " then
+            Msg(3) := ' ';
+         end if;
+
+         if Msg(Msg'First .. Msg'First + 1) = "E9" and Msg(Msg'First + 2) >= 'A' and Msg(Msg'First + 2) <= 'Z' and Msg(Msg'First + 3) >= 'A' and
+           Msg(Msg'First + 3) <= 'Z' and Msg(Msg'First + 4) = ' ' then
+            Msg := "CQ " & Msg(Msg'First + 5 .. Msg'Last);
+         end if;
+
    end Unpack_Msg;
 
    -- I did some limited testing with this and ended up getting the same result as its fortran equivalent
@@ -560,10 +933,44 @@ package body Pack_JT is
 
    end Pack_Text;
 
-
-   procedure Unpack_Text(Nc1a, Nc2a, Nc3a : Integer; Msg : String) is
+   --Parameters might need to be integers not unsigned
+   procedure Unpack_Text(Nc1a, Nc2a, Nc3a : Unsigned_32; Msg : in out String) is
+      Nc1, Nc2, Nc3 : Unsigned_32;
+      J : Integer;
+      C : String := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ +-./?";
    begin
-      raise Not_Implemented with "Unpack_Text";
+      Nc1 := Nc1a;
+      Nc2 := Nc2a;
+      Nc3 := Nc3a and 32767;
+
+      if (Nc1 and 1) /= 0 then Nc3 := Nc3 + 32768; end if;
+
+      Nc1 := Nc1 / 2;
+
+      if (Nc2 and 1) /= 0 then Nc3 := Nc3 + 65536; end if;
+
+      Nc2 := Nc2 / 2;
+
+      for I in reverse 1 .. 5 loop
+         J := (Integer(Nc1) mod 42) + 1;
+         Msg(I) := C(J);
+         Nc1 := Nc1 / 42;
+      end loop;
+
+      for I in reverse 6 .. 10 loop
+         J := (Integer(Nc2) mod 42) + 1;
+         Msg(I) := C(J);
+         Nc2 := Nc2 / 42;
+      end loop;
+
+      for I in reverse 11 .. 13 loop
+         J := (Integer(Nc3) mod 42) + 1;
+         Msg(I) := C(J);
+         Nc3 := Nc3 / 42;
+      end loop;
+
+      Msg(14 .. 22) := "         ";
+
    end Unpack_Text;
 
    --Something is broken in this
@@ -572,7 +979,6 @@ package body Pack_JT is
       Prefixes : pfx_array;
       Callsign0, lof, rof : String (1..12);
       C : String (1..8);
-      add_pfx : String (1 .. 8);
       t_pfx : String (1 .. 4);
       t_sfx : String (1 .. 3);
       is_pfx, is_sfx, invalid : Boolean;
@@ -653,8 +1059,9 @@ package body Pack_JT is
          Move(Callsign(1 .. islash - 1), C, Right, Left, Space);
          --Callsign := Callsign(islash + 1 .. iz);
          Move(Callsign(islash + 1 .. iz), Callsign, Right, Left, Space);
+
          for I in Prefixes'Range loop
-            if Prefixes(I)(1 .. 4) = C then
+            if Prefixes(I)(1 .. 4) = C(1 .. 4) then --Changed from original fortran code
                K := I;
                Nv2 := 2;
                Ten;
@@ -669,9 +1076,10 @@ package body Pack_JT is
          end if;
 
       elsif islash = iz -1 then
-         C := Callsign(islash + 1 .. iz);
-         Callsign := Callsign(1 .. islash - 1);
-
+         --C := Callsign(islash + 1 .. iz);
+         Move(Callsign(islash + 1 .. iz), C, Right, Left, Space);
+         --Callsign := Callsign(1 .. islash - 1);
+         Move(Callsign(1 .. islash - 1), Callsign, Right, Left, Space);
          for I in Suffixes'Range loop
             if Suffixes(I) = C(1) then
                K := 400 + I;
@@ -686,21 +1094,56 @@ package body Pack_JT is
    end Get_Pfx1;
 
 
-   procedure Get_Pfx2(K0 : Integer; Callsign : String) is
+   procedure Get_Pfx2(K0 : Integer; Callsign : in out String) is
+      K, Iz : Integer := K0;
+      Suffix : sfx_array;
+      Prefix : pfx_array;
    begin
-      raise Not_Implemented with "Get_Pfx2";
+      Init_Pfx(Prefix, Suffix);
+
+      if K > 450 then K := K - 450; end if;
+
+      if K >= 1 and K <= Prefix'Length then
+         Iz := Index(Prefix(K), " ") - 1;
+         Callsign := Prefix(K)(1 .. Iz) & '/' & Callsign;
+      elsif K >= 401 and K <= (400 + Suffix'Length) then
+         Iz := Index(Callsign, " ") - 1;
+         Callsign := Callsign(1 .. Iz) & '/' & Suffix(K - 400);
+      elsif K = 449 then
+         Iz := Index(add_pfx, " ") - 1;
+         if Iz < 1 then Iz := 8; end if;
+         Callsign := add_pfx(1 .. Iz) & '/' & Callsign;
+      end if;
+
    end Get_Pfx2;
 
 
-   procedure Grid2k(Grid : String; K : Integer) is
+   procedure Grid2k(Grid : String; K : out Integer) is
+      NLong, NLat : Integer;
+      XLong, XLat : Float;
    begin
-      raise Not_Implemented with "Grid2k";
+      Grid2Deg(Grid, XLong, XLat);
+      NLong := Integer(XLong);
+      NLat := Integer(XLat);
+      K := 0;
+
+      if NLat >= 85 then
+         K := 5 * (NLong + 179) / 2 + NLat - 84;
+      end if;
+
    end Grid2k;
 
 
    procedure K2Grid(K : Integer; Grid : out String) is
+      NLong, NLat : Integer;
+      DLong, DLat : Float;
    begin
-      raise Not_Implemented with "K2Grid";
+      NLong := 2 * (((K - 1) / 5) mod 90) - 179;
+      if K > 450 then NLong := NLong + 180; end if;
+      NLat := ((K - 1) mod 5) + 85;
+      DLat := Float(NLat);
+      DLong := Float(NLong);
+      Deg2Grid(DLong, DLat, Grid);
    end K2Grid;
 
 
@@ -788,6 +1231,33 @@ package body Pack_JT is
       DLat := Float(NLat) + XMinLat/60.0;
 
    end Grid2Deg;
+
+   procedure Deg2Grid(DLong0 : Float; DLat : Float; Grid : out String) is
+      DLong : Float := DLong0;
+      NLat, NLong, N1, N2, N3 : Integer;
+   begin
+      if DLong < -180.0 then DLong := DLong + 360.0; end if;
+      if DLong > 180.0 then DLong := DLong - 360.0; end if;
+
+      NLong := Integer(Float'Floor(60.0 * (180.0 - DLong) / 5.0));
+      --Need to check how these are rounded
+      N1 := NLong / 240;
+      N2 := (NLong - 240 * N1) / 24;
+      N3 := NLong - 240 * N1 - 24 * N2;
+      Grid(1) := Character'Val(Character'Pos('A') + N1);
+      Grid(3) := Character'Val(Character'Pos('0') + N2);
+      Grid(5) := Character'Val(Character'Pos('a') + N3);
+
+      NLat := Integer(Float'Floor(60.0 * (DLat + 90.0) / 2.5));
+      N1 := NLat / 240;
+      N2 := (NLat - 240 * N1) / 24;
+      N3 := NLat - 240 * N1 - 24 * N2;
+      Grid(2) := Character'Val(Character'Pos('A') + N1);
+      Grid(4) := Character'Val(Character'Pos('0') + N2);
+      Grid(6) := Character'Val(Character'Pos('a') + N3);
+
+   end Deg2Grid;
+
 
    --Something is Wrong here
    procedure Fmtmsg ( Msg : in out String ) is
