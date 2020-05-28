@@ -1,3 +1,6 @@
+
+pragma SPARK_Mode(On);
+
 with Interfaces; use Interfaces;
 --with General_JT; use General_JT;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
