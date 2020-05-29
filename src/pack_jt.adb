@@ -5,7 +5,8 @@ package body Pack_JT is
 
    --JT_IType, JT_Nc1, JT_Nc2, JT_Ng, JT_K1, JT_K2 : Integer;
    --JT_C1, JT_C2, JT_C3 : String(1 .. 6);
-   add_pfx : String (1 ..8);
+   add_pfx : String(1 .. 8);
+
 
    procedure Pack_Bits(DBits : in out Octet_Array; NSymd : in out Integer; M0 : in out Integer; Sym : in out Integer_Array) is
       -- Might need to change the types for n and m
@@ -157,7 +158,8 @@ package body Pack_JT is
 
       for X in 1 .. 4 loop
          if Word(X) /= ' ' then
-            Word := Word(X .. Word'Last);
+            --Word := Word(X .. Word'Last);
+            Move(Word(X .. Word'Last), Word, Right, Left, Space);
             goto NineNineNine;
          end if;
       end loop;
@@ -391,7 +393,6 @@ package body Pack_JT is
 
    end Pack_Grid;
 
-
    procedure Unpack_Grid(Ng : Integer; Grid : out String) is
       NGBASE : constant Integer := 180 * 180;
       Grid6 : String(1 .. 6);
@@ -464,7 +465,7 @@ package body Pack_JT is
          if ic >= ib + 1 then
             --C3 := Msg(ib+1 ..ic);
             Move(Msg(ib+1 ..ic), C3, Right, Left, Space);
-
+            --Put_Line("In three first if. C3: " & C3);
          end if;
 
          if C3 = "000 " then
@@ -472,6 +473,7 @@ package body Pack_JT is
          end if;
 
          Get_Pfx1(C1, K1, Nv2a);
+         --Put_Line("In three after first Pfx C1: " & C1 & " Nv2a: " & Integer'Image(Nv2a));
 
          if Nv2a >= 4 then
             --Ten;
@@ -479,16 +481,18 @@ package body Pack_JT is
          end if;
 
          Pack_Call(C1, Nc1, Text1);
+         --Put_Line("After first Pack_Call C1: " & C1 & "End");
 
          if Text1 then
             --Ten;
             return;
          end if;
-
+         --Put_Line("Before Second pfx C2: " & C2);
          Get_Pfx1(C2, K2, Nv2b);
+         --Put_Line("In three after second Pfx C2: " & C2 & " Nv2b: " & Integer'Image(Nv2b));
 
          Pack_Call(C2, Nc2, text2);
-
+         --Put_Line("After second Pack_Call C2: " & C2 & "End");
          if Text2 then
             --Ten;
             return;
@@ -515,7 +519,8 @@ package body Pack_JT is
          end if;
 
          Pack_Grid(C3, Ng, Text3);
-
+         --Put_Line("In three after pack_grid C3: " & C3 & " Text3: " & Boolean'Image(Text3));
+         --Nv2b := 4;
          if Nv2a < 4 and Nv2b < 4 and not Text1 and not Text3 then
             Skip_Ten := True;
             return;
@@ -561,10 +566,12 @@ package body Pack_JT is
          ib := I_Start;
          --C2 := Msg(ia+1 .. ib-1);
          Move(Msg(ia+1 .. ib-1), C2, Right, Left, Space);
+         --Put_Line("In two C2: " & C2);
          I_Start := ib + 1;
          for I in I_Start .. 22 loop
             I_Start := I;
             if Msg(I) = ' ' then
+               --Put_Line("Going to three");
                Three;
                exit;
             end if;
@@ -577,10 +584,12 @@ package body Pack_JT is
          ia := I_Start;
          --C1 := Msg(1 .. ia-1);
          Move(Msg(1 .. ia-1), C1, Right, Left, Space);
+         --Put_Line("In one C1: " & C1);
          I_Start := ia + 1;
          for I in I_Start .. 22 loop
             I_Start := I;
             if Msg(I) = ' ' then
+               --Put_Line("Going to Two");
                Two;
                exit;
             end if;
@@ -604,23 +613,25 @@ package body Pack_JT is
 
 
       if Msg(1..3) = "CQ " and Msg(4) >= '0' and Msg(4) <= '9' and Msg(5) = ' ' then
-         Msg := "CQ 00" & Msg(4..Msg'Last);
+         Msg := "CQ 00" & Msg(4..Msg'Last - 2); --The Last character of the Msg is cut off, I dont think it matters but it might.
       end if;
 
       if Msg(1..6) = "CQ DX " then
          Msg(3) := '9';
       end if;
 
-      if Msg(1..3) = "CQ" and msg(4) >= 'A' and Msg(4) <= 'Z' and Msg(5) >= 'A' and Msg(5) <= 'Z' and Msg(6) = ' ' then
-         Msg := "E9" & Msg(4..Msg'Last);
+      if Msg(1..3) = "CQ " and msg(4) >= 'A' and Msg(4) <= 'Z' and Msg(5) >= 'A' and Msg(5) <= 'Z' and Msg(6) = ' ' then
+         --Msg := "E9" & Msg(4..Msg'Last);
+         Move("E9" & Msg(4..Msg'Last), Msg, Right, Left, Space);
       end if;
 
-      --Check if it"s a CQ message - We proably wont need to do this in the final version
+      --Check if it"s a CQ message
       if Msg(1..3) = "CQ " then
          I_Start := 3;
          if Msg(4) >= '0' and Msg(4) <= '9' and Msg(5) >= '0' and Msg(5) <= '9' and Msg(6) >= '0' and Msg(6) <= '9' then
             I_Start := 7;
          end if;
+         --Put_Line("Finding first blank space");
          One;
       else
          --Gets the first blank space
@@ -628,6 +639,7 @@ package body Pack_JT is
             I_Start := I;
             if I_Start in Msg'Range then
                if Msg(I) = ' ' then
+
                   One;
                   exit;
                end if;
@@ -641,6 +653,7 @@ package body Pack_JT is
       end if;
 
       if IType /= 6 then
+         --Put_Line("Selecting IType: " & Integer'Image(Nv2a) & " " & Integer'Image(Nv2b));
          IType := Integer'Max(Nv2a,Nv2b);
       end if;
 
@@ -992,12 +1005,16 @@ package body Pack_JT is
          I : Integer;
       begin
          if islash /= 0 and K = 0 then
-            lof := Callsign0(1 .. islash -1);
-            rof := Callsign0(islash +1 .. Callsign0'Last);
+            --lof := Callsign0(1 .. islash -1);
+            Move(Callsign0(1 .. islash -1), lof, Right, Left, Space);
+            --rof := Callsign0(islash +1 .. Callsign0'Last);
+            Move(Callsign0(islash +1 .. Callsign0'Last), rof, Right, Left, Space);
             llof := Trim(lof, Right)'Length;
             lrof := Trim(rof, Right)'Length;
             is_pfx := llof > 0 and llof <= 4;
+            --Put_Line("In get pfx1 is_pfx: " & Boolean'Image(is_pfx));
             is_sfx := lrof > 0 and lrof <= 3;
+
             invalid := not (is_pfx or is_sfx);
 
             if is_pfx and is_sfx then
@@ -1024,8 +1041,11 @@ package body Pack_JT is
                   K := 37 * K + NChar(t_pfx(4));
                   Nv2 := 4;
                   I := Index(Callsign0, "/");
-                  Callsign := Callsign0(1 .. I-1);
-                  Callsign := Callsign0(I+1 .. Callsign0'Length);
+
+                  --Callsign := Callsign0(1 .. I-1);
+                  Move(Callsign0(1 .. I-1), Callsign, Right, Left, Space);
+                  --Callsign := Callsign0(I+1 .. Callsign0'Length);
+                  Move(Callsign0(I+1 .. Callsign0'Length), Callsign, Right, Left, Space);
                end if;
                if is_sfx then
                   t_sfx := rof(1 .. 3);
@@ -1034,7 +1054,8 @@ package body Pack_JT is
                   K := 37 * K + NChar(t_sfx(3));
                   nv2 := 5;
                   I := Index(Callsign0, "/");
-                  Callsign := Callsign0(1 .. I-1);
+                  --Callsign := Callsign0(1 .. I-1);
+                  Move(Callsign0(1 .. I-1), Callsign, Right, Left, Space);
                end if;
 
             end if;
@@ -1052,6 +1073,7 @@ package body Pack_JT is
       iz := Index(Callsign, " ") - 1;
       if iz < 0 then iz := 12; end if;
       islash := Index(Callsign(1 .. iz), "/");
+
       K := 0;
 
       --C := "   ";
@@ -1059,6 +1081,7 @@ package body Pack_JT is
       if islash > 0 and islash <= iz - 4 then
          --C := Callsign(1 .. islash - 1);
          Move(Callsign(1 .. islash - 1), C, Right, Left, Space);
+
          --Callsign := Callsign(islash + 1 .. iz);
          Move(Callsign(islash + 1 .. iz), Callsign, Right, Left, Space);
 
@@ -1091,6 +1114,8 @@ package body Pack_JT is
             end if;
          end loop;
       end if;
+
+      Ten;
 
 
    end Get_Pfx1;
