@@ -426,7 +426,8 @@ package body Pack_JT is
       N := Ng - NGBASE - 1;
 
       if N >= 1 and N <= 30 then
-         Grid := Integer'Image(-N);
+         --Grid := Integer'Image(-N);
+         Move(Integer'Image(-N), Grid, Right, Left, Space);
       elsif N >= 31 and N <= 60 then
          N := N - 30;
          Grid := "R" & Integer'Image(-N);
@@ -609,7 +610,7 @@ package body Pack_JT is
       Move(Msg0, Msg, Right, Left, Space);
 
       --Fmtmsg(Msg); --This Needs to be fixed for now I am just using To_Upper
-      --Msg := To_Upper(Msg); --Something is wrong with this too
+      --Msg := To_Upper(Msg); --This was causing trouble
 
 
       if Msg(1..3) = "CQ " and Msg(4) >= '0' and Msg(4) <= '9' and Msg(5) = ' ' then
@@ -741,27 +742,33 @@ package body Pack_JT is
          n2 := Trim(c2, Right)'Length;
 
          if iv2 = 1 then
-            Msg := "CQ " & psfx(psfx'First .. n1) & '/' & c2(c2'First .. n2) & ' ' & grid;
+            --Msg := "CQ " & psfx(psfx'First .. n1) & '/' & c2(c2'First .. n2) & ' ' & grid;
+            Move("CQ " & psfx(psfx'First .. n1) & '/' & c2(c2'First .. n2) & ' ' & grid, Msg, Right, Left, Space);
          end if;
 
          if iv2 = 2 then
-            Msg := "QRZ " & psfx(psfx'First .. n1) & '/' & c2(c2'First .. n2) & ' ' & grid;
+            --Msg := "QRZ " & psfx(psfx'First .. n1) & '/' & c2(c2'First .. n2) & ' ' & grid;
+            Move("QRZ " & psfx(psfx'First .. n1) & '/' & c2(c2'First .. n2) & ' ' & grid, Msg, Right, Left, Space);
          end if;
 
          if iv2 = 3 then
-            Msg := "DE " & psfx(psfx'First .. n1) & '/' & c2(c2'First .. n2) & ' ' & grid;
+            --Msg := "DE " & psfx(psfx'First .. n1) & '/' & c2(c2'First .. n2) & ' ' & grid;
+            Move("DE " & psfx(psfx'First .. n1) & '/' & c2(c2'First .. n2) & ' ' & grid, Msg, Right, Left, Space);
          end if;
 
          if iv2 = 4 then
-            Msg := "CQ " & c2(c2'First .. n2) & '/' & psfx(psfx'First .. n1) & ' ' & grid;
+            --Msg := "CQ " & c2(c2'First .. n2) & '/' & psfx(psfx'First .. n1) & ' ' & grid;
+            Move("CQ " & c2(c2'First .. n2) & '/' & psfx(psfx'First .. n1) & ' ' & grid, Msg, Right, Left, Space);
          end if;
 
          if iv2 = 5 then
-            Msg := "QRZ " & c2(c2'First .. n2) & '/' & psfx(psfx'First .. n1) & ' ' & grid;
+            --Msg := "QRZ " & c2(c2'First .. n2) & '/' & psfx(psfx'First .. n1) & ' ' & grid;
+            Move("QRZ " & c2(c2'First .. n2) & '/' & psfx(psfx'First .. n1) & ' ' & grid, Msg, Right, Left, Space);
          end if;
 
          if iv2 = 6 then
-            Msg := "DE " & c2(c2'First .. n2) & '/' & psfx(psfx'First .. n1) & ' ' & grid;
+            --Msg := "DE " & c2(c2'First .. n2) & '/' & psfx(psfx'First .. n1) & ' ' & grid;
+            Move("DE " & c2(c2'First .. n2) & '/' & psfx(psfx'First .. n1) & ' ' & grid, Msg, Right, Left, Space);
          end if;
 
          if iv2 = 7 then
@@ -771,9 +778,11 @@ package body Pack_JT is
             if K >= 451 and K <= 900 then
                Get_Pfx2(K, c2);
                n2 := Trim(c2, Right)'Length;
-               Msg := "DE " & c2(c2'First .. n2);
+               --Msg := "DE " & c2(c2'First .. n2);
+               Move("DE " & c2(c2'First .. n2), Msg, Right, Left, Space);
             else
-               Msg := "DE " & c2(c2'First .. n2) & ' ' & grid;
+               --Msg := "DE " & c2(c2'First .. n2) & ' ' & grid;
+               Move("DE " & c2(c2'First .. n2) & ' ' & grid, Msg, Right, Left, Space);
             end if;
          end if;
 
@@ -795,7 +804,7 @@ package body Pack_JT is
          if K >= 451 and K <= 900 then
             Get_Pfx2(K, c2);
          end if;
-
+         --Put_Line("c1: " & c1);
          Index_Val := Index(c1, " "); -- This Might not work. In fortran it looks for null characters but hopefully this works the same
 
          if Index_Val >= 3 then
@@ -1132,14 +1141,17 @@ package body Pack_JT is
 
       if K >= 1 and K <= Prefix'Length then
          Iz := Index(Prefix(K), " ") - 1;
-         Callsign := Prefix(K)(1 .. Iz) & '/' & Callsign;
+         --Callsign := Prefix(K)(1 .. Iz) & '/' & Callsign;
+         Move(Prefix(K)(1 .. Iz) & '/' & Callsign, Callsign, Right, Left, Space);
       elsif K >= 401 and K <= (400 + Suffix'Length) then
          Iz := Index(Callsign, " ") - 1;
-         Callsign := Callsign(1 .. Iz) & '/' & Suffix(K - 400);
+         --Callsign := Callsign(1 .. Iz) & '/' & Suffix(K - 400);
+         Move(Callsign(1 .. Iz) & '/' & Suffix(K - 400), Callsign, Right, Left, Space);
       elsif K = 449 then
          Iz := Index(add_pfx, " ") - 1;
          if Iz < 1 then Iz := 8; end if;
          Callsign := add_pfx(1 .. Iz) & '/' & Callsign;
+         Move(add_pfx(1 .. Iz) & '/' & Callsign, Callsign, Right, Left, Space);
       end if;
 
    end Get_Pfx2;
