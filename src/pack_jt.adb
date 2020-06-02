@@ -430,13 +430,14 @@ package body Pack_JT is
          Move(Integer'Image(-N), Grid, Right, Left, Space);
       elsif N >= 31 and N <= 60 then
          N := N - 30;
-         Grid := "R" & Integer'Image(-N);
+         --Grid := "R" & Integer'Image(-N);
+         Move("R" & Integer'Image(-N), Grid, Right, Left, Space);
       elsif N = 61 then
-         Grid := "RO";
+         Grid := "RO  ";
       elsif N = 62 then
-         Grid := "RRR";
+         Grid := "RRR ";
       elsif N = 63 then
-         Grid := "73";
+         Grid := "73  ";
       end if;
 
 
@@ -466,7 +467,7 @@ package body Pack_JT is
          if ic >= ib + 1 then
             --C3 := Msg(ib+1 ..ic);
             Move(Msg(ib+1 ..ic), C3, Right, Left, Space);
-            --Put_Line("In three first if. C3: " & C3);
+
          end if;
 
          if C3 = "000 " then
@@ -474,7 +475,7 @@ package body Pack_JT is
          end if;
 
          Get_Pfx1(C1, K1, Nv2a);
-         --Put_Line("In three after first Pfx C1: " & C1 & " Nv2a: " & Integer'Image(Nv2a));
+
 
          if Nv2a >= 4 then
             --Ten;
@@ -482,18 +483,18 @@ package body Pack_JT is
          end if;
 
          Pack_Call(C1, Nc1, Text1);
-         --Put_Line("After first Pack_Call C1: " & C1 & "End");
+
 
          if Text1 then
             --Ten;
             return;
          end if;
-         --Put_Line("Before Second pfx C2: " & C2);
+
          Get_Pfx1(C2, K2, Nv2b);
-         --Put_Line("In three after second Pfx C2: " & C2 & " Nv2b: " & Integer'Image(Nv2b));
+
 
          Pack_Call(C2, Nc2, text2);
-         --Put_Line("After second Pack_Call C2: " & C2 & "End");
+
          if Text2 then
             --Ten;
             return;
@@ -520,7 +521,7 @@ package body Pack_JT is
          end if;
 
          Pack_Grid(C3, Ng, Text3);
-         --Put_Line("In three after pack_grid C3: " & C3 & " Text3: " & Boolean'Image(Text3));
+
          --Nv2b := 4;
          if Nv2a < 4 and Nv2b < 4 and not Text1 and not Text3 then
             Skip_Ten := True;
@@ -567,12 +568,12 @@ package body Pack_JT is
          ib := I_Start;
          --C2 := Msg(ia+1 .. ib-1);
          Move(Msg(ia+1 .. ib-1), C2, Right, Left, Space);
-         --Put_Line("In two C2: " & C2);
+
          I_Start := ib + 1;
          for I in I_Start .. 22 loop
             I_Start := I;
             if Msg(I) = ' ' then
-               --Put_Line("Going to three");
+
                Three;
                exit;
             end if;
@@ -585,12 +586,12 @@ package body Pack_JT is
          ia := I_Start;
          --C1 := Msg(1 .. ia-1);
          Move(Msg(1 .. ia-1), C1, Right, Left, Space);
-         --Put_Line("In one C1: " & C1);
+
          I_Start := ia + 1;
          for I in I_Start .. 22 loop
             I_Start := I;
             if Msg(I) = ' ' then
-               --Put_Line("Going to Two");
+
                Two;
                exit;
             end if;
@@ -610,7 +611,7 @@ package body Pack_JT is
       Move(Msg0, Msg, Right, Left, Space);
 
       --Fmtmsg(Msg); --This Needs to be fixed for now I am just using To_Upper
-      --Msg := To_Upper(Msg); --This was causing trouble
+      Msg := To_Upper(Msg); --This was causing trouble
 
 
       if Msg(1..3) = "CQ " and Msg(4) >= '0' and Msg(4) <= '9' and Msg(5) = ' ' then
@@ -632,7 +633,7 @@ package body Pack_JT is
          if Msg(4) >= '0' and Msg(4) <= '9' and Msg(5) >= '0' and Msg(5) <= '9' and Msg(6) >= '0' and Msg(6) <= '9' then
             I_Start := 7;
          end if;
-         --Put_Line("Finding first blank space");
+
          One;
       else
          --Gets the first blank space
@@ -654,7 +655,7 @@ package body Pack_JT is
       end if;
 
       if IType /= 6 then
-         --Put_Line("Selecting IType: " & Integer'Image(Nv2a) & " " & Integer'Image(Nv2b));
+
          IType := Integer'Max(Nv2a,Nv2b);
       end if;
 
@@ -682,7 +683,7 @@ package body Pack_JT is
 
    end Pack_Msg;
 
-
+   -- Need to fix null character check
    procedure Unpack_Msg(Dat : Integer_Array; Msg : in out String) is
       NBASE : Integer := 37*36*10*27*27*27;
       NGBASE : Integer := 180*180;
@@ -723,7 +724,8 @@ package body Pack_JT is
          if NFreq >= 0 and NFreq <= 999 then
             --write(c1,1002) nfreq
             --format('CQ ',i3.3)
-            c1 := "CQ " & Integer'Image(NFreq);
+            --c1 := "CQ " & Integer'Image(NFreq);
+            Move("CQ " & Integer'Image(NFreq), c1, Right, Left, Space);
             cqnnn := True;
          end if;
       end if;
@@ -731,7 +733,9 @@ package body Pack_JT is
       Unpack_Call(nc2, c2, junk1, junk2);
       Unpack_Grid(Integer(ng), grid);
 
-      if iv2 >= 0 then
+
+
+      if iv2 > 0 then
          for I in 1 .. 4 loop
             if Character'Pos(psfx(I)) = 0 then
                psfx(I) := ' ';
@@ -793,80 +797,91 @@ package body Pack_JT is
          goto One_Hundred;
       end if;
 
-         grid6 := grid & "ma";
+      grid6 := grid & "ma";
 
-         Grid2k(grid6, K);
+      Grid2k(grid6, K);
 
-         if K >= 1 and K <= 450 then
-            Get_Pfx2(K, c1);
-         end if;
+      if K >= 1 and K <= 450 then
+         Get_Pfx2(K, c1);
+      end if;
 
-         if K >= 451 and K <= 900 then
-            Get_Pfx2(K, c2);
-         end if;
-         --Put_Line("c1: " & c1);
-         Index_Val := Index(c1, " "); -- This Might not work. In fortran it looks for null characters but hopefully this works the same
+      if K >= 451 and K <= 900 then
+         Get_Pfx2(K, c2);
+      end if;
 
-         if Index_Val >= 3 then
-            c1 := c1(1 .. Index_Val - 1) & "            ";
-         end if;
+      --Index_Val := Index(c1, " "); -- Should be looking for null characters not blank space
 
-         Index_Val := Index(c2, " ");
+      if Index_Val >= 3 then
+         --c1 := c1(1 .. Index_Val - 1) & "            ";
+         Move(c1(1 .. Index_Val - 1) & "            ", c1, Right, Left, Space);
+      end if;
 
-         if Index_Val >= 3 then
-            c2 := c2(1 .. Index_Val - 1) & "            ";
-         end if;
+      --Index_Val := Index(c2, " "); -- Should be looking for null characters not blank space
 
-         Msg := "                      ";
+      if Index_Val >= 3 then
+         --c2 := c2(1 .. Index_Val - 1) & "            ";
+         Move(c2(1 .. Index_Val - 1) & "            ", c2, Right, Left, Space);
+      end if;
 
-         J := 0;
+      Msg := "                      ";
 
-         if cqnnn then
-            Msg := c1 & "          ";
-            J := 7;
-            goto Ten;
-         end if;
+      J := 0;
 
-         for I in 1 .. 12 loop
-            J := J + 1;
-            Msg(J) := c1(I);
-            if c1(I) = ' ' then goto Ten; end if;
-         end loop;
+      if cqnnn then
+         Msg := c1 & "          ";
+         J := 7;
+         goto Ten;
+      end if;
 
+      for I in 1 .. 12 loop
          J := J + 1;
-         Msg(J) := ' ';
+         Msg(J) := c1(I);
+         if c1(I) = ' ' then goto Ten; end if;
+      end loop;
 
-         <<Ten>>
-         for I in 1 .. 12 loop
+      J := J + 1;
+      Msg(J) := ' ';
+
+      <<Ten>>
+      for I in 1 .. 12 loop
+         if J <= 21 then J := J + 1; end if;
+         Msg(J) := c2(I);
+         if c2(I) = ' ' then goto Twenty; end if;
+      end loop;
+
+      if J <= 21 then J := J + 1; end if;
+      Msg(J) := ' ';
+
+      <<Twenty>>
+      if K = 0 then
+         for I in 1 .. 4 loop
             if J <= 21 then J := J + 1; end if;
-            Msg(J) := c2(I);
-            if c2(I) = ' ' then goto Twenty; end if;
+            Msg(J) := grid(I);
          end loop;
 
          if J <= 21 then J := J + 1; end if;
          Msg(J) := ' ';
-
-         <<Twenty>>
-         if K = 0 then
-            for I in 1 .. 4 loop
-               if J <= 21 then J := J + 1; end if;
-               Msg(J) := grid(I);
-            end loop;
-
-            if J <= 21 then J := J + 1; end if;
-            Msg(J) := ' ';
-         end if;
+      end if;
 
 
-         <<One_Hundred>>
-         if Msg(Msg'First .. Msg'First + 5) = "CQ9DX " then
-            Msg(3) := ' ';
-         end if;
+      <<One_Hundred>>
+      if Msg(Msg'First .. Msg'First + 5) = "CQ9DX " then
+         Msg(3) := ' ';
+      end if;
 
-         if Msg(Msg'First .. Msg'First + 1) = "E9" and Msg(Msg'First + 2) >= 'A' and Msg(Msg'First + 2) <= 'Z' and Msg(Msg'First + 3) >= 'A' and
-           Msg(Msg'First + 3) <= 'Z' and Msg(Msg'First + 4) = ' ' then
-            Msg := "CQ " & Msg(Msg'First + 5 .. Msg'Last);
-         end if;
+      if Msg(Msg'First .. Msg'First + 1) = "E9" and Msg(Msg'First + 2) >= 'A' and Msg(Msg'First + 2) <= 'Z' and Msg(Msg'First + 3) >= 'A' and Msg(Msg'First + 3) <= 'Z' and Msg(Msg'First + 4) = ' ' then
+
+         --Msg := "CQ " & Msg(Msg'First + 2 .. Msg'Last);
+         Move("CQ " & Msg(Msg'First + 2 .. Msg'Last), Msg, Right, Left, Space);
+      end if;
+
+      if Msg(Msg'First .. Msg'First + 4) = "CQ 00" and Msg(Msg'First + 5) >= '0' and Msg(Msg'First + 5) <= '9' then
+         --Msg := "CQ " & Msg(Msg'First + 5 .. Msg'Last);
+         Move("CQ " & Msg(Msg'First + 5 .. Msg'Last), Msg, Right, Left, Space);
+      end if;
+
+
+
 
    end Unpack_Msg;
 
@@ -1021,7 +1036,7 @@ package body Pack_JT is
             llof := Trim(lof, Right)'Length;
             lrof := Trim(rof, Right)'Length;
             is_pfx := llof > 0 and llof <= 4;
-            --Put_Line("In get pfx1 is_pfx: " & Boolean'Image(is_pfx));
+
             is_sfx := lrof > 0 and lrof <= 3;
 
             invalid := not (is_pfx or is_sfx);
