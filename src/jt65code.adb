@@ -21,7 +21,7 @@ is
    Bad : String (1 .. 1);
    Msgtype : String (1 .. 10);
    Sent, Tmp, Holder : Integer_Array (1 .. 63);
-   Sent1: Integer_Array (0 .. 62);
+   Sent1, Tmp1: Integer_Array (0 .. 62);
    Dat, Recd_Tmp : Pack_JT.Integer_Array(1 .. 12);
    Dgen, Recd : Integer_Array(0 .. 11);
    Recd_Convert : Integer_Array(1 .. 12);
@@ -125,6 +125,7 @@ begin
       Msg0 := Msg;
       Chkmsg(Msg, Cok, Nspecial);
       Msg1 := Msg;
+      Put_Line(Msg1);
 
       if ( Nspecial > 0 ) then
          if ( Nspecial = 2 ) then Decoded(1 .. 2) := "RO";
@@ -140,7 +141,7 @@ begin
          Pack_JT.Pack_Msg(Msg1, Dat, Itype);
          Dgen(0 .. 11) := Integer_Array(Dat(1 .. 12));
 
-         Put_Line("Msg : " & Msg0(1 .. 13));New_Line;
+         Put_Line("Msg : " & Msg0(1 .. 22));New_Line;
 
          Put_Line("Packed message, 6-bit symbols: ");
          for I in Dgen'Range loop
@@ -162,7 +163,7 @@ begin
 
          Rs_Encode(Dgen, Sent1);
 
-         Sent(1 .. 63) := Sent1(0 .. 62);
+         --Sent(1 .. 63) := Sent1(0 .. 62);
 
          -- DEBUG
          --New_Line; New_Line;
@@ -173,7 +174,7 @@ begin
 
          -- DEBUG
          --New_Line;New_Line;
-         Interleave63(Sent, 1, Holder);
+         Interleave63(Sent1, 1);
          --Interleave63(Sent, 1);
 
          --Put_Line("Interleave: ");
@@ -183,7 +184,7 @@ begin
 
          -- DEBUG
          --New_Line;New_Line;
-         Graycode ( Sent, 63, 1);
+         Graycode ( Sent1, 1);
          --Graycode ( Sent, 63);
 
          --Put_Line("GrayCode: ");
@@ -194,13 +195,15 @@ begin
 
          New_Line; New_Line;
          Put_Line("Information-carrying channel symbols");
-         for I in Sent'Range loop
-            Put(Integer'Image(Sent(I)));
+         for I in Sent1'Range loop
+            Put(Integer'Image(Sent1(I)));
          end loop;
 
-         Tmp(1 .. 63) := Sent(1 .. 63);
+         --Tmp(1 .. 63) := Sent(1 .. 63);
+         Tmp1(0 .. 62) := Sent1(0 .. 62);
 
-         Graycode ( Tmp, 63, -1);
+
+         Graycode ( Tmp1, -1);
          -- DEBUG
          --Put_Line("Remove Graycode: ");
          --for I in Tmp'Range loop
@@ -208,14 +211,15 @@ begin
          --end loop;
          --New_Line; New_Line;
 
-         Interleave63 ( Tmp, -1, Holder );
+         Interleave63 ( Tmp1, -1 );
          -- DEBUG
          --Put_Line("Remove-Interleave: ");
          --for I in Tmp'Range loop
          --   Put(Integer'Image(Tmp(I)));
          --end loop;
 
-         Sent1(0 .. 62) := Tmp(1 .. 63);
+         --Sent1(0 .. 62) := Tmp(1 .. 63);
+         Sent1(0 .. 62) := Tmp1(0 .. 62);
          Rs_Decode( Sent1, Era, 0, Recd, Nerr);
          New_Line;New_Line;
 
