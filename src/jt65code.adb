@@ -32,20 +32,15 @@ is
    Testmsg : Testmsgarray;
    Testmsgchk : Testmsgarray;
 
-begin
+   Testing : Boolean;
 
-   --Args := Argument_Count;
-   --if ( Args /= 1 ) then
-      --Put("Usage: jt65code 'message'"); New_Line;
-      --Put("       jt65code -t"); New_Line;
-   --end if;
+begin
 
     for I in 1 .. Argument_Count loop
             Msgtmp := To_Unbounded_String(Argument(1));
-            --Put_Line (Item => Argument (Number => i));
     end loop;
-      --Nmsg := 1;
-      Init_Testmsg(Testmsg, Testmsgchk);
+
+   Init_Testmsg(Testmsg, Testmsgchk);
 
          Testmsg(Ntest + 1) := To_Unbounded_String("KA1ABC WB9XYZ EN34 OOO");
          Testmsg(Ntest + 2) :=  To_Unbounded_String("KA1ABC WB9XYZ OOO");
@@ -62,40 +57,31 @@ begin
          Nmsg := Ntest + 5;
 
    Start := 1;
-   if Msgtmp'Size > 0 then
+   if Msgtmp /= "-t" then
       Nmsg := 2;
       Start := 2;
+      Testing := False;
+   else
+      Testing := True;
    end if;
 
    for Imsg in Start .. Nmsg loop
-      -- for Imsg in 1 .. Nmsg loop -- Use this loop initializer to loop over
-      -- every test message
 
+      if ( Testing ) then
 
-      if ( Nmsg > 1 ) then
-         --Msg := To_String(Testmsg(Imsg));
-         --Msg := To_String(Testmsg(Imsg));
-         --Msgchk := To_String(Testmsgchk(Imsg));
-
-         --Msgtmp := Testmsg(Imsg);
-
+         Msgtmp := Testmsg(Imsg);
 
          Msgtmplength := Length(Msgtmp);
-         --Put_Line("Msgtmplength = " & Msgtmplength'Image);
          if Msgtmplength > 22 then
-            --MsgTmpString := To_String(Msgtmp);
             while Msgtmplength < 100 loop
                Append(Msgtmp, " ");
                Msgtmplength := Msgtmplength + 1;
-               --Put_Line("Msgtmplength = " & Msgtmplength'Image);
             end loop;
             MsgTmpString := To_String(Msgtmp);
             Msg := MsgTmpString(1 .. 22);
-            --Msg := To_String(Unbounded_String(Fmtmsg_Unbounded(Msgtmp)));
          else
              while (Msgtmplength <= 21) loop
             Append(Msgtmp, " ");
-            --Msgtmp :=  Msgtmp + To_Unbounded_String(" ");
             Msgtmplength := Msgtmplength + 1;
             end loop;
               Msg := To_String(Msgtmp);
@@ -108,7 +94,31 @@ begin
             Msgchktmplength := Msgchktmplength + 1;
          end loop;
 
-         --Put_Line(Integer'Image(Msgtmplength));
+      else
+
+         Msgtmplength := Length(Msgtmp);
+         if Msgtmplength > 22 then
+            while Msgtmplength < 100 loop
+               Append(Msgtmp, " ");
+               Msgtmplength := Msgtmplength + 1;
+            end loop;
+            MsgTmpString := To_String(Msgtmp);
+            Msg := MsgTmpString(1 .. 22);
+         else
+             while (Msgtmplength <= 21) loop
+            Append(Msgtmp, " ");
+            Msgtmplength := Msgtmplength + 1;
+            end loop;
+              Msg := To_String(Msgtmp);
+         end if;
+
+         Msgchktmp := Testmsgchk(Imsg);
+         Msgchktmplength := Length(Msgchktmp);
+         while (Msgchktmplength <= 21) loop
+            Append(Msgchktmp, ' ');
+            Msgchktmplength := Msgchktmplength + 1;
+         end loop;
+
       end if;
 
       Pack_JT.Fmtmsg(Msg);
@@ -252,6 +262,8 @@ begin
          then Expected := "TRUNCATED             ";
          end if;
       end if;
+
+      Put_Line("------------------------------------------------------");
 
    end loop;
    Nmsg := 1;
