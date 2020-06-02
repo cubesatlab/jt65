@@ -6,16 +6,14 @@
 --------------------------------------------------------------------------------
 pragma SPARK_Mode(On);
 
-with Ada.Unchecked_Deallocation;
 with System.Memory; use System.Memory;
 
 package Init_Rs is
 
-   type Data_T is new Integer;
-   type Data_T_Access is access Data_T;
-
-   type Unsigned_Array is array(Natural range 0 .. 63) of Integer;
-   type Unsigned_Array_2 is array(Natural range 0 .. 51) of Integer;
+   type Unsigned_Array is
+     array(Natural range 0 .. 63) of Integer;
+   type Unsigned_Array_2 is
+     array(Natural range 0 .. 51) of Integer;
 
    type Rs is
       record
@@ -31,13 +29,18 @@ package Init_Rs is
          Pad : Integer;
       end record;
 
-   type Rs_Access is access Rs;
+   type Rs_Access is
+     access Rs;
 
-   function Init_Rs_Int ( Symsize : in out Integer; Gfpoly : in out Integer; Fcr : in out Integer;
-                          Prim : in out Integer; Nroots : in out Integer; Pad : in out Integer)
-                            return Rs_Access;
+   function Init_Rs_Int ( Symsize : in out Integer;
+                          Gfpoly : in out Integer;
+                          Fcr : in out Integer;
+                          Prim : in out Integer;
+                          Nroots : in out Integer;
+                          Pad : in out Integer) return Rs_Access;
 
-   function Modnn ( Rs : in Rs_Access; A : in Integer) return Integer;
-
+   function Modnn ( Rs : in Rs_Access;
+                    A : in Integer) return Integer;
 
 end Init_Rs;
+

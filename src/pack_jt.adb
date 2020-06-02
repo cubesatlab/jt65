@@ -1323,6 +1323,7 @@ package body Pack_JT is
             else
                if Msg(I+1) = ' ' then
                   --Msg(I) := Character'Val (127);
+                  null;
                end if;
             end if;
          else

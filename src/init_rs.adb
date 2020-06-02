@@ -12,9 +12,13 @@ with System.Memory; use System.Memory;
 
 package body Init_Rs is
 
-   function Init_Rs_Int ( Symsize : in out Integer; Gfpoly : in out Integer; Fcr : in out Integer;
-                          Prim : in out Integer; Nroots : in out Integer; Pad : in out Integer)
-                         return Rs_Access is
+   function Init_Rs_Int ( Symsize : in out Integer;
+                          Gfpoly : in out Integer;
+                          Fcr : in out Integer;
+                          Prim : in out Integer;
+                          Nroots : in out Integer;
+                          Pad : in out Integer) return Rs_Access
+   is
 
       Rs_Ptr :  constant Rs_Access := new Rs;
       X, Y, Sr, Root, Iprim : Integer;
@@ -39,7 +43,8 @@ package body Init_Rs is
          return Rs_Null;
       end if;
 
-      if Pad < 0 or Unsigned_8(Pad) >= Shift_Left(1,Symsize) - 1 - Unsigned_8(Nroots)  then
+      if Pad < 0 or Unsigned_8(Pad) >=
+        Shift_Left(1,Symsize) - 1 - Unsigned_8(Nroots)  then
          return Rs_Null;
       end if;
 
@@ -106,12 +111,15 @@ package body Init_Rs is
       return Rs_Ptr;
    end Init_Rs_Int;
 
-   function Modnn ( Rs : in  Rs_Access; A : in Integer) return Integer is
+   function Modnn ( Rs : in  Rs_Access;
+                    A : in Integer) return Integer
+   is
       X : Integer := A;
    begin
       while X >= Rs.Nn loop
          X := X - Rs.Nn;
-         X := Integer(Shift_Right(Unsigned_8(X), Rs.Mm) + (Unsigned_8(X) and Unsigned_8(Rs.Nn)));
+         X := Integer(Shift_Right(Unsigned_8(X), Rs.Mm)
+                      + (Unsigned_8(X) and Unsigned_8(Rs.Nn)));
       end loop;
       return X;
    end Modnn;
