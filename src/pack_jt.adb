@@ -1322,7 +1322,7 @@ package body Pack_JT is
                exit;
             else
                if Msg(I+1) = ' ' then
-                  Msg(I) := Character'Val (127);
+                  --Msg(I) := Character'Val (127);
                end if;
             end if;
          else
