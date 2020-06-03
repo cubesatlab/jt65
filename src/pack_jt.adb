@@ -124,6 +124,134 @@ package body Pack_JT is
       NBASE : constant Integer := 37 * 36 * 10 * 27 * 27 * 27;
       C : constant String := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
       N, I : Integer := Integer(NCall);
+
+      procedure Nine_Nine_Nine is
+      begin
+         if Word(Word'First .. Word'First + 2) = "3D0" then
+            Word := "3DA0" & Word(Word'First + 3 .. Word'Last);
+         end if;
+         if Word(Word'First) = 'Q' and Word(Word'First + 1) >= 'A' and Word(Word'First + 1) <= 'Z' then
+            Word := "3X" & Word(Word'First + 1 .. Word'Last);
+         end if;
+      end Nine_Nine_Nine;
+
+      procedure Twenty is
+      begin
+         if N >= 267796946 then
+            Nine_Nine_Nine;
+            return;
+         end if;
+
+         if N >= 262178563 and N <= 264002071 then
+            Iv2 := 1;
+            N := N - 262178563;
+
+            I := (N mod 37) + 1;
+            Psfx(Psfx'First + 3) := C(I);
+            N := N / 37;
+
+            I := (N mod 37) + 1;
+            Psfx(Psfx'First + 2) := C(I);
+            N := N / 37;
+
+            I := (N mod 37) + 1;
+            Psfx(Psfx'First + 1) := C(I);
+            N := N / 37;
+
+            I := N + 1;
+            Psfx(Psfx'First) := C(I);
+
+         elsif N >= 264002072 and N <= 265825580 then
+            Iv2 := 2;
+            N := N - 264002072;
+
+            I := (N mod 37) + 1;
+            Psfx(Psfx'First + 3) := C(I);
+            N := N / 37;
+
+            I := (N mod 37) + 1;
+            Psfx(Psfx'First + 2) := C(I);
+            N := N / 37;
+
+            I := (N mod 37) + 1;
+            Psfx(Psfx'First + 1) := C(I);
+            N := N / 37;
+
+            I := N + 1;
+            Psfx(Psfx'First) := C(I);
+
+         elsif N >= 265825581 and N <= 267649089 then
+            Iv2 := 3;
+            N := N - 265825581;
+
+            I := (N mod 37) + 1;
+            Psfx(Psfx'First + 3) := C(I);
+            N := N / 37;
+
+            I := (N mod 37) + 1;
+            Psfx(Psfx'First + 2) := C(I);
+            N := N / 37;
+
+            I := (N mod 37) + 1;
+            Psfx(Psfx'First + 1) := C(I);
+            N := N / 37;
+
+            I := N + 1;
+            Psfx(Psfx'First) := C(I);
+
+         elsif N >= 267649090 and N <= 267698374 then
+            Iv2 := 4;
+            N := N - 267649090;
+
+            I := (N mod 37) + 1;
+            Psfx(Psfx'First + 2) := C(I);
+            N := N / 37;
+
+            I := (N mod 37) + 1;
+            Psfx(Psfx'First + 1) := C(I);
+            N := N / 37;
+
+            I := N + 1;
+            Psfx(Psfx'First) := C(I);
+
+         elsif N >= 267698375 and N <= 267747659 then
+            Iv2 := 5;
+            N := N - 267698375;
+
+            I := (N mod 37) + 1;
+            Psfx(Psfx'First + 2) := C(I);
+            N := N / 37;
+
+            I := (N mod 37) + 1;
+            Psfx(Psfx'First + 1) := C(I);
+            N := N / 37;
+
+            I := N + 1;
+            Psfx(Psfx'First) := C(I);
+
+         elsif N >= 267747660 and N <= 267796944 then
+            Iv2 := 6;
+            N := N - 267747660;
+
+            I := (N mod 37) + 1;
+            Psfx(Psfx'First + 2) := C(I);
+            N := N / 37;
+
+            I := (N mod 37) + 1;
+            Psfx(Psfx'First + 1) := C(I);
+            N := N / 37;
+
+            I := N + 1;
+            Psfx(Psfx'First) := C(I);
+
+         elsif N = 267796945 then
+            Iv2 := 7;
+            Psfx := "    ";
+
+         end if;
+         Nine_Nine_Nine;
+      end Twenty;
+
       begin
       --Word := "......";
       Move("......", Word, Right, Left, Space);
@@ -131,159 +259,164 @@ package body Pack_JT is
       Move("    ", Psfx, Right, Left, Space);
       Iv2 := 0;
 
-      if N >= 262177560 then goto Twenty; end if;
+      if N >= 262177560 then
+         Twenty;
+         return;
+      end if;
 
       I := (N mod 27) + 11;
-      Word(6) := C(I);
+      Word(Word'First + 5) := C(I);
       N := N / 27;
 
       I := (N mod 27) + 11;
-      Word(5) := C(I);
+      Word(Word'First + 4) := C(I);
       N := N / 27;
 
       I := (N mod 27) + 11;
-      Word(4) := C(I);
+      Word(Word'First + 3) := C(I);
       N := n / 27;
 
       I := (N mod 10) + 1;
-      Word(3) := C(I);
+      Word(Word'First + 2) := C(I);
       N := N / 10;
 
       I := (N mod 36) + 1;
-      Word(2) := C(I);
+      Word(Word'First + 1) := C(I);
       N := N / 36;
 
       I := N + 1;
-      Word(1) := C(I);
+      Word(Word'First) := C(I);
 
       for X in 1 .. 4 loop
          if Word(X) /= ' ' then
             --Word := Word(X .. Word'Last);
             Move(Word(X .. Word'Last), Word, Right, Left, Space);
-            goto NineNineNine;
+            Nine_Nine_Nine;
+            return;
          end if;
       end loop;
 
-      goto NineNineNine;
+      Nine_Nine_Nine;
 
-      <<Twenty>>
-      if N >= 267796946 then goto NineNineNine; end if;
 
-      if N >= 262178563 and N <= 264002071 then
-         Iv2 := 1;
-         N := N - 262178563;
-
-         I := (N mod 37) + 1;
-         Psfx(4) := C(I);
-         N := N / 37;
-
-         I := (N mod 37) + 1;
-         Psfx(3) := C(I);
-         N := N / 37;
-
-         I := (N mod 37) + 1;
-         Psfx(2) := C(I);
-         N := N / 37;
-
-         I := N + 1;
-         Psfx(1) := C(I);
-
-      elsif N >= 264002072 and N <= 265825580 then
-         Iv2 := 2;
-         N := N - 264002072;
-
-         I := (N mod 37) + 1;
-         Psfx(4) := C(I);
-         N := N / 37;
-
-         I := (N mod 37) + 1;
-         Psfx(3) := C(I);
-         N := N / 37;
-
-         I := (N mod 37) + 1;
-         Psfx(2) := C(I);
-         N := N / 37;
-
-         I := N + 1;
-         Psfx(1) := C(I);
-
-      elsif N >= 265825581 and N <= 267649089 then
-         Iv2 := 3;
-         N := N - 265825581;
-
-         I := (N mod 37) + 1;
-         Psfx(4) := C(I);
-         N := N / 37;
-
-         I := (N mod 37) + 1;
-         Psfx(3) := C(I);
-         N := N / 37;
-
-         I := (N mod 37) + 1;
-         Psfx(2) := C(I);
-         N := N / 37;
-
-         I := N + 1;
-         Psfx(1) := C(I);
-
-      elsif N >= 267649090 and N <= 267698374 then
-         Iv2 := 4;
-         N := N - 267649090;
-
-         I := (N mod 37) + 1;
-         Psfx(3) := C(I);
-         N := N / 37;
-
-         I := (N mod 37) + 1;
-         Psfx(2) := C(I);
-         N := N / 37;
-
-         I := N + 1;
-         Psfx(1) := C(I);
-
-      elsif N >= 267698375 and N <= 267747659 then
-         Iv2 := 5;
-         N := N - 267698375;
-
-         I := (N mod 37) + 1;
-         Psfx(3) := C(I);
-         N := N / 37;
-
-         I := (N mod 37) + 1;
-         Psfx(2) := C(I);
-         N := N / 37;
-
-         I := N + 1;
-         Psfx(1) := C(I);
-
-      elsif N >= 267747660 and N <= 267796944 then
-         Iv2 := 6;
-         N := N - 267747660;
-
-         I := (N mod 37) + 1;
-         Psfx(3) := C(I);
-         N := N / 37;
-
-         I := (N mod 37) + 1;
-         Psfx(2) := C(I);
-         N := N / 37;
-
-         I := N + 1;
-         Psfx(1) := C(I);
-
-      elsif N = 267796945 then
-         Iv2 := 7;
-         Psfx := "    ";
-
-      end if;
-
-      <<NineNineNine>>
-      if Word(1 .. 3) = "3D0" then
-         Word := "3DA0" & Word(4 .. Word'Last);
-      end if;
-      if Word(1) = 'Q' and Word(2) >= 'A' and Word(2) <= 'Z' then
-         Word := "3X" & Word(2 .. Word'Last);
-      end if;
+--        <<Twenty>>
+--        if N >= 267796946 then goto NineNineNine; end if;
+--
+--        if N >= 262178563 and N <= 264002071 then
+--           Iv2 := 1;
+--           N := N - 262178563;
+--
+--           I := (N mod 37) + 1;
+--           Psfx(Psfx'First + 3) := C(I);
+--           N := N / 37;
+--
+--           I := (N mod 37) + 1;
+--           Psfx(Psfx'First + 2) := C(I);
+--           N := N / 37;
+--
+--           I := (N mod 37) + 1;
+--           Psfx(Psfx'First + 1) := C(I);
+--           N := N / 37;
+--
+--           I := N + 1;
+--           Psfx(Psfx'First) := C(I);
+--
+--        elsif N >= 264002072 and N <= 265825580 then
+--           Iv2 := 2;
+--           N := N - 264002072;
+--
+--           I := (N mod 37) + 1;
+--           Psfx(Psfx'First + 3) := C(I);
+--           N := N / 37;
+--
+--           I := (N mod 37) + 1;
+--           Psfx(Psfx'First + 2) := C(I);
+--           N := N / 37;
+--
+--           I := (N mod 37) + 1;
+--           Psfx(Psfx'First + 1) := C(I);
+--           N := N / 37;
+--
+--           I := N + 1;
+--           Psfx(Psfx'First) := C(I);
+--
+--        elsif N >= 265825581 and N <= 267649089 then
+--           Iv2 := 3;
+--           N := N - 265825581;
+--
+--           I := (N mod 37) + 1;
+--           Psfx(Psfx'First + 3) := C(I);
+--           N := N / 37;
+--
+--           I := (N mod 37) + 1;
+--           Psfx(Psfx'First + 2) := C(I);
+--           N := N / 37;
+--
+--           I := (N mod 37) + 1;
+--           Psfx(Psfx'First + 1) := C(I);
+--           N := N / 37;
+--
+--           I := N + 1;
+--           Psfx(Psfx'First) := C(I);
+--
+--        elsif N >= 267649090 and N <= 267698374 then
+--           Iv2 := 4;
+--           N := N - 267649090;
+--
+--           I := (N mod 37) + 1;
+--           Psfx(Psfx'First + 2) := C(I);
+--           N := N / 37;
+--
+--           I := (N mod 37) + 1;
+--           Psfx(Psfx'First + 1) := C(I);
+--           N := N / 37;
+--
+--           I := N + 1;
+--           Psfx(Psfx'First) := C(I);
+--
+--        elsif N >= 267698375 and N <= 267747659 then
+--           Iv2 := 5;
+--           N := N - 267698375;
+--
+--           I := (N mod 37) + 1;
+--           Psfx(Psfx'First + 2) := C(I);
+--           N := N / 37;
+--
+--           I := (N mod 37) + 1;
+--           Psfx(Psfx'First + 1) := C(I);
+--           N := N / 37;
+--
+--           I := N + 1;
+--           Psfx(Psfx'First) := C(I);
+--
+--        elsif N >= 267747660 and N <= 267796944 then
+--           Iv2 := 6;
+--           N := N - 267747660;
+--
+--           I := (N mod 37) + 1;
+--           Psfx(Psfx'First + 2) := C(I);
+--           N := N / 37;
+--
+--           I := (N mod 37) + 1;
+--           Psfx(Psfx'First + 1) := C(I);
+--           N := N / 37;
+--
+--           I := N + 1;
+--           Psfx(Psfx'First) := C(I);
+--
+--        elsif N = 267796945 then
+--           Iv2 := 7;
+--           Psfx := "    ";
+--
+--        end if;
+--
+--        <<NineNineNine>>
+--        if Word(Word'First .. Word'First + 2) = "3D0" then
+--           Word := "3DA0" & Word(Word'First + 3 .. Word'Last);
+--        end if;
+--        if Word(Word'First) = 'Q' and Word(Word'First + 1) >= 'A' and Word(Word'First + 1) <= 'Z' then
+--           Word := "3X" & Word(Word'First + 1 .. Word'Last);
+--        end if;
 
    end Unpack_Call;
 
@@ -292,104 +425,229 @@ package body Pack_JT is
       C1 : Character;
       N, Long, Lat : Integer;
       DLong, DLat : Float;
+
+      procedure Eight_Hundred is
+      begin
+         Text := True;
+      end Eight_Hundred;
+
+      procedure Ninety is
+      begin
+         NG := NGBASE + 1;
+         return;
+      end Ninety;
+
+      procedure Forty is
+      begin
+         Grid2Deg(Grid & "mm", DLong, DLat);
+         Long := Integer(Float'Floor(DLong));
+         Lat := Integer(Float'Floor(DLat + 90.0));
+         NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+         return;
+      end Forty;
+
+      procedure Thirty is
+      begin
+         if N >= -50 and N <= 49 then
+            if C1 = 'R' then
+               --write(grid,1002) n+50
+               --format('LA',i2.2)
+               Grid := "LA" & Integer'Image(N + 50);
+            else
+               --write(grid,1003) n+50
+               --format('KA',i2.2)
+               Grid := "KA" & Integer'Image(N + 50);
+            end if;
+            Forty;
+            return;
+         end if;
+
+         if Grid(Grid'First) < 'A' or Grid(Grid'First) > 'R' then Text := True; end if;
+         if Grid(Grid'First + 1) < 'A' or Grid(Grid'First + 1) > 'R' then Text := True; end if;
+         if Grid(Grid'First + 2) < '0' or Grid(Grid'First + 2) > '9' then Text := True; end if;
+         if Grid(Grid'First + 3) < '0' or Grid(Grid'First + 3) > '9' then Text := True; end if;
+         if Text then return; end if;
+
+         Forty;
+      end Thirty;
+
+      procedure Twenty is
+      begin
+
+         for I in Trim(Grid(Grid'First + 1 .. Grid'First + 3), Both)'range loop
+            if Grid(I) < '0' or Grid(I) > '9' then
+               Thirty;
+               return;
+            end if;
+         end loop;
+
+         N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 3));
+--
+--           begin
+--              N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 3));
+--           exception
+--              when E : Constraint_Error =>
+--                 Thirty;
+--                 return;
+--           end;
+
+         Thirty;
+      end Twenty;
+
+      procedure Ten is
+      begin
+         N := 99;
+         C1 := Grid(Grid'First);
+
+         for I in Trim(Grid, Right)'range loop
+            if Grid(I) < '0' or Grid(I) > '9' then
+               Twenty;
+               return;
+            end if;
+         end loop;
+
+         N := Integer'Value(Grid);
+
+--           begin
+--              N := Integer'Value(Grid);
+--           exception
+--              when E : Constraint_Error =>
+--                 Twenty;
+--                 return;
+--           end;
+
+      Thirty;
+      end Ten;
+
    begin
       Text := False;
-      if Grid = "    " then goto Ninety; end if;
+      if Grid = "    " then
+         Ninety;
+         return;
+      end if;
 
       if Grid(Grid'First) = '-' then
-         begin
-            N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 2));
-         exception
-            when E : Constraint_Error =>
-               goto Eight_Hundred;
-         end;
+
+         for I in Trim(Grid(Grid'First + 1 .. Grid'First + 2), Right)'range loop
+            if Grid(I) < '0' or Grid(I) > '9' then
+               Eight_Hundred;
+               return;
+            end if;
+         end loop;
+
+         N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 2));
+
+--           begin
+--              N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 2));
+--           exception
+--              when E : Constraint_Error =>
+--                 Eight_Hundred;
+--                 return;
+--           end;
 
          if N >= 1 and N <= 30 then
             NG := NGBASE + 1 + Unsigned_32(N);
-            goto Nine_Hundred;
+            return;
          end if;
-         goto Ten;
+
+         Ten;
+         return;
+
       elsif Grid(Grid'First .. Grid'First + 1) = "R-" then
-         begin
-            N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
-         exception
-            when E : Constraint_Error =>
-               goto Eight_Hundred;
-         end;
+
+         for I in Trim(Grid(Grid'First + 2 .. Grid'First + 3), Right)'range loop
+            if Grid(I) < '0' or Grid(I) > '9' then
+               Eight_Hundred;
+               return;
+            end if;
+         end loop;
+
+         N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
+
+--           begin
+--              N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
+--           exception
+--              when E : Constraint_Error =>
+--                 Eight_Hundred;
+--                 return;
+--           end;
 
          if N >= 1 and N <= 30 then
             NG := NGBASE + 31 + Unsigned_32(N);
-            goto Nine_Hundred;
+            return;
          end if;
-         goto Ten;
+         Ten;
+         return;
       elsif Grid(Grid'First .. Grid'First + 3) = "RO  " then
 
          NG := NGBASE + 62;
-         goto Nine_Hundred;
+         return;
       elsif Grid(Grid'First .. Grid'First + 3) = "RRR " then
          NG := NGBASE + 63;
-         goto Nine_Hundred;
+         return;
       elsif Grid(Grid'First .. Grid'First + 3) = "73  " then
          NG := NGBASE + 64;
-         goto Nine_Hundred;
+         return;
       end if;
 
-      <<Ten>>
-      N := 99;
-      C1 := Grid(Grid'First);
-      begin
-         N := Integer'Value(Grid);
-      exception
-         when E : Constraint_Error =>
-            goto Twenty;
-      end;
+      Ten;
 
-      goto Thirty;
+--        <<Ten>>
+--        N := 99;
+--        C1 := Grid(Grid'First);
+--        begin
+--           N := Integer'Value(Grid);
+--        exception
+--           when E : Constraint_Error =>
+--              goto Twenty;
+--        end;
+--
+--        goto Thirty;
 
-      <<Twenty>>
-      begin
-         N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 3));
-      exception
-         when E : Constraint_Error =>
-            goto Thirty;
-      end;
+--        <<Twenty>>
+--        begin
+--           N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 3));
+--        exception
+--           when E : Constraint_Error =>
+--              goto Thirty;
+--        end;
 
-      <<Thirty>>
-      if N >= -50 and N <= 49 then
-         if C1 = 'R' then
-            --write(grid,1002) n+50
-            --format('LA',i2.2)
-            Grid := "LA" & Integer'Image(N + 50);
-         else
-            --write(grid,1003) n+50
-            --format('KA',i2.2)
-            Grid := "KA" & Integer'Image(N + 50);
-         end if;
-         goto Forty;
-      end if;
+--        <<Thirty>>
+--        if N >= -50 and N <= 49 then
+--           if C1 = 'R' then
+--              --write(grid,1002) n+50
+--              --format('LA',i2.2)
+--              Grid := "LA" & Integer'Image(N + 50);
+--           else
+--              --write(grid,1003) n+50
+--              --format('KA',i2.2)
+--              Grid := "KA" & Integer'Image(N + 50);
+--           end if;
+--           goto Forty;
+--        end if;
+--
+--        if Grid(Grid'First) < 'A' or Grid(Grid'First) > 'R' then Text := True; end if;
+--        if Grid(Grid'First + 1) < 'A' or Grid(Grid'First + 1) > 'R' then Text := True; end if;
+--        if Grid(Grid'First + 2) < '0' or Grid(Grid'First + 2) > '9' then Text := True; end if;
+--        if Grid(Grid'First + 3) < '0' or Grid(Grid'First + 3) > '9' then Text := True; end if;
+--        if Text then goto Nine_Hundred; end if;
 
-      if Grid(Grid'First) < 'A' or Grid(Grid'First) > 'R' then Text := True; end if;
-      if Grid(Grid'First + 1) < 'A' or Grid(Grid'First + 1) > 'R' then Text := True; end if;
-      if Grid(Grid'First + 2) < '0' or Grid(Grid'First + 2) > '9' then Text := True; end if;
-      if Grid(Grid'First + 3) < '0' or Grid(Grid'First + 3) > '9' then Text := True; end if;
-      if Text then goto Nine_Hundred; end if;
+--        <<Forty>>
+--        Grid2Deg(Grid & "mm", DLong, DLat);
+--        Long := Integer(Float'Floor(DLong));
+--        Lat := Integer(Float'Floor(DLat + 90.0));
+--        NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+--        goto Nine_Hundred;
 
-      <<Forty>>
-      Grid2Deg(Grid & "mm", DLong, DLat);
-      Long := Integer(Float'Floor(DLong));
-      Lat := Integer(Float'Floor(DLat + 90.0));
-      NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
-      goto Nine_Hundred;
+--        <<Ninety>>
+--        NG := NGBASE + 1;
+--        goto Nine_Hundred;
 
-      <<Ninety>>
-      NG := NGBASE + 1;
-      goto Nine_Hundred;
-
-      <<Eight_Hundred>>
-      Text := True;
-
-      <<Nine_Hundred>>
-      return;
+--        <<Eight_Hundred>>
+--        Text := True;
+--
+--        <<Nine_Hundred>>
+--        return;
 
    end Pack_Grid;
 
@@ -398,51 +656,73 @@ package body Pack_JT is
       Grid6 : String(1 .. 6);
       DLat, DLong : Float;
       N : Integer;
+
+      procedure Ten is
+      begin
+         N := Ng - NGBASE - 1;
+
+         if N >= 1 and N <= 30 then
+            --Grid := Integer'Image(-N);
+            Move(Integer'Image(-N), Grid, Right, Left, Space);
+         elsif N >= 31 and N <= 60 then
+            N := N - 30;
+            --Grid := "R" & Integer'Image(-N);
+            Move("R" & Integer'Image(-N), Grid, Right, Left, Space);
+         elsif N = 61 then
+            Grid := "RO  ";
+         elsif N = 62 then
+            Grid := "RRR ";
+         elsif N = 63 then
+            Grid := "73  ";
+         end if;
+
+      end Ten;
+
+
    begin
       Grid := "    ";
 
-      if Ng >= 32400 then goto Ten; end if;
+      if Ng >= 32400 then
+         Ten;
+         return;
+      end if;
 
       DLat := Float((Ng mod 180) - 90);
       DLong := Float((Ng / 180) * 2 - 180 + 2);
       Deg2Grid(DLong, DLat, Grid6);
       Grid := Grid6(Grid6'First .. Grid6'First + 3);
 
-      if Grid(1 .. 2) = "KA" then
-         N := Integer'Value(Grid(3 .. 4));
+      if Grid(Grid'First .. Grid'First + 1) = "KA" then
+         N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
          N := N - 50;
          Grid := Integer'Image(N);
-         if Grid(1) = ' ' then Grid(1) := '+'; end if;
-      elsif Grid(3 .. 4) = "LA" then
-         N := Integer'Value(Grid(3 .. 4));
+         if Grid(Grid'First) = ' ' then Grid(Grid'First) := '+'; end if;
+      elsif Grid(Grid'First + 2 .. Grid'First + 3) = "LA" then
+         N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
          N := N - 50;
          Grid := "R" & Integer'Image(N);
-         if Grid(2) = ' ' then Grid(2) := '+'; end if;
+         if Grid(Grid'First + 1) = ' ' then Grid(Grid'First + 1) := '+'; end if;
       end if;
 
-      goto Nine_Hundred;
-
-      <<Ten>>
-      N := Ng - NGBASE - 1;
-
-      if N >= 1 and N <= 30 then
-         --Grid := Integer'Image(-N);
-         Move(Integer'Image(-N), Grid, Right, Left, Space);
-      elsif N >= 31 and N <= 60 then
-         N := N - 30;
-         --Grid := "R" & Integer'Image(-N);
-         Move("R" & Integer'Image(-N), Grid, Right, Left, Space);
-      elsif N = 61 then
-         Grid := "RO  ";
-      elsif N = 62 then
-         Grid := "RRR ";
-      elsif N = 63 then
-         Grid := "73  ";
-      end if;
-
-
-      <<Nine_Hundred>>
       return;
+
+--        <<Ten>>
+--        N := Ng - NGBASE - 1;
+--
+--        if N >= 1 and N <= 30 then
+--           --Grid := Integer'Image(-N);
+--           Move(Integer'Image(-N), Grid, Right, Left, Space);
+--        elsif N >= 31 and N <= 60 then
+--           N := N - 30;
+--           --Grid := "R" & Integer'Image(-N);
+--           Move("R" & Integer'Image(-N), Grid, Right, Left, Space);
+--        elsif N = 61 then
+--           Grid := "RO  ";
+--        elsif N = 62 then
+--           Grid := "RRR ";
+--        elsif N = 63 then
+--           Grid := "73  ";
+--        end if;
 
    end Unpack_Grid;
 
@@ -692,7 +972,57 @@ package body Pack_JT is
       grid6 : String(1..6);
       cqnnn : Boolean := False;
       nc1, nc2, ng : Unsigned_32;
-      iv2, NFreq, junk1, n1, n2, K, Index_Val, J : Integer;
+      iv2, NFreq, junk1, n1, n2, K, J : Integer;
+      --Index_Val : Integer;
+
+      procedure One_Hundred is
+      begin
+         if Msg(Msg'First .. Msg'First + 5) = "CQ9DX " then
+            Msg(Msg'First + 2) := ' ';
+         end if;
+
+         if Msg(Msg'First .. Msg'First + 1) = "E9" and Msg(Msg'First + 2) >= 'A' and Msg(Msg'First + 2) <= 'Z' and Msg(Msg'First + 3) >= 'A' and Msg(Msg'First + 3) <= 'Z' and Msg(Msg'First + 4) = ' ' then
+
+            --Msg := "CQ " & Msg(Msg'First + 2 .. Msg'Last);
+            Move("CQ " & Msg(Msg'First + 2 .. Msg'Last), Msg, Right, Left, Space);
+         end if;
+
+         if Msg(Msg'First .. Msg'First + 4) = "CQ 00" and Msg(Msg'First + 5) >= '0' and Msg(Msg'First + 5) <= '9' then
+            --Msg := "CQ " & Msg(Msg'First + 5 .. Msg'Last);
+            Move("CQ " & Msg(Msg'First + 5 .. Msg'Last), Msg, Right, Left, Space);
+         end if;
+      end One_Hundred;
+
+      procedure Twenty is
+      begin
+         if K = 0 then
+            for I in 1 .. 4 loop
+               if J <= 21 then J := J + 1; end if;
+               Msg(J) := grid(I);
+            end loop;
+
+            if J <= 21 then J := J + 1; end if;
+            Msg(J) := ' ';
+         end if;
+         One_Hundred;
+      end Twenty;
+
+      procedure Ten is
+      begin
+         for I in 1 .. 12 loop
+            if J <= 21 then J := J + 1; end if;
+            Msg(J) := c2(I);
+            if c2(I) = ' ' then
+               Twenty;
+               return;
+            end if;
+         end loop;
+
+         if J <= 21 then J := J + 1; end if;
+         Msg(J) := ' ';
+         Twenty;
+      end Ten;
+
    begin
       nc1 := Shift_Left(Unsigned_32(Dat(1)), 22) + Shift_Left(Unsigned_32(Dat(2)), 16) + Shift_Left(Unsigned_32(Dat(3)), 10) +
         Shift_Left(Unsigned_32(Dat(4)), 4) + (Shift_Right(Unsigned_32(Dat(5)), 2) and 15);
@@ -704,7 +1034,8 @@ package body Pack_JT is
 
       if ng >= 32768 then
          Unpack_Text(nc1, nc2, ng, Msg);
-         goto One_Hundred;
+         One_Hundred;
+         return;
       end if;
 
       Unpack_Call(nc1, c1, iv2, psfx);
@@ -794,7 +1125,8 @@ package body Pack_JT is
             Msg := " ";
          end if;
 
-         goto One_Hundred;
+         One_Hundred;
+         return;
       end if;
 
       grid6 := grid & "ma";
@@ -809,19 +1141,19 @@ package body Pack_JT is
          Get_Pfx2(K, c2);
       end if;
 
-      --Index_Val := Index(c1, " "); -- Should be looking for null characters not blank space
-
-      if Index_Val >= 3 then
-         --c1 := c1(1 .. Index_Val - 1) & "            ";
-         Move(c1(1 .. Index_Val - 1) & "            ", c1, Right, Left, Space);
-      end if;
-
-      --Index_Val := Index(c2, " "); -- Should be looking for null characters not blank space
-
-      if Index_Val >= 3 then
-         --c2 := c2(1 .. Index_Val - 1) & "            ";
-         Move(c2(1 .. Index_Val - 1) & "            ", c2, Right, Left, Space);
-      end if;
+--        Index_Val := Index(c1, " "); -- Should be looking for null characters not blank space
+--
+--        if Index_Val >= 3 then
+--           --c1 := c1(1 .. Index_Val - 1) & "            ";
+--           Move(c1(1 .. Index_Val - 1) & "            ", c1, Right, Left, Space);
+--        end if;
+--
+--        Index_Val := Index(c2, " "); -- Should be looking for null characters not blank space
+--
+--        if Index_Val >= 3 then
+--           --c2 := c2(1 .. Index_Val - 1) & "            ";
+--           Move(c2(1 .. Index_Val - 1) & "            ", c2, Right, Left, Space);
+--        end if;
 
       Msg := "                      ";
 
@@ -830,57 +1162,60 @@ package body Pack_JT is
       if cqnnn then
          Msg := c1 & "          ";
          J := 7;
-         goto Ten;
+         Ten;
+         return;
       end if;
 
       for I in 1 .. 12 loop
          J := J + 1;
          Msg(J) := c1(I);
-         if c1(I) = ' ' then goto Ten; end if;
+         if c1(I) = ' ' then
+            Ten;
+            return;
+         end if;
       end loop;
 
       J := J + 1;
       Msg(J) := ' ';
 
-      <<Ten>>
-      for I in 1 .. 12 loop
-         if J <= 21 then J := J + 1; end if;
-         Msg(J) := c2(I);
-         if c2(I) = ' ' then goto Twenty; end if;
-      end loop;
+      Ten;
+--        <<Ten>>
+--        for I in 1 .. 12 loop
+--           if J <= 21 then J := J + 1; end if;
+--           Msg(J) := c2(I);
+--           if c2(I) = ' ' then goto Twenty; end if;
+--        end loop;
+--
+--        if J <= 21 then J := J + 1; end if;
+--        Msg(J) := ' ';
 
-      if J <= 21 then J := J + 1; end if;
-      Msg(J) := ' ';
-
-      <<Twenty>>
-      if K = 0 then
-         for I in 1 .. 4 loop
-            if J <= 21 then J := J + 1; end if;
-            Msg(J) := grid(I);
-         end loop;
-
-         if J <= 21 then J := J + 1; end if;
-         Msg(J) := ' ';
-      end if;
-
-
-      <<One_Hundred>>
-      if Msg(Msg'First .. Msg'First + 5) = "CQ9DX " then
-         Msg(3) := ' ';
-      end if;
-
-      if Msg(Msg'First .. Msg'First + 1) = "E9" and Msg(Msg'First + 2) >= 'A' and Msg(Msg'First + 2) <= 'Z' and Msg(Msg'First + 3) >= 'A' and Msg(Msg'First + 3) <= 'Z' and Msg(Msg'First + 4) = ' ' then
-
-         --Msg := "CQ " & Msg(Msg'First + 2 .. Msg'Last);
-         Move("CQ " & Msg(Msg'First + 2 .. Msg'Last), Msg, Right, Left, Space);
-      end if;
-
-      if Msg(Msg'First .. Msg'First + 4) = "CQ 00" and Msg(Msg'First + 5) >= '0' and Msg(Msg'First + 5) <= '9' then
-         --Msg := "CQ " & Msg(Msg'First + 5 .. Msg'Last);
-         Move("CQ " & Msg(Msg'First + 5 .. Msg'Last), Msg, Right, Left, Space);
-      end if;
+--        <<Twenty>>
+--        if K = 0 then
+--           for I in 1 .. 4 loop
+--              if J <= 21 then J := J + 1; end if;
+--              Msg(J) := grid(I);
+--           end loop;
+--
+--           if J <= 21 then J := J + 1; end if;
+--           Msg(J) := ' ';
+--        end if;
 
 
+--        <<One_Hundred>>
+--        if Msg(Msg'First .. Msg'First + 5) = "CQ9DX " then
+--           Msg(Msg'First + 2) := ' ';
+--        end if;
+--
+--        if Msg(Msg'First .. Msg'First + 1) = "E9" and Msg(Msg'First + 2) >= 'A' and Msg(Msg'First + 2) <= 'Z' and Msg(Msg'First + 3) >= 'A' and Msg(Msg'First + 3) <= 'Z' and Msg(Msg'First + 4) = ' ' then
+--
+--           --Msg := "CQ " & Msg(Msg'First + 2 .. Msg'Last);
+--           Move("CQ " & Msg(Msg'First + 2 .. Msg'Last), Msg, Right, Left, Space);
+--        end if;
+--
+--        if Msg(Msg'First .. Msg'First + 4) = "CQ 00" and Msg(Msg'First + 5) >= '0' and Msg(Msg'First + 5) <= '9' then
+--           --Msg := "CQ " & Msg(Msg'First + 5 .. Msg'Last);
+--           Move("CQ " & Msg(Msg'First + 5 .. Msg'Last), Msg, Right, Left, Space);
+--        end if;
 
 
    end Unpack_Msg;
@@ -1008,7 +1343,7 @@ package body Pack_JT is
          Nc3 := Nc3 / 42;
       end loop;
 
-      Msg(14 .. 22) := "         ";
+      Msg(Msg'First + 13 .. Msg'First + 21) := "         ";
 
    end Unpack_Text;
 
@@ -1096,7 +1431,7 @@ package body Pack_JT is
       Nv2 := 1;
       iz := Index(Callsign, " ") - 1;
       if iz < 0 then iz := 12; end if;
-      islash := Index(Callsign(1 .. iz), "/");
+      islash := Index(Callsign(Callsign'First .. iz), "/");
 
       K := 0;
 
@@ -1104,7 +1439,7 @@ package body Pack_JT is
 
       if islash > 0 and islash <= iz - 4 then
          --C := Callsign(1 .. islash - 1);
-         Move(Callsign(1 .. islash - 1), C, Right, Left, Space);
+         Move(Callsign(Callsign'First .. islash - 1), C, Right, Left, Space);
 
          --Callsign := Callsign(islash + 1 .. iz);
          Move(Callsign(islash + 1 .. iz), Callsign, Right, Left, Space);
@@ -1128,7 +1463,7 @@ package body Pack_JT is
          --C := Callsign(islash + 1 .. iz);
          Move(Callsign(islash + 1 .. iz), C, Right, Left, Space);
          --Callsign := Callsign(1 .. islash - 1);
-         Move(Callsign(1 .. islash - 1), Callsign, Right, Left, Space);
+         Move(Callsign(Callsign'First .. islash - 1), Callsign, Right, Left, Space);
          for I in Suffixes'Range loop
             if Suffixes(I) = C(1) then
                K := 400 + I;
@@ -1161,7 +1496,7 @@ package body Pack_JT is
       elsif K >= 401 and K <= (400 + Suffix'Length) then
          Iz := Index(Callsign, " ") - 1;
          --Callsign := Callsign(1 .. Iz) & '/' & Suffix(K - 400);
-         Move(Callsign(1 .. Iz) & '/' & Suffix(K - 400), Callsign, Right, Left, Space);
+         Move(Callsign(Callsign'First .. Iz) & '/' & Suffix(K - 400), Callsign, Right, Left, Space);
       elsif K = 449 then
          Iz := Index(add_pfx, " ") - 1;
          if Iz < 1 then Iz := 8; end if;
@@ -1298,17 +1633,17 @@ package body Pack_JT is
       N1 := NLong / 240;
       N2 := (NLong - 240 * N1) / 24;
       N3 := NLong - 240 * N1 - 24 * N2;
-      Grid(1) := Character'Val(Character'Pos('A') + N1);
-      Grid(3) := Character'Val(Character'Pos('0') + N2);
-      Grid(5) := Character'Val(Character'Pos('a') + N3);
+      Grid(Grid'First) := Character'Val(Character'Pos('A') + N1);
+      Grid(Grid'First + 2) := Character'Val(Character'Pos('0') + N2);
+      Grid(Grid'First + 4) := Character'Val(Character'Pos('a') + N3);
 
       NLat := Integer(Float'Floor(60.0 * (DLat + 90.0) / 2.5));
       N1 := NLat / 240;
       N2 := (NLat - 240 * N1) / 24;
       N3 := NLat - 240 * N1 - 24 * N2;
-      Grid(2) := Character'Val(Character'Pos('A') + N1);
-      Grid(4) := Character'Val(Character'Pos('0') + N2);
-      Grid(6) := Character'Val(Character'Pos('a') + N3);
+      Grid(Grid'First + 1) := Character'Val(Character'Pos('A') + N1);
+      Grid(Grid'First + 3) := Character'Val(Character'Pos('0') + N2);
+      Grid(Grid'First + 5) := Character'Val(Character'Pos('a') + N3);
 
    end Deg2Grid;
 
