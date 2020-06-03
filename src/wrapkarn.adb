@@ -64,7 +64,8 @@ package body Wrapkarn is
 
       Nroots : Integer := 51;
       Deg_Lambda, El, Deg_Omega : Integer;
-      --I, J, R, K : Integer;
+      --I, J, R,
+      K : Integer;
       U, Q, Tmp, Num1, Num2, Den, Discr_R, X, Y, Z, R : Integer;
       Modnn_Tmp, Modnn_Tmp2, Modnn_Tmp3 : Integer;
 
@@ -129,7 +130,6 @@ package body Wrapkarn is
             end loop;
          end if;
 
-
          -- Skipped over DEBUG 1 and DEBUG 2
 
          for I in 0 .. 50 loop
@@ -155,7 +155,7 @@ package body Wrapkarn is
             -- Testing
             for I in 0 .. Nroots loop
                null;
-               --Put_Line("B("&I'Image&") = "&Integer'Image(B(I)));
+               Put_Line("B("&I'Image&") = "&Integer'Image(B(I)));
             end loop;
 
             if Discr_R = Rs.Nn then
@@ -179,15 +179,110 @@ package body Wrapkarn is
                      B(I) := (if Lambda(I) = 0 then Rs.Nn else Modnn(Rs,Modnn_Tmp3));
                   end loop;
                else
+                  -- Error here
+                  -- 2 lines below: B(x) <-- inv(discr_r_) * lambda(x)
                   B(1) := B(0);
                   B(0) := Rs.Nn;
                end if;
                Lambda := T;
             end if;
          end loop;
-         return 1;
+
+         -- Convert lambda to index forma and compute deg(lambda(x))
+         Deg_Lambda := 0;
+         for I in 0 .. Nroots loop
+            Lambda(I) := Rs.Index_Of(Lambda(I));
+            if Lambda(I) /= Rs.Nn then
+               Deg_Lambda := I;
+            end if;
+         end loop;
+
+         -- Find roots of the eror+ersure locator polynomial by Chien search
+         Reg(1) := Lambda(1);
+         Count := 0;
+
+         K := Rs.Iprim-1;
+         for I in 1 .. Rs.Nn loop
+            Q := 1; -- Lambda(0) is always 0
+            for J in reverse 1 .. Deg_Lambda loop
+               if Reg(J) /= Rs.Nn then
+                  Y := Reg(J) + J;
+                  Reg(J) := Modnn(Rs,Y);
+                  Q := Integer(Unsigned_8(Q) xor Unsigned_8(Rs.Alpha_To(Reg(J))));
+               end if;
+            end loop;
+            if Q /= 0 then
+               null;
+            else
+               Root(Count) := I;
+               Loc(Count) := K;
+               -- If we've already found the max possible roots.
+               -- Abort the search to save time
+               Count := Count + 1;
+               if Count = Deg_Lambda then
+                  exit;
+               end if;
+            end if;
+            X := K + Rs.Iprim;
+            K := Modnn(Rs,X);
+         end loop;
+
+         if Deg_Lambda /= Count then
+            -- Deg(Lambda unequal to number of roots => uncorrectable
+            -- error detected
+            Count := -1;
+            Finish(Eras_Pos, Count, Loc);
+            return Count;
+         end if;
+         -- Compute err+eras evaluator poly omega(x) = s(x)*lambda(x) (modulo
+         -- x **Nroots). In index form. Also find deg(omega).
+         Deg_Omega := Deg_Lambda - 1;
+         for I in 0 .. Deg_Omega loop
+            Tmp := 0;
+            for J in reverse 0 .. I loop
+               if S(I - J) /= Rs.Nn and Lambda(J) /= Rs.Nn then
+                  X := S(I - J) + Lambda(J);
+                  Tmp := Integer(Unsigned_8(Tmp) xor Unsigned_8(Rs.Alpha_To(Modnn(Rs,X))));
+               end if;
+            end loop;
+            Omega(I) := Rs.Index_Of(Tmp);
+         end loop;
+
+         -- Compute error values in poly-form. Num1 = Omega(Inv(X(L))), Num2 =
+         -- Inv(X(L))**(Rs.Fcr-1) and Den = Lambda_Pr(Inv(X(L))) all in poly-form
+         for J in 0 .. Count - 1 loop
+            Num1 := 0;
+            for I in 0 .. Deg_Omega loop
+               if Omega(I) /= Rs.Nn then
+                  X := Omega(I) + I * Root(J);
+                  Num1 := Integer(Unsigned_8(Num1) xor Unsigned_8(Rs.Alpha_To(Modnn(Rs,X))));
+               end if;
+            end loop;
+            Y := Root(J) * (Rs.Fcr - 1) + Rs.Nn;
+            Num2 := Rs.Alpha_To(Modnn(Rs,Y));
+            Den := 0;
+
+            --Lamda(I + 1) for I even is the formal dericative lambda_pr of lambda(I)
+            -- Bitwise not operation in ada?
+            --Tmp := Integer(Unsigned_8((if Deg_Lambda < Nroots - 1 then Deg_Lambda else Nroots - 1)) and Unsigned_8((not 1)));
+            Tmp := 1;
+            for I in reverse 0 .. Tmp loop
+               if Lambda(I + 1) /= Rs.Nn then
+                  Z := Lambda(I + 1) + I * Root(J);
+                  Den := Integer(Unsigned_8(Den) xor Unsigned_8(Rs.Alpha_To(Modnn(Rs,Z))));
+               end if;
+
+               if Num1 /= 0 and Loc(J) >= Rs.Pad then
+                  R := Rs.Index_Of(Num1) + Rs.Index_Of(Num2) + Rs.Nn - Rs.Index_Of(Den);
+                  Data(Loc(J) - Rs.Pad) := Integer(Unsigned_8(Data(Loc(J) - Rs.Pad)) xor Unsigned_8(Rs.Alpha_To(Modnn(Rs,R))));
+               end if;
+               Tmp := Tmp - 2;
+            end loop;
+         end loop;
+         Finish(Eras_Pos, Count, Loc);
+         return Count;
       end if;
-      return 0;
+      return -1;
    end Decode_Rs_Int;
 
    procedure Rs_Encode( Dgen : in Integer_Array;

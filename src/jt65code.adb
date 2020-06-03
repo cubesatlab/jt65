@@ -125,7 +125,7 @@ begin
       Msg0 := Msg;
       Chkmsg(Msg, Cok, Nspecial);
       Msg1 := Msg;
-      Put_Line(Msg1);
+      --Put_Line(Msg1);
 
       if ( Nspecial > 0 ) then
          if ( Nspecial = 2 ) then Decoded(1 .. 2) := "RO";
@@ -141,13 +141,6 @@ begin
          Pack_JT.Pack_Msg(Msg1, Dat, Itype);
          Dgen(0 .. 11) := Integer_Array(Dat(1 .. 12));
 
-         Put_Line("Msg : " & Msg0(1 .. 22));New_Line;
-
-         Put_Line("Packed message, 6-bit symbols: ");
-         for I in Dgen'Range loop
-            Put(Integer'Image(Dgen(I)));
-         end loop;
-
          if ( Itype = 1 ) then Msgtype := "Std Msg   ";
          end if;
          if ( Itype = 2 ) then Msgtype := "Type 1 pfx";
@@ -160,6 +153,22 @@ begin
          end if;
          if ( Itype = 6 ) then Msgtype := "Free Text ";
          end if;
+
+
+         Put_Line("   Message");
+         Put_Line("-----------------------------------------------------------");
+
+
+         Put("   " & Msg0(1 .. 22));
+
+         New_Line;New_Line;
+
+         Put_Line("Packed message, 6-bit symbols: ");
+         for I in Dgen'Range loop
+            Put(Integer'Image(Dgen(I)));
+         end loop;
+
+
 
          Rs_Encode(Dgen, Sent1);
 
@@ -224,14 +233,14 @@ begin
          New_Line;New_Line;
 
          -- DEBUG
-         Put_Line("Rs_Decode: ");
+         --Put_Line("Rs_Decode: ");
          Counter := 1;
          for I in Recd'Range loop
-            Put(Integer'Image(Integer(Recd(I))));
+            --Put(Integer'Image(Integer(Recd(I))));
             Recd_Convert(Counter) := Recd(I);
             Counter := Counter + 1;
          end loop;
-         New_Line;New_Line;
+         --New_Line;New_Line;
 
 
          --Recd_Convert(1 .. 12) := Recd(0 .. 11);
@@ -243,14 +252,28 @@ begin
 
 
          Recd_Tmp(1 .. 12) := Pack_JT.Integer_Array(Recd_Convert(1 .. 12));
-         Put_Line("Recd_Tmp: ");
-         for I in Recd'Range loop
-            Put(Integer'Image(Integer(Recd(I))));
-         end loop;
-         New_Line;New_Line;
+         --Put_Line("Recd_Tmp: ");
+         --for I in Recd'Range loop
+         --   Put(Integer'Image(Integer(Recd(I))));
+         --end loop;
+         --New_Line;New_Line;
 
          Pack_JT.Unpack_Msg ( Recd_Tmp, Decoded );
-         Put_Line("Decoded Message: " & Decoded(1 .. 22));New_Line;
+
+         Bad := " ";
+         Expected := "EXACT                 ";
+         if (Decoded /= Msg0) then
+            Bad := "*";
+            if (Decoded(1 .. 13) = Msg0(1 ..13) and Decoded(14 .. 22) = "         ")
+            then Expected := "TRUNCATED             ";
+            end if;
+         end if;
+         Put_Line("   Decoded           Err?      Type               Expected        ");
+         Put_Line("-----------------------------------------------------------");
+         Put("   " & Decoded(1 .. 22));
+         Put("  " & Bad);
+         Put("   " & Msgtype);
+         Put("         " & Expected); New_Line;
 
          --New_Line;New_Line;New_Line;
 
@@ -258,17 +281,9 @@ begin
          end if;
          Pack_JT.Fmtmsg(Decoded);
       end if;
-      Bad := " ";
-      Expected := "EXACT                 ";
-      if (Decoded /= Msg0) then
-         Bad := "*";
-         if (Decoded(1 .. 13) = Msg0(1 ..13) and Decoded(14 .. 22) = "         ")
-         then Expected := "TRUNCATED             ";
-         end if;
-      end if;
 
-      Put_Line("------------------------------------------------------");
 
+      New_Line;New_Line;New_Line;
    end loop;
    Nmsg := 1;
    Nspecial := 0;
