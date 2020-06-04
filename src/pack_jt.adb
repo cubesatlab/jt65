@@ -735,7 +735,8 @@ package body Pack_JT is
       C3 : String(1..4);
       Grid6 : String(1..6);
       Text1, Text2, Text3 : Boolean;
-      I_Start, ia , ib, ic, Nv2a, Nv2b : Integer;
+      I_Start : Integer := 1;
+      ia , ib, ic, Nv2a, Nv2b : Integer;
       Nc1, Nc2, Ng : Unsigned_32;
       Skip_Ten : Boolean := False;
 
