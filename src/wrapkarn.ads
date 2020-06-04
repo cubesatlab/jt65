@@ -18,21 +18,22 @@ package Wrapkarn is
 
    procedure Encode_Rs_Int( Rs : in Rs_Access;
                             Data : in Integer_Array;
-                            Bb : in out Integer_Array);
+                            Bb : out Integer_Array);
 
-   function Decode_Rs_Int( Rs : in out Rs_Access;
-                           Data : in out Integer_Array;
-                           Eras_Pos : in out Integer_Array;
-                           No_Eras : in out Integer ) return Integer;
+   function Decode_Rs_Int( Rs : in Rs_Access;
+                           Data_In : in Integer_Array;
+                           Eras_Pos_In : in Integer_Array;
+                           No_Eras : in  Integer ) return Integer_Array;
 
    procedure Rs_Encode( Dgen : in Integer_Array;
-                        Sent : in out Integer_Array );
+                        Sent : in out Integer_Array )
+     with Global => (In_Out => (Reed_S, First));
 
    procedure Rs_Decode( Recd0 : in Integer_Array;
                         Era : in Integer_Array;
                         Num : in Integer;
-                        Decoded : out Integer_Array;
-                        Nerr : in out Integer );
+                        Decoded : out Integer_Array )
+     with Global => (In_Out => (Reed_S, First));
 
 end Wrapkarn;
 

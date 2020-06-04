@@ -13,18 +13,21 @@ package body Wrapkarn is
 
    procedure Encode_Rs_Int( Rs : in Rs_Access;
                             Data : in Integer_Array;
-                            Bb : in out Integer_Array ) is
+                            Bb : out Integer_Array ) is
 
       Feedback, X : Integer;
       Nroots : Integer := 51;
       Rs_Null : constant Rs_Access := null;
-   begin
-      if Rs /= Rs_Null then
 
-         Bb(0 .. 50) := (others => 0);
+   begin
+      for I in Bb'Range loop
+         Bb(I) := 0;
+      end loop;
+
+      if Rs /= Rs_Null then
          for I in 0 .. 11 loop
             Feedback := Rs.Index_Of(Integer(Unsigned_8(Data(I)) xor
-                                      Unsigned_8(Bb(0))));
+                               Unsigned_8(Bb(0))));
             if Feedback /= Rs.Nn then
                for J in 1 .. 50 loop
                   X := Feedback + Rs.Genpoly(Nroots-J);
@@ -43,10 +46,10 @@ package body Wrapkarn is
       end if;
    end Encode_Rs_Int;
 
-   function Decode_Rs_Int( Rs : in out Rs_Access;
-                           Data : in out Integer_Array;
-                           Eras_Pos : in out Integer_Array;
-                           No_Eras : in out Integer ) return Integer
+   function Decode_Rs_Int( Rs : in Rs_Access;
+                           Data_In : in  Integer_Array;
+                           Eras_Pos_In : in Integer_Array;
+                           No_Eras : in Integer ) return Integer_Array
    is
 
       procedure Finish( Eras_Pos1 : in out Integer_Array;
@@ -70,14 +73,22 @@ package body Wrapkarn is
       Modnn_Tmp, Modnn_Tmp2, Modnn_Tmp3 : Integer;
 
       -- Err + Eras Locator Poly and syndrome poly
-      Lambda : Integer_Array(0 .. Nroots);
-      S : Integer_Array(0 .. Nroots - 1);
+      Lambda : Integer_Array(0 .. 51);
+      S : Integer_Array(0 .. 50);
 
-      B, T, Omega, Reg : Integer_Array(0 .. Nroots);
-      Root, Loc : Integer_Array(0 .. Nroots);
+      B, T, Omega, Reg : Integer_Array(0 .. 51);
+      Root, Loc : Integer_Array(0 .. 51);
       Syn_Error, Count : Integer;
       Rs_Null : constant Rs_Access := null;
+      Data : Integer_Array(0 .. 62);
+      Eras_Pos : Integer_Array(0 .. 49);
    begin
+      --Data(0 .. 62) := Data_In(0 .. 62);
+      for I in Data'Range loop
+         Data(I) := Data_In(I);
+      end loop;
+
+      Eras_Pos(0 .. 49) := Eras_Pos_In(0 .. 49);
       if Rs /= Rs_Null then
          for I in 0 .. Nroots - 1 loop
             S(I) := Data(0);
@@ -107,7 +118,8 @@ package body Wrapkarn is
             -- to corret. Return Data() unmodified.
             Count := 0;
             Finish(Eras_Pos, Count, Loc);
-            return Count;
+            return Data;
+            --return Count;
          end if;
          Lambda(0 .. 50) := (others=>0);
          Lambda(0) := 1;
@@ -153,10 +165,10 @@ package body Wrapkarn is
             Discr_R := Rs.Index_Of(Discr_R);
 
             -- Testing
-            for I in 0 .. Nroots loop
-               null;
-               Put_Line("B("&I'Image&") = "&Integer'Image(B(I)));
-            end loop;
+            --for I in 0 .. Nroots loop
+            --   null;
+              -- Put_Line("B("&I'Image&") = "&Integer'Image(B(I)));
+            --end loop;
 
             if Discr_R = Rs.Nn then
                B(1) := B(0);
@@ -232,7 +244,7 @@ package body Wrapkarn is
             -- error detected
             Count := -1;
             Finish(Eras_Pos, Count, Loc);
-            return Count;
+            return Data;
          end if;
          -- Compute err+eras evaluator poly omega(x) = s(x)*lambda(x) (modulo
          -- x **Nroots). In index form. Also find deg(omega).
@@ -280,9 +292,9 @@ package body Wrapkarn is
             end loop;
          end loop;
          Finish(Eras_Pos, Count, Loc);
-         return Count;
+         return Data;
       end if;
-      return -1;
+      return Data;
    end Decode_Rs_Int;
 
    procedure Rs_Encode( Dgen : in Integer_Array;
@@ -298,8 +310,7 @@ package body Wrapkarn is
       Nroots : Integer := 51;
       Pad : Integer := 0;
    begin
-
-      if(First) then
+      if First then
          -- Initialize the JT65 codec
          Reed_S := Init_Rs_Int(Symsize, Gfpoly, Fcr, Prim, Nroots, Pad);
          First := False;
@@ -327,15 +338,14 @@ package body Wrapkarn is
    procedure Rs_Decode( Recd0 : in Integer_Array;
                         Era : in Integer_Array;
                         Num : in Integer;
-                        Decoded : out Integer_Array;
-                        Nerr : in out Integer  )
+                        Decoded : out Integer_Array )
    is
    -- Decode JT65 received data recd0[63], producing decoded[12].
    -- Erasures are indicated in era0[Numera].  The number of corrected
    -- errors is Nerr.  If the data are uncorrectable, Nerr=-1 is returned.
       Numera : Integer;
       Era_Pos : Integer_Array(0 .. 49);
-      Recd : Integer_Array(0 .. 62);
+      Recd, Recd_Out: Integer_Array(0 .. 62);
       Symsize : Integer := 6;
       Gfpoly : Integer := 16#43#;
       Fcr : Integer := 3;
@@ -350,22 +360,33 @@ package body Wrapkarn is
          First := False;
       end if;
       Numera := Num;
-      for I in 0 .. 11 loop
+      for I in Recd'Range loop
          Recd(I) := Recd0(62 - I);
       end loop;
       for I in 0 .. 50 loop
          Recd(12 + I) := Recd0(50 - I);
       end loop;
 
+
+      for I in Era_Pos'Range loop
+         Era_Pos(I) := 0;
+      end loop;
       --TO DO: proper handling of Era_Pos
       if Numera /= 0 then
          for I in 1 .. Numera loop
             Era_Pos(I) := Era(I);
          end loop;
       end if;
-      Nerr := Decode_Rs_Int( Reed_S, Recd, Era_Pos, Numera );
+      -- No longer returning the number of errors to meet
+      -- SPARK flow analysis requirements
+      --Nerr := Decode_Rs_Int( Reed_S, Recd, Era_Pos, Numera );
+      Recd_Out := Decode_Rs_Int( Reed_S, Recd, Era_Pos, Numera );
+      for I in Decoded'Range loop
+         Decoded(I) := 0;
+      end loop;
+
       for I in 0 .. 11 loop
-         Decoded(I) := Recd(11 - I);
+         Decoded(I) := Recd_Out(11 - I);
       end loop;
    end Rs_Decode;
 

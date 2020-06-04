@@ -17,27 +17,28 @@ package Init_Rs is
 
    type Rs is
       record
-         Mm : Integer;
-         Nn : Integer;
-         Alpha_To : Unsigned_Array;
-         Index_Of : Unsigned_Array;
-         Genpoly : Unsigned_Array_2;
-         Nroots : Integer;
-         Fcr : Integer;
-         Prim : Integer;
-         Iprim : Integer;
-         Pad : Integer;
+         Mm : Integer := 0;
+         Nn : Integer := 0;
+         Alpha_To : Unsigned_Array := (others => 0);
+         Index_Of : Unsigned_Array := (others => 0);
+         Genpoly : Unsigned_Array_2 := (others => 0);
+         Nroots : Integer := 0;
+         Fcr : Integer := 0;
+         Prim : Integer := 0;
+         Iprim : Integer := 0;
+         Pad : Integer := 0;
       end record;
 
    type Rs_Access is
      access Rs;
 
-   function Init_Rs_Int ( Symsize : in out Integer;
-                          Gfpoly : in out Integer;
-                          Fcr : in out Integer;
-                          Prim : in out Integer;
-                          Nroots : in out Integer;
-                          Pad : in out Integer) return Rs_Access;
+   function Init_Rs_Int ( Symsize : in Integer;
+                          Gfpoly : in Integer;
+                          Fcr : in Integer;
+                          Prim : in Integer;
+                          Nroots : in Integer;
+                          Pad : in Integer) return Rs_Access
+     with Pre => Fcr >= 0 and Prim >= 0 and Nroots >= 0 and Pad >= 0 and Gfpoly > 0 and Symsize >= 0;
 
    function Modnn ( Rs : in Rs_Access;
                     A : in Integer) return Integer;

@@ -20,43 +20,45 @@ is
    Cok: String (1 .. 3);
    Bad : String (1 .. 1);
    Msgtype : String (1 .. 10);
-   Sent, Tmp, Holder : Integer_Array (1 .. 63);
+   --Sent, Tmp: Integer_Array (1 .. 63);
    Sent1, Tmp1: Integer_Array (0 .. 62);
    Dat, Recd_Tmp : Pack_JT.Integer_Array(1 .. 12);
    Dgen, Recd : Integer_Array(0 .. 11);
    Recd_Convert : Integer_Array(1 .. 12);
    Era : Integer_Array (0 .. 50);
-   --Args : Natural;
-   Nspecial, Nmsg, Itype, Counter  : Integer;
+   Nspecial, Nmsg, Itype, Counter, Arg_Counter  : Integer;
    Nerr, Start : Integer := 0;
    Testmsg : Testmsgarray;
    Testmsgchk : Testmsgarray;
 
    Testing : Boolean;
+   IncorrectPress : Boolean;
 
 begin
 
+   Arg_Counter := 0;
     for I in 1 .. Argument_Count loop
-            Msgtmp := To_Unbounded_String(Argument(1));
-    end loop;
+      Msgtmp := To_Unbounded_String(Argument(1));
+      Arg_Counter := Arg_Counter + Argument_Count;
+   end loop;
 
    Init_Testmsg(Testmsg, Testmsgchk);
 
-         Testmsg(Ntest + 1) := To_Unbounded_String("KA1ABC WB9XYZ EN34 OOO");
-         Testmsg(Ntest + 2) :=  To_Unbounded_String("KA1ABC WB9XYZ OOO");
-         Testmsg(Ntest + 3) := To_Unbounded_String("RO");
-         Testmsg(Ntest + 3) := To_Unbounded_String("RRR");
-         Testmsg(Ntest + 3) := To_Unbounded_String("73");
+   Testmsg(Ntest + 1) := To_Unbounded_String("KA1ABC WB9XYZ EN34 OOO");
+   Testmsg(Ntest + 2) :=  To_Unbounded_String("KA1ABC WB9XYZ OOO");
+   Testmsg(Ntest + 3) := To_Unbounded_String("RO");
+   Testmsg(Ntest + 3) := To_Unbounded_String("RRR");
+   Testmsg(Ntest + 3) := To_Unbounded_String("73");
+   Testmsgchk(Ntest + 1) := To_Unbounded_String("KA1ABC WB9XYZ EN34 OOO");
+   Testmsgchk(Ntest + 1) := To_Unbounded_String("KA1ABC WB9XYZ OOO");
+   Testmsgchk(Ntest + 1) := To_Unbounded_String("RO");
+   Testmsgchk(Ntest + 1) := To_Unbounded_String("RRR");
+   Testmsgchk(Ntest + 1) := To_Unbounded_String("73");
 
-         Testmsgchk(Ntest + 1) := To_Unbounded_String("KA1ABC WB9XYZ EN34 OOO");
-         Testmsgchk(Ntest + 1) := To_Unbounded_String("KA1ABC WB9XYZ OOO");
-         Testmsgchk(Ntest + 1) := To_Unbounded_String("RO");
-         Testmsgchk(Ntest + 1) := To_Unbounded_String("RRR");
-         Testmsgchk(Ntest + 1) := To_Unbounded_String("73");
-
-         Nmsg := Ntest + 5;
-
+   Nmsg := Ntest + 5;
    Start := 1;
+   IncorrectPress := False;
+
    if Msgtmp /= "-t" then
       Nmsg := 2;
       Start := 2;
@@ -65,37 +67,43 @@ begin
       Testing := True;
    end if;
 
+
    for Imsg in Start .. Nmsg loop
 
-      if ( Testing ) then
+      if Testing = True and IncorrectPress = False then
 
-         Msgtmp := Testmsg(Imsg);
-
-         Msgtmplength := Length(Msgtmp);
-         if Msgtmplength > 22 then
+            Msgtmp := Testmsg(Imsg);
+            Msgtmplength := Length(Msgtmp);
+            if Msgtmplength > 22 then
             while Msgtmplength < 100 loop
                Append(Msgtmp, " ");
                Msgtmplength := Msgtmplength + 1;
             end loop;
             MsgTmpString := To_String(Msgtmp);
             Msg := MsgTmpString(1 .. 22);
-         else
+
+            else
              while (Msgtmplength <= 21) loop
             Append(Msgtmp, " ");
             Msgtmplength := Msgtmplength + 1;
             end loop;
               Msg := To_String(Msgtmp);
-         end if;
+            end if;
 
-         Msgchktmp := Testmsgchk(Imsg);
-         Msgchktmplength := Length(Msgchktmp);
-         while (Msgchktmplength <= 21) loop
-            Append(Msgchktmp, ' ');
-            Msgchktmplength := Msgchktmplength + 1;
-         end loop;
+            Msgchktmp := Testmsgchk(Imsg);
+            Msgchktmplength := Length(Msgchktmp);
 
+            while (Msgchktmplength <= 21) loop
+               Append(Msgchktmp, ' ');
+               Msgchktmplength := Msgchktmplength + 1;
+            end loop;
+
+
+      elsif Arg_Counter /= 1 then
+         Put_Line("Usage: jt65code 'message'");
+         Put_Line("       jt65code -t");
+         exit;
       else
-
          Msgtmplength := Length(Msgtmp);
          if Msgtmplength > 22 then
             while Msgtmplength < 100 loop
@@ -105,34 +113,35 @@ begin
             MsgTmpString := To_String(Msgtmp);
             Msg := MsgTmpString(1 .. 22);
          else
-             while (Msgtmplength <= 21) loop
-            Append(Msgtmp, " ");
-            Msgtmplength := Msgtmplength + 1;
+            while (Msgtmplength <= 21) loop
+               Append(Msgtmp, " ");
+               Msgtmplength := Msgtmplength + 1;
             end loop;
-              Msg := To_String(Msgtmp);
+            Msg := To_String(Msgtmp);
          end if;
-
          Msgchktmp := Testmsgchk(Imsg);
          Msgchktmplength := Length(Msgchktmp);
          while (Msgchktmplength <= 21) loop
             Append(Msgchktmp, ' ');
             Msgchktmplength := Msgchktmplength + 1;
          end loop;
-
       end if;
 
       Pack_JT.Fmtmsg(Msg);
       Msg0 := Msg;
       Chkmsg(Msg, Cok, Nspecial);
       Msg1 := Msg;
-      --Put_Line(Msg1);
+      --Put_Line(Msg1); -- Maybe needed?
 
       if ( Nspecial > 0 ) then
-         if ( Nspecial = 2 ) then Decoded(1 .. 2) := "RO";
+         if ( Nspecial = 2 ) then
+            Decoded(1 .. 2) := "RO";
          end if;
-         if ( Nspecial = 3 ) then Decoded(1 .. 3) := "RRR";
+         if ( Nspecial = 3 ) then
+            Decoded(1 .. 3) := "RRR";
          end if;
-         if ( Nspecial = 4 ) then Decoded(1 .. 2) := "73";
+         if ( Nspecial = 4 ) then
+            Decoded(1 .. 2) := "73";
          end if;
          Itype := -1;
          Msgtype := "Shorthand ";
@@ -141,23 +150,27 @@ begin
          Pack_JT.Pack_Msg(Msg1, Dat, Itype);
          Dgen(0 .. 11) := Integer_Array(Dat(1 .. 12));
 
-         if ( Itype = 1 ) then Msgtype := "Std Msg   ";
+         if ( Itype = 1 ) then
+            Msgtype := "Std Msg   ";
          end if;
-         if ( Itype = 2 ) then Msgtype := "Type 1 pfx";
+         if ( Itype = 2 ) then
+            Msgtype := "Type 1 pfx";
          end if;
-         if ( Itype = 3 ) then Msgtype := "Type 1 sfx";
+         if ( Itype = 3 ) then
+            Msgtype := "Type 1 sfx";
          end if;
-         if ( Itype = 4 ) then Msgtype := "Type 2 pfx";
+         if ( Itype = 4 ) then
+            Msgtype := "Type 2 pfx";
          end if;
-         if ( Itype = 5 ) then Msgtype := "Type 2 sfx";
+         if ( Itype = 5 ) then
+            Msgtype := "Type 2 sfx";
          end if;
-         if ( Itype = 6 ) then Msgtype := "Free Text ";
+         if ( Itype = 6 ) then
+            Msgtype := "Free Text ";
          end if;
-
 
          Put_Line("   Message");
          Put_Line("-----------------------------------------------------------");
-
 
          Put("   " & Msg0(1 .. 22));
 
@@ -168,8 +181,6 @@ begin
             Put(Integer'Image(Dgen(I)));
          end loop;
 
-
-
          Rs_Encode(Dgen, Sent1);
 
          --Sent(1 .. 63) := Sent1(0 .. 62);
@@ -177,8 +188,8 @@ begin
          -- DEBUG
          --New_Line; New_Line;
          --Put_Line("Rs_Encode: ");
-         --for I in Sent'Range loop
-         --   Put(Integer'Image(Sent(I)));
+         --for I in Sent1'Range loop
+         --   Put(Integer'Image(Sent1(I)));
          --end loop;
 
          -- DEBUG
@@ -194,8 +205,6 @@ begin
          -- DEBUG
          --New_Line;New_Line;
          Graycode ( Sent1, 1);
-         --Graycode ( Sent, 63);
-
          --Put_Line("GrayCode: ");
          --for I in Sent'Range loop
          --   Put(Integer'Image(Sent(I)));
@@ -229,7 +238,7 @@ begin
 
          --Sent1(0 .. 62) := Tmp(1 .. 63);
          Sent1(0 .. 62) := Tmp1(0 .. 62);
-         Rs_Decode( Sent1, Era, 0, Recd, Nerr);
+         Rs_Decode( Sent1, Era, 0, Recd);
          New_Line;New_Line;
 
          -- DEBUG
@@ -242,7 +251,7 @@ begin
          end loop;
          --New_Line;New_Line;
 
-
+         -- DEBUG
          --Recd_Convert(1 .. 12) := Recd(0 .. 11);
          --Put_Line("Recd_Convert: ");
          --for I in Recd_Convert'Range loop
@@ -250,15 +259,15 @@ begin
          --end loop;
          --New_Line;New_Line;
 
-
          Recd_Tmp(1 .. 12) := Pack_JT.Integer_Array(Recd_Convert(1 .. 12));
+         -- DEBUG
          --Put_Line("Recd_Tmp: ");
          --for I in Recd'Range loop
          --   Put(Integer'Image(Integer(Recd(I))));
          --end loop;
          --New_Line;New_Line;
 
-         Pack_JT.Unpack_Msg ( Recd_Tmp, Decoded );
+         Pack_JT.Unpack_Msg( Recd_Tmp, Decoded );
 
          Bad := " ";
          Expected := "EXACT                 ";
@@ -274,15 +283,10 @@ begin
          Put("  " & Bad);
          Put("   " & Msgtype);
          Put("         " & Expected); New_Line;
-
-         --New_Line;New_Line;New_Line;
-
          if ( Cok = "000" ) then Decoded ( 20 .. 22) := cok;
          end if;
          Pack_JT.Fmtmsg(Decoded);
       end if;
-
-
       New_Line;New_Line;New_Line;
    end loop;
    Nmsg := 1;
@@ -290,7 +294,6 @@ begin
    if ( Nmsg = 1 and Nspecial = 0) then
       null;
    end if;
-
 end JT65Code;
 
 

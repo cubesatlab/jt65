@@ -12,40 +12,47 @@ with System.Memory; use System.Memory;
 
 package body Init_Rs is
 
-   function Init_Rs_Int ( Symsize : in out Integer;
-                          Gfpoly : in out Integer;
-                          Fcr : in out Integer;
-                          Prim : in out Integer;
-                          Nroots : in out Integer;
-                          Pad : in out Integer) return Rs_Access
+   function Init_Rs_Int ( Symsize : in Integer;
+                          Gfpoly : in Integer;
+                          Fcr : in Integer;
+                          Prim : in Integer;
+                          Nroots : in Integer;
+                          Pad : in Integer) return Rs_Access
    is
 
       Rs_Ptr :  constant Rs_Access := new Rs;
       X, Y, Sr, Root, Iprim : Integer;
-      Rs_Null : constant Rs_Access := null;
+
+      Rs_Null_One,
+      Rs_Null_Two,
+      Rs_Null_Three,
+      Rs_Null_Four,
+      Rs_Null_Five,
+      Rs_Null_Six : constant Rs_Access := new Rs;
+
       Placeholder : Unsigned_8;
       One : Unsigned_8 := 1;
 
    begin
       if Symsize < 0 or Symsize > Integer(8*Unsigned_8'Size) then
-         return Rs_Null;
+         return Rs_Null_One;
       end if;
 
       if Fcr < 0 or Unsigned_8(Fcr) >= Shift_Left(1,Symsize) then
-           return Rs_Null;
+           return Rs_Null_Two;
       end if;
 
       if Prim <= 0 or Unsigned_8(Prim) >= Shift_Left(1,Symsize) then
-         return Rs_Null;
+         return Rs_Null_Three;
       end if;
 
       if Nroots < 0 or Unsigned_8(Nroots) >= Shift_Left(1,Symsize) then
-         return Rs_Null;
+         return Rs_Null_Four;
       end if;
 
       if Pad < 0 or Unsigned_8(Pad) >=
         Shift_Left(1,Symsize) - 1 - Unsigned_8(Nroots)  then
-         return Rs_Null;
+         return Rs_Null_Five;
       end if;
 
       Rs_Ptr.Mm := Symsize;
@@ -68,7 +75,7 @@ package body Init_Rs is
       end loop;
 
       if Sr /= 1 then
-         Return Rs_Null;
+         Return Rs_Null_Six;
       end if;
 
       Rs_Ptr.Fcr := Fcr;
