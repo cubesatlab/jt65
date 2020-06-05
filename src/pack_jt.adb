@@ -452,11 +452,13 @@ package body Pack_JT is
             if C1 = 'R' then
                --write(grid,1002) n+50
                --format('LA',i2.2)
-               Grid := "LA" & Integer'Image(N + 50);
+               --Grid := "LA" & Integer'Image(N + 50);
+               Move("LA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
             else
                --write(grid,1003) n+50
                --format('KA',i2.2)
-               Grid := "KA" & Integer'Image(N + 50);
+               --Grid := "KA" & Integer'Image(N + 50);
+               Move("KA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
             end if;
             Forty;
             return;
@@ -474,8 +476,8 @@ package body Pack_JT is
       procedure Twenty is
       begin
 
-         for I in Trim(Grid(Grid'First + 1 .. Grid'First + 3), Both)'range loop
-            if Grid(I) < '0' or Grid(I) > '9' then
+         for I in Grid(Grid'First + 1 .. Grid'First + 3)'range loop
+            if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
                Thirty;
                return;
             end if;
@@ -499,8 +501,8 @@ package body Pack_JT is
          N := 99;
          C1 := Grid(Grid'First);
 
-         for I in Trim(Grid, Right)'range loop
-            if Grid(I) < '0' or Grid(I) > '9' then
+         for I in Grid'range loop
+            if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
                Twenty;
                return;
             end if;
@@ -528,8 +530,8 @@ package body Pack_JT is
 
       if Grid(Grid'First) = '-' then
 
-         for I in Trim(Grid(Grid'First + 1 .. Grid'First + 2), Right)'range loop
-            if Grid(I) < '0' or Grid(I) > '9' then
+         for I in Grid(Grid'First + 1 .. Grid'First + 2)'range loop
+            if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
                Eight_Hundred;
                return;
             end if;
@@ -555,8 +557,8 @@ package body Pack_JT is
 
       elsif Grid(Grid'First .. Grid'First + 1) = "R-" then
 
-         for I in Trim(Grid(Grid'First + 2 .. Grid'First + 3), Right)'range loop
-            if Grid(I) < '0' or Grid(I) > '9' then
+         for I in Grid(Grid'First + 2 .. Grid'First + 3)'range loop
+            if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
                Eight_Hundred;
                return;
             end if;
@@ -695,12 +697,12 @@ package body Pack_JT is
       if Grid(Grid'First .. Grid'First + 1) = "KA" then
          N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
          N := N - 50;
-         Grid := Integer'Image(N);
+         Grid := Trim(Integer'Image(N), Both);
          if Grid(Grid'First) = ' ' then Grid(Grid'First) := '+'; end if;
       elsif Grid(Grid'First + 2 .. Grid'First + 3) = "LA" then
          N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
          N := N - 50;
-         Grid := "R" & Integer'Image(N);
+         Grid := "R" & Trim(Integer'Image(N), Both);
          if Grid(Grid'First + 1) = ' ' then Grid(Grid'First + 1) := '+'; end if;
       end if;
 
@@ -751,7 +753,7 @@ package body Pack_JT is
 
          end if;
 
-         if C3 = "000 " then
+         if C3 = "OOO " then
             C3 := "    ";
          end if;
 
@@ -1057,7 +1059,7 @@ package body Pack_JT is
             --write(c1,1002) nfreq
             --format('CQ ',i3.3)
             --c1 := "CQ " & Integer'Image(NFreq);
-            Move("CQ " & Integer'Image(NFreq), c1, Right, Left, Space);
+            Move("CQ " & Trim(Integer'Image(NFreq), Both), c1, Right, Left, Space);
             cqnnn := True;
          end if;
       end if;

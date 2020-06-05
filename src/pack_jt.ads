@@ -7,9 +7,6 @@ with Ada.Strings; use Ada.Strings;
 with pfx; use pfx;
 with Ada.Characters.Handling; use Ada.Characters.Handling;
 
-
-
-
 package Pack_JT is
 
    Not_Implemented : exception;
