@@ -1,8 +1,8 @@
 project JT65 is
 
-   for Source_Dirs use ("src");
+   for Source_Dirs use ("src", "check");
    for Object_Dir use "obj";
-   for Main use ("jt65code.adb");
+   for Main use ("jt65code.adb", "check_pack.adb");
 
    package Ide is
       for Default_Switches ("adacontrol") use ("-f", "jt65.aru");
