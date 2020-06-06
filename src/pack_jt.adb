@@ -1,6 +1,5 @@
 pragma SPARK_Mode(On);
 
-with Interfaces; use Interfaces;
 package body Pack_JT is
 
    --JT_IType, JT_Nc1, JT_Nc2, JT_Ng, JT_K1, JT_K2 : Integer;
@@ -40,7 +39,7 @@ package body Pack_JT is
       NBASE : constant Unsigned_32 := 37*36*10*27*27*27;
       C : Character;
       TMP : String(1 .. 6);
-      N1, N2, N3, N4, N5 , N6, NFreq : Integer := 0;
+      N1, N2, N3, N4, N5 , N6, NFreq : Integer;
 
    begin
 
@@ -657,8 +656,8 @@ package body Pack_JT is
    procedure Unpack_Grid(Ng : Integer; Grid : out String) is
       NGBASE : constant Integer := 180 * 180;
       Grid6 : String(1 .. 6);
-      DLat, DLong : Float := 0.0;
-      N : Integer := 0;
+      DLat, DLong : Float;
+      N : Integer;
 
       procedure Ten is
       begin
@@ -732,19 +731,20 @@ package body Pack_JT is
 
    procedure Pack_Msg(Msg0 : String; Dat : out Integer_Array; IType : out Integer) is
       Msg : String(1 .. 22);
-      NBASE : constant Integer := 37*36*10*27*27*27;
-      NBASE2 : constant Integer := 262178562;
+      --NBASE : constant Integer := 37*36*10*27*27*27;
+      --NBASE2 : constant Integer := 262178562;
       C1,C2 : String(1..12);
       C3 : String(1..4);
       Grid6 : String(1..6);
       Text1, Text2, Text3 : Boolean := True;
       I_Start : Integer := 1;
-      ia , ib, ic, Nv2a, Nv2b : Integer := 0;
+      ia , ib, ic : Integer;
+      Nv2a, Nv2b : Integer := 0;
       Nc1, Nc2, Ng : Unsigned_32 := 0;
       Skip_Ten : Boolean := False;
 
      procedure Three is
-        K, K1, K2 : Integer := 0;
+        K, K1, K2 : Integer;
       begin
          ic := I_Start;
          C3 := "    ";
@@ -975,8 +975,8 @@ package body Pack_JT is
       grid, psfx , junk2 : String(1..4);
       grid6 : String(1..6);
       cqnnn : Boolean := False;
-      nc1, nc2, ng : Unsigned_32 := 0;
-      iv2, NFreq, junk1, n1, n2, K, J : Integer := 0;
+      nc1, nc2, ng : Unsigned_32;
+      iv2, NFreq, junk1, n1, n2, K, J : Integer;
       --Index_Val : Integer;
 
       procedure One_Hundred is
@@ -1227,8 +1227,8 @@ package body Pack_JT is
    -- I did some limited testing with this and ended up getting the same result as its fortran equivalent
    procedure Pack_Text(Msg : String; Nc1, Nc2, Nc3 : out Unsigned_32) is
       C : String(1 .. 42);
-      Skip_Step : Boolean := False;
-      J_Count : Unsigned_32 := 0;
+      Skip_Step : Boolean;
+      J_Count : Unsigned_32;
    begin
       C := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ +-./?";
       Nc1 := 0;
@@ -1355,17 +1355,16 @@ package body Pack_JT is
    procedure Get_Pfx1(Callsign : in out String; K : out Integer; Nv2 : in out Integer) is
       Suffixes : sfx_array;
       Prefixes : pfx_array;
-      Callsign0, lof, rof : String (1..12);
+      Callsign0: String (1..12);
       C : String (1..8);
-      t_pfx : String (1 .. 4);
-      t_sfx : String (1 .. 3);
-      is_pfx, is_sfx, invalid : Boolean := True;
-      iz, islash : Integer := 0;
+      iz, islash : Integer;
 
       procedure Ten is
-         llof : Integer := 0;
-         lrof : Integer := 0;
-         I : Integer := 0;
+         llof, lrof, I : Integer;
+         t_pfx : String (1 .. 4);
+         t_sfx : String (1 .. 3);
+         lof, rof : String (1 .. 12);
+         is_pfx, is_sfx, invalid : Boolean;
       begin
          if islash /= 0 and K = 0 then
             --lof := Callsign0(1 .. islash -1);
@@ -1486,7 +1485,7 @@ package body Pack_JT is
 
    procedure Get_Pfx2(K0 : Integer; Callsign : in out String) is
       K : Integer := K0;
-      Iz : Integer := 0;
+      Iz : Integer;
       Suffix : sfx_array;
       Prefix : pfx_array;
    begin
@@ -1513,8 +1512,8 @@ package body Pack_JT is
 
 
    procedure Grid2k(Grid : String; K : out Integer) is
-      NLong, NLat : Integer := 0;
-      XLong, XLat : Float := 0.0;
+      NLong, NLat : Integer;
+      XLong, XLat : Float;
    begin
       Grid2Deg(Grid, XLong, XLat);
       NLong := Integer(XLong);
@@ -1529,8 +1528,8 @@ package body Pack_JT is
 
 
    procedure K2Grid(K : Integer; Grid : out String) is
-      NLong, NLat : Integer := 0;
-      DLong, DLat : Float := 0.0;
+      NLong, NLat : Integer;
+      DLong, DLat : Float;
    begin
       NLong := 2 * (((K - 1) / 5) mod 90) - 179;
       if K > 450 then NLong := NLong + 180; end if;
@@ -1555,7 +1554,7 @@ package body Pack_JT is
 
    --Converts ascii number, letter, or space to 0-36
    function NChar(C : Character) return Integer is
-      N : Integer := 0;
+      N : Integer;
    begin
       if C >= '0' and C <= '9' then
          N := Character'Pos(C) - Character'Pos('0');
@@ -1588,8 +1587,8 @@ package body Pack_JT is
    procedure Grid2Deg(Grid0 : String; DLong : out Float; DLat : out Float) is
       Grid : String := Grid0;
       G1, G2, G3, G4, G5, G6 : Character;
-      I, NLong, NLat, N20d : Integer := 0;
-      XMinLong, XMinLat : Float := 0.0;
+      I, NLong, NLat, N20d : Integer;
+      XMinLong, XMinLat : Float;
    begin
       --Grid := Grid0;
       I := Character'Pos(Grid(5));
@@ -1628,7 +1627,7 @@ package body Pack_JT is
 
    procedure Deg2Grid(DLong0 : Float; DLat : Float; Grid : out String) is
       DLong : Float := DLong0;
-      NLat, NLong, N1, N2, N3 : Integer := 0;
+      NLat, NLong, N1, N2, N3 : Integer;
    begin
       if DLong < -180.0 then DLong := DLong + 360.0; end if;
       if DLong > 180.0 then DLong := DLong - 360.0; end if;
