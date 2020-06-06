@@ -1,0 +1,10 @@
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 1. HELLO                  HELLO                     6:Free text   EXACT                 
+
+Packed message, 6-bit symbols  25 47  9 63 55 26 55 61 62 15 56 28
+
+Information-carrying channel symbols
+   13 42  6 48 47 62 33 24 23 52  2 23 59 25 53 21 54 44  7 56 12
+   42 57 46 33 21 35  8 42 53 35  3  0 47 56 33 14 59 56 56 57  4
+    3 13  8 28 23 19 54 30 30 11 32 36 21 41 16 23 56  0 43 44 18
