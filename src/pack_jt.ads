@@ -47,7 +47,7 @@ package Pack_JT is
    --  -1   Does not decode correctly
    procedure Pack_Msg(Msg0 : String; Dat : out Integer_Array; IType : out Integer);
 
-   procedure Unpack_Msg(Dat : Integer_Array; Msg : in out String);
+   procedure Unpack_Msg(Dat : Integer_Array; Msg : out String);
 
    procedure Pack_Text(Msg : String; Nc1, Nc2, Nc3 : out Unsigned_32);
 
