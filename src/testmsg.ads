@@ -8,6 +8,6 @@ package Testmsg is
    type Testmsgarray is array (1 .. Maxtest) of Unbounded_String;
 
    -- Initializes the two message arrays. Used for testing in jt65code.adb
-   procedure Init_Testmsg (Msg : in out Testmsgarray; Msgchk : in out Testmsgarray);
+   procedure Init_Testmsg (Msg : out Testmsgarray; Msgchk : out Testmsgarray);
 
 end Testmsg;

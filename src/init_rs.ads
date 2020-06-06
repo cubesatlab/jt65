@@ -6,7 +6,7 @@
 --------------------------------------------------------------------------------
 pragma SPARK_Mode(On);
 
-with System.Memory; use System.Memory;
+--with System.Memory; use System.Memory;
 
 package Init_Rs is
 
@@ -38,7 +38,9 @@ package Init_Rs is
                           Prim : in Integer;
                           Nroots : in Integer;
                           Pad : in Integer) return Rs_Access
-     with Pre => Fcr >= 0 and Prim >= 0 and Nroots >= 0 and Pad >= 0 and Gfpoly > 0 and Symsize >= 0;
+     with
+     Volatile_Function,
+       Pre => Fcr >= 0 and Prim >= 0 and Nroots >= 0 and Pad >= 0 and Gfpoly > 0 and Symsize >= 0;
 
    function Modnn ( Rs : in Rs_Access;
                     A : in Integer) return Integer;
