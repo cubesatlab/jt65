@@ -1,10 +1,7 @@
-with Ada.Strings.Unbounded;
-use Ada.Strings.Unbounded;
-
 
 package body Testmsg is
 
-   procedure Init_Testmsg(Msg : in out Testmsgarray; Msgchk : in out Testmsgarray) is
+   procedure Init_Testmsg(Msg : out Testmsgarray; Msgchk : out Testmsgarray) is
 
    begin
 

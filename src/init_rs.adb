@@ -7,8 +7,8 @@
 pragma SPARK_Mode(On);
 
 with Interfaces; use Interfaces;
-with Ada.Text_IO; use Ada.Text_IO;
-with System.Memory; use System.Memory;
+--with Ada.Text_IO; use Ada.Text_IO;
+--with System.Memory; use System.Memory;
 
 package body Init_Rs is
 
@@ -21,7 +21,7 @@ package body Init_Rs is
    is
 
       Rs_Ptr :  constant Rs_Access := new Rs;
-      X, Y, Sr, Root, Iprim : Integer;
+      X, Sr, Root, Iprim : Integer;
 
       Rs_Null_One,
       Rs_Null_Two,
@@ -31,7 +31,7 @@ package body Init_Rs is
       Rs_Null_Six : constant Rs_Access := new Rs;
 
       Placeholder : Unsigned_8;
-      One : Unsigned_8 := 1;
+      One : constant Unsigned_8 := 1;
 
    begin
       if Symsize < 0 or Symsize > Integer(8*Unsigned_8'Size) then
@@ -68,7 +68,7 @@ package body Init_Rs is
          Rs_Ptr.Index_Of(Sr) := I;
          Rs_Ptr.Alpha_To(I) := Sr;
          Sr := Integer(Shift_Left(Unsigned_8(Sr),1));
-         if (Unsigned_8(Sr) and Unsigned_8(Shift_Left(One,Symsize))) /= 0 then
+         if (Unsigned_8(Sr) and Shift_Left(One,Symsize)) /= 0 then
             Sr := Integer(Unsigned_8(Sr) xor Unsigned_8(Gfpoly));
          end if;
          Sr := Integer(Unsigned_8(Sr) and Unsigned_8(Rs_Ptr.Nn));
@@ -100,7 +100,7 @@ package body Init_Rs is
             if J > 0 then
                if Rs_Ptr.Genpoly(J) /= 0 then
                  X := Rs_Ptr.Index_Of(Rs_Ptr.Genpoly(J)) + Root;
-                  Y := Modnn(Rs_Ptr,X);
+                  --Y := Modnn(Rs_Ptr,X);
                Rs_Ptr.Genpoly(J) := Integer(Unsigned_8(Rs_Ptr.Genpoly(J-1)) xor
                                               Unsigned_8(Rs_Ptr.Alpha_To(Modnn(Rs_Ptr,X))));
                else
@@ -118,7 +118,7 @@ package body Init_Rs is
       return Rs_Ptr;
    end Init_Rs_Int;
 
-   function Modnn ( Rs : in  Rs_Access;
+   function Modnn ( Rs : in Rs_Access;
                     A : in Integer) return Integer
    is
       X : Integer := A;

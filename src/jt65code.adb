@@ -1,14 +1,12 @@
+pragma SPARK_Mode(ON);
+
 with Pack_JT;
 with General_JT; use General_JT;
 with Ada.Command_Line; use Ada.Command_Line;
 with Ada.Text_IO; use Ada.Text_IO;
-with General_JT; use General_JT;
 with Testmsg; use Testmsg;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Wrapkarn; use Wrapkarn;
-with Interfaces; use Interfaces;
-with Init_Rs; use Init_Rs;
-with Ada.Command_Line; use Ada.Command_Line;
 
 procedure JT65Code
 is
@@ -27,7 +25,6 @@ is
    Recd_Convert : Integer_Array(1 .. 12);
    Era : Integer_Array (0 .. 50);
    Nspecial, Nmsg, Itype, Counter, Arg_Counter  : Integer;
-   Nerr, Start : Integer := 0;
    Testmsg : Testmsgarray;
    Testmsgchk : Testmsgarray;
 
@@ -58,19 +55,19 @@ begin
    Testmsgchk(Ntest + 1) := To_Unbounded_String("73");
 
 
-   Start := 1;
+   --Start := 1;
    IncorrectPress := False;
 
    if Msgtmp /= "-t" then
       Nmsg := 1;
-      Start := 1;
+      --Start := 1;
       Testing := False;
    else
       Testing := True;
    end if;
 
 
-   for Imsg in Start .. Nmsg loop
+   for Imsg in 1 .. Nmsg loop
 
       if Testing and IncorrectPress = False then
 
@@ -129,6 +126,11 @@ begin
          end loop;
       end if;
 
+      for I in Era'Range loop
+         Era(I) := 0;
+      end loop;
+
+
       Pack_JT.Fmtmsg(Msg);
       Msg0 := Msg;
       Chkmsg(Msg, Cok, Nspecial);
@@ -175,6 +177,8 @@ begin
             Msgtype := "6:Free Text ";
          end if;
       end if;
+
+
          Rs_Encode(Dgen, Sent1);
 
          --Sent(1 .. 63) := Sent1(0 .. 62);
@@ -296,11 +300,6 @@ begin
 
       New_Line;New_Line;New_Line;
    end loop;
-   Nmsg := 1;
-   Nspecial := 0;
-   if ( Nmsg = 1 and Nspecial = 0) then
-      null;
-   end if;
 end JT65Code;
 
 
