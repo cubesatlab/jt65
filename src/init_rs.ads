@@ -6,8 +6,6 @@
 --------------------------------------------------------------------------------
 pragma SPARK_Mode(On);
 
---with System.Memory; use System.Memory;
-
 package Init_Rs is
 
    type Unsigned_Array is

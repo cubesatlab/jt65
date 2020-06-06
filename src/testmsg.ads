@@ -1,9 +1,14 @@
+--------------------------------------------------------------------------------
+-- FILE   : testmsg.ads
+-- SUBJECT: Specification of a package for ...
+-- AUTHOR : (C) Copyright 2020 by Vermont Technical College
+--
+--------------------------------------------------------------------------------
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 
 package Testmsg is
 
-   Maxtest : constant Integer := 75;
-   Ntest : constant Integer := 68;
+   Maxtest : constant Integer := 73;
 
    type Testmsgarray is array (1 .. Maxtest) of Unbounded_String;
 

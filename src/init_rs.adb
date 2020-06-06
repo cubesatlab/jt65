@@ -7,8 +7,6 @@
 pragma SPARK_Mode(On);
 
 with Interfaces; use Interfaces;
---with Ada.Text_IO; use Ada.Text_IO;
---with System.Memory; use System.Memory;
 
 package body Init_Rs is
 
@@ -100,7 +98,6 @@ package body Init_Rs is
             if J > 0 then
                if Rs_Ptr.Genpoly(J) /= 0 then
                  X := Rs_Ptr.Index_Of(Rs_Ptr.Genpoly(J)) + Root;
-                  --Y := Modnn(Rs_Ptr,X);
                Rs_Ptr.Genpoly(J) := Integer(Unsigned_8(Rs_Ptr.Genpoly(J-1)) xor
                                               Unsigned_8(Rs_Ptr.Alpha_To(Modnn(Rs_Ptr,X))));
                else

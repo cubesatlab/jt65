@@ -1,4 +1,9 @@
-
+--------------------------------------------------------------------------------
+-- FILE   : testmsg.adb
+-- SUBJECT: Specification of a package for ...
+-- AUTHOR : (C) Copyright 2020 by Vermont Technical College
+--
+--------------------------------------------------------------------------------
 package body Testmsg is
 
    procedure Init_Testmsg(Msg : out Testmsgarray; Msgchk : out Testmsgarray) is
@@ -73,6 +78,11 @@ package body Testmsg is
       Msg(66) := To_Unbounded_String("DE KA1ABC/QRP 2W");
       Msg(67) := To_Unbounded_String("KA1ABC/1 WB9XYZ/1");
       Msg(68) := To_Unbounded_String("123456789ABCDEFGH");
+      Msg(69) := To_Unbounded_String("KA1ABC WB9XYZ EN34 OOO");
+      Msg(70) := To_Unbounded_String("KA1ABC WB9XYZ OOO");
+      Msg(71) := To_Unbounded_String("RO");
+      Msg(72) := To_Unbounded_String("RRR");
+      Msg(73) := To_Unbounded_String("73");
 
 
       Msgchk(1) := To_Unbounded_String("CQ WB9XYZ EN34");
@@ -143,6 +153,11 @@ package body Testmsg is
       Msgchk(66) := To_Unbounded_String("DE KA1ABC/QRP");
       Msgchk(67) := To_Unbounded_String("KA1ABC/1 WB9X");
       Msgchk(68) := To_Unbounded_String("123456789ABCD");
+      Msgchk(69) := To_Unbounded_String("KA1ABC WB9XYZ EN34 OOO");
+      Msgchk(70) := To_Unbounded_String("KA1ABC WB9XYZ OOO");
+      Msgchk(71) := To_Unbounded_String("RO");
+      Msgchk(72) := To_Unbounded_String("RRR");
+      Msgchk(73) := To_Unbounded_String("73");
 
    end Init_Testmsg;
 
