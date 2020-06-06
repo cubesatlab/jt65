@@ -19,11 +19,11 @@ is
    Msgtmplength, Msgchktmplength: Integer;
    Cok: String (1 .. 3);
    Bad : String (1 .. 1);
-   Msgtype : String (1 .. 10);
+   Msgtype : String (1 .. 12);
    --Sent, Tmp: Integer_Array (1 .. 63);
-   Sent1, Tmp1: Integer_Array (0 .. 62);
+   Sent1, Sent_Channel, Tmp1: Integer_Array (0 .. 62);
    Dat, Recd_Tmp : Pack_JT.Integer_Array(1 .. 12);
-   Dgen, Recd : Integer_Array(0 .. 11);
+   Dgen, Recd, Dgen_Packed : Integer_Array(0 .. 11);
    Recd_Convert : Integer_Array(1 .. 12);
    Era : Integer_Array (0 .. 50);
    Nspecial, Nmsg, Itype, Counter, Arg_Counter  : Integer;
@@ -44,24 +44,26 @@ begin
 
    Init_Testmsg(Testmsg, Testmsgchk);
 
+   Nmsg := Ntest + 5;
+
    Testmsg(Ntest + 1) := To_Unbounded_String("KA1ABC WB9XYZ EN34 OOO");
    Testmsg(Ntest + 2) :=  To_Unbounded_String("KA1ABC WB9XYZ OOO");
    Testmsg(Ntest + 3) := To_Unbounded_String("RO");
-   Testmsg(Ntest + 3) := To_Unbounded_String("RRR");
-   Testmsg(Ntest + 3) := To_Unbounded_String("73");
+   Testmsg(Ntest + 4) := To_Unbounded_String("RRR");
+   Testmsg(Ntest + 5) := To_Unbounded_String("73");
    Testmsgchk(Ntest + 1) := To_Unbounded_String("KA1ABC WB9XYZ EN34 OOO");
    Testmsgchk(Ntest + 1) := To_Unbounded_String("KA1ABC WB9XYZ OOO");
    Testmsgchk(Ntest + 1) := To_Unbounded_String("RO");
    Testmsgchk(Ntest + 1) := To_Unbounded_String("RRR");
    Testmsgchk(Ntest + 1) := To_Unbounded_String("73");
 
-   Nmsg := Ntest + 5;
+
    Start := 1;
    IncorrectPress := False;
 
    if Msgtmp /= "-t" then
-      Nmsg := 2;
-      Start := 2;
+      Nmsg := 1;
+      Start := 1;
       Testing := False;
    else
       Testing := True;
@@ -70,7 +72,7 @@ begin
 
    for Imsg in Start .. Nmsg loop
 
-      if Testing = True and IncorrectPress = False then
+      if Testing and IncorrectPress = False then
 
             Msgtmp := Testmsg(Imsg);
             Msgtmplength := Length(Msgtmp);
@@ -131,9 +133,9 @@ begin
       Msg0 := Msg;
       Chkmsg(Msg, Cok, Nspecial);
       Msg1 := Msg;
-      --Put_Line(Msg1); -- Maybe needed?
 
       if ( Nspecial > 0 ) then
+
          if ( Nspecial = 2 ) then
             Decoded(1 .. 2) := "RO";
          end if;
@@ -144,43 +146,35 @@ begin
             Decoded(1 .. 2) := "73";
          end if;
          Itype := -1;
-         Msgtype := "Shorthand ";
+         Msgtype := "Shorthand   ";
+         Pack_JT.Pack_Msg(Msg1, Dat, Itype);
+         Dgen(0 .. 11) := Integer_Array(Dat(1 .. 12));
+         Dgen_Packed(0 .. 11) := Dgen(0 .. 11);
       else
 
          Pack_JT.Pack_Msg(Msg1, Dat, Itype);
          Dgen(0 .. 11) := Integer_Array(Dat(1 .. 12));
+         Dgen_Packed(0 .. 11) := Dgen(0 .. 11);
 
          if ( Itype = 1 ) then
-            Msgtype := "Std Msg   ";
+            Msgtype := "1:Std Msg   ";
          end if;
          if ( Itype = 2 ) then
-            Msgtype := "Type 1 pfx";
+            Msgtype := "2:Type 1 pfx";
          end if;
          if ( Itype = 3 ) then
-            Msgtype := "Type 1 sfx";
+            Msgtype := "3:Type 1 sfx";
          end if;
          if ( Itype = 4 ) then
-            Msgtype := "Type 2 pfx";
+            Msgtype := "4:Type 2 pfx";
          end if;
          if ( Itype = 5 ) then
-            Msgtype := "Type 2 sfx";
+            Msgtype := "5:Type 2 sfx";
          end if;
          if ( Itype = 6 ) then
-            Msgtype := "Free Text ";
+            Msgtype := "6:Free Text ";
          end if;
-
-         Put_Line("   Message");
-         Put_Line("-----------------------------------------------------------");
-
-         Put("   " & Msg0(1 .. 22));
-
-         New_Line;New_Line;
-
-         Put_Line("Packed message, 6-bit symbols: ");
-         for I in Dgen'Range loop
-            Put(Integer'Image(Dgen(I)));
-         end loop;
-
+      end if;
          Rs_Encode(Dgen, Sent1);
 
          --Sent(1 .. 63) := Sent1(0 .. 62);
@@ -205,17 +199,15 @@ begin
          -- DEBUG
          --New_Line;New_Line;
          Graycode ( Sent1, 1);
+         Sent_Channel(0 .. 62) := Sent1(0 .. 62);
          --Put_Line("GrayCode: ");
-         --for I in Sent'Range loop
-         --   Put(Integer'Image(Sent(I)));
+         --for I in Sent1'Range loop
+         --   Put(Integer'Image(Sent1(I)));
          --end loop;
 
 
          New_Line; New_Line;
-         Put_Line("Information-carrying channel symbols");
-         for I in Sent1'Range loop
-            Put(Integer'Image(Sent1(I)));
-         end loop;
+
 
          --Tmp(1 .. 63) := Sent(1 .. 63);
          Tmp1(0 .. 62) := Sent1(0 .. 62);
@@ -239,7 +231,7 @@ begin
          --Sent1(0 .. 62) := Tmp(1 .. 63);
          Sent1(0 .. 62) := Tmp1(0 .. 62);
          Rs_Decode( Sent1, Era, 0, Recd);
-         New_Line;New_Line;
+         --New_Line;New_Line;
 
          -- DEBUG
          --Put_Line("Rs_Decode: ");
@@ -277,16 +269,31 @@ begin
             then Expected := "TRUNCATED             ";
             end if;
          end if;
-         Put_Line("   Decoded           Err?      Type               Expected        ");
-         Put_Line("-----------------------------------------------------------");
+         Put_Line("   Message                    Decoded             Err? Type             Expected");
+         Put_Line("--------------------------------------------------------------------------------");
+         Put(Imsg'Image);
+         Put(". " & Msg0(1 .. 22));
          Put("   " & Decoded(1 .. 22));
-         Put("  " & Bad);
-         Put("   " & Msgtype);
-         Put("         " & Expected); New_Line;
+         Put(" " & Bad);
+         Put("  " & Msgtype);
+         Put("    " & Expected);
+         New_Line;New_Line;
          if ( Cok = "000" ) then Decoded ( 20 .. 22) := cok;
          end if;
+         Put("Packed message, 6-bit symbols: ");
+         for I in Dgen_Packed'Range loop
+            Put(Integer'Image(Dgen_Packed(I)));
+         end loop;
+         New_Line;New_Line;
+         Put_Line("Information-carrying channel symbols");
+         for I in Sent_Channel'Range loop
+            Put(Integer'Image(Sent_Channel(I)));
+            if I = 20 or I = 41 then
+               New_Line;
+            end if;
+         end loop;
          Pack_JT.Fmtmsg(Decoded);
-      end if;
+
       New_Line;New_Line;New_Line;
    end loop;
    Nmsg := 1;
@@ -295,6 +302,7 @@ begin
       null;
    end if;
 end JT65Code;
+
 
 
 
