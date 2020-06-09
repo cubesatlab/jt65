@@ -7,7 +7,7 @@ package body Pack_JT is
    add_pfx : String(1 .. 8);
 
 
-   procedure Pack_Bits(DBits : in out Octet_Array; NSymd : in out Integer; M0 : in out Integer; Sym : in out Unsigned_Array) is
+   procedure Pack_Bits(DBits : in out Octet_Array; NSymd : in out Integer; M0 : in out Integer; Sym : in out Unsigned_32_Array) is
       -- Might need to change the types for n and m
       k : Integer := 0;
       n : Octet := 0;
@@ -21,14 +21,14 @@ package body Pack_JT is
             k := k + 1;
             n := Shift_Left(n,1) or m;
          end loop;
-         Sym(i) := Integer(n);
+         Sym(i) := Unsigned_32(n);
       end loop;
 
       raise Not_Implemented with "Pack_Bits";
    end Pack_Bits;
 
 
-   procedure Unpack_Bits(Sym : Unsigned_Array; NSymd : Integer; M0 : Integer; DBits : Octet_Array) is
+   procedure Unpack_Bits(Sym : Unsigned_32_Array; NSymd : Integer; M0 : Integer; DBits : Octet_Array) is
    begin
       raise Not_Implemented with "Unpack_Bits";
    end Unpack_Bits;
@@ -729,7 +729,7 @@ package body Pack_JT is
    end Unpack_Grid;
 
 
-   procedure Pack_Msg(Msg0 : String; Dat : out Unsigned_Array; IType : out Integer) is
+   procedure Pack_Msg(Msg0 : String; Dat : out Unsigned_32_Array; IType : out Integer) is
       Msg : String(1 .. 22);
       --NBASE : constant Integer := 37*36*10*27*27*27;
       --NBASE2 : constant Integer := 262178562;
@@ -968,7 +968,7 @@ package body Pack_JT is
    end Pack_Msg;
 
    -- Need to fix null character check
-   procedure Unpack_Msg(Dat : Unsigned_Array; Msg : out String) is
+   procedure Unpack_Msg(Dat : Unsigned_32_Array; Msg : out String) is
       NBASE : Integer := 37*36*10*27*27*27;
       NGBASE : Integer := 180*180;
       c1, c2 : String(1 .. 12);
@@ -1573,7 +1573,7 @@ package body Pack_JT is
    end NChar;
 
 
-   procedure Pack50(N1, N2 : Integer; Dat : Unsigned_Array) is
+   procedure Pack50(N1, N2 : Integer; Dat : Unsigned_32_Array) is
    begin
       raise Not_Implemented with "Pack50";
    end Pack50;

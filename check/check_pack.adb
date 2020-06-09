@@ -2,10 +2,11 @@
 with Ada.Text_IO; use Ada.Text_IO;
 with Pack_JT;     use Pack_JT;
 with Interfaces; use Interfaces;
+with Unsigned_Array; use Unsigned_Array;
 
 procedure Check_Pack is
    IType : Integer;
-   Dat   : Unsigned_Array(0 .. 11);
+   Dat   : Unsigned_32_Array(0 .. 11);
    Test  : constant String := "DE KA1ABC/VE6 -22";
    Decoded_Message : String(1 .. 22);
 begin
