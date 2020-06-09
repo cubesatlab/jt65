@@ -7,7 +7,7 @@ package body Pack_JT is
    add_pfx : String(1 .. 8);
 
 
-   procedure Pack_Bits(DBits : in out Octet_Array; NSymd : in out Integer; M0 : in out Integer; Sym : in out Integer_Array) is
+   procedure Pack_Bits(DBits : in out Octet_Array; NSymd : in out Integer; M0 : in out Integer; Sym : in out Unsigned_Array) is
       -- Might need to change the types for n and m
       k : Integer := 0;
       n : Octet := 0;
@@ -28,7 +28,7 @@ package body Pack_JT is
    end Pack_Bits;
 
 
-   procedure Unpack_Bits(Sym : Integer_Array; NSymd : Integer; M0 : Integer; DBits : Octet_Array) is
+   procedure Unpack_Bits(Sym : Unsigned_Array; NSymd : Integer; M0 : Integer; DBits : Octet_Array) is
    begin
       raise Not_Implemented with "Unpack_Bits";
    end Unpack_Bits;
@@ -1573,7 +1573,7 @@ package body Pack_JT is
    end NChar;
 
 
-   procedure Pack50(N1, N2 : Integer; Dat : Integer_Array) is
+   procedure Pack50(N1, N2 : Integer; Dat : Unsigned_Array) is
    begin
       raise Not_Implemented with "Pack50";
    end Pack50;
