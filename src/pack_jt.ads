@@ -14,16 +14,16 @@ package Pack_JT is
 
    type Octet is new Unsigned_8;
    type Octet_Array is array(Positive range <>) of Octet;
-   type Integer_Array is array(Positive range <>) of Integer;
+   type Unsigned_Array is array(Natural range <>) of Unsigned_32;
 
    -- Pack 0s and 1s from DBits into Sym with M0 bits per word.
    -- NB: NSymd is the number of packed output words.
-   procedure Pack_Bits(DBits : in out Octet_Array; NSymd : in out Integer; M0 : in out Integer; Sym : in out Integer_Array);
+   procedure Pack_Bits(DBits : in out Octet_Array; NSymd : in out Integer; M0 : in out Integer; Sym : in out Unsigned_Array);
 
    -- Unpack bits from Sym into DBits, one bit per byte.
    -- NB: NSymd is the number of input words, and M0 their length.
    -- there will be M0*NSymd output bytes, each 0 or 1.
-   procedure Unpack_Bits(Sym : Integer_Array; NSymd : Integer; M0 : Integer; DBits : Octet_Array);
+   procedure Unpack_Bits(Sym : Unsigned_Array; NSymd : Integer; M0 : Integer; DBits : Octet_Array);
 
    -- Pack a valid callsign into a 28-bit integer.
    procedure Pack_Call(Call : in out String; NCall : in out  Unsigned_32; Text : out Boolean);
@@ -45,9 +45,9 @@ package Pack_JT is
    --   5   Type 2 suffix
    --   6   Free text
    --  -1   Does not decode correctly
-   procedure Pack_Msg(Msg0 : String; Dat : out Integer_Array; IType : out Integer);
+   procedure Pack_Msg(Msg0 : String; Dat : out Unsigned_Array; IType : out Integer);
 
-   procedure Unpack_Msg(Dat : Integer_Array; Msg : out String);
+   procedure Unpack_Msg(Dat : Unsigned_Array; Msg : out String);
 
    procedure Pack_Text(Msg : String; Nc1, Nc2, Nc3 : out Unsigned_32);
 
@@ -68,7 +68,7 @@ package Pack_JT is
    -- Convert ASCII number, letter, or space to 0-36 for callsign packing.
    function NChar(C : Character) return Integer;
 
-   procedure Pack50(N1, N2 : Integer; Dat : Integer_Array);
+   procedure Pack50(N1, N2 : Integer; Dat : Unsigned_Array);
 
    procedure Pack_Pfx(Call1 : String; N1 : Integer; Ng : Integer; Nadd : Integer);
 
