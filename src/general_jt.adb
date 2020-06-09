@@ -6,11 +6,7 @@
 --------------------------------------------------------------------------------
 pragma SPARK_Mode(On);
 
-with Ada.Characters.Handling; use Ada.Characters.Handling;
 with Interfaces; use Interfaces;
-with Ada.Unchecked_Conversion;
-with Ada.Numerics.Real_Arrays; use Ada.Numerics.Real_Arrays;
-with Ada.Text_IO; use Ada.Text_IO;
 
 package body General_JT is
 
@@ -30,6 +26,7 @@ package body General_JT is
                      Msg := Msg(Msg'First .. I-4);
                   end if;
                end if;
+
             end if;
          else
          if (Msg = "RO                    ") then NSpecial := 2; end if;
@@ -99,7 +96,8 @@ package body General_JT is
    is
       Temporary_Array : Integer_Array(Sent'Range);
 
-      function IGray(Num : in Integer; Dir : in Integer) return Integer is
+      function IGray(Num : in Integer; Dir : in Integer) return Integer
+      is
          Num_8: Unsigned_8;
          Sh   : Unsigned_8;
          Nn   : Unsigned_8;

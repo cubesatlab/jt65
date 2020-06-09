@@ -6,30 +6,35 @@
 --------------------------------------------------------------------------------
 pragma SPARK_Mode(On);
 
-with Interfaces; use Interfaces;
+-- For moving array to Unsigned_32
+--with Interfaces; use Interfaces;
 
 package General_JT is
 
-   -- May re-work type to be of Unsigned_8
+   -- Rework using Unsigned_32
    type Integer_Array is array(Natural range <>) of Integer;
+   Array_Out_Of_Bounds : exception;
 
    -- Converted subroutines from References to be added here
    procedure Chkmsg( Msg : in out String;
                      Cok : out String;
                      Nspecial : out Integer )
-     with
-       Pre => Msg'Length >= 1 and Msg'Length <= 22;
+     with Pre => (Cok'First = 1 and Cok'Last = 3 and Cok'Length = 3)
+     and then ((Msg'First = 1 and Msg'Last = 22 and Msg'Length = 22)
+               or else raise Array_Out_Of_Bounds);
 
    -- Performs Interleave / De-interleave
    procedure Interleave63( Sent : in out Integer_Array;
                            Num : in Integer)
-     with
-       Pre => Sent'Length >= 1 and Sent'Length <= 63;
+     with Pre => (Num = -1 or Num = 1)
+     and then ((Sent'Length = 63 and Sent'First = 0 and Sent'Last = 62)
+               or else raise Array_Out_Of_Bounds);
 
    -- Performs Graycode and applys the graycode to Output
    procedure Graycode(Sent : in out Integer_Array; Dir : in Integer)
-     with
-       Pre => Sent'First = 0 and Sent'Last = 62 and Sent'Length = 63;
+     with Pre => (Dir = -1 or Dir = 1)
+     and then ((Sent'Length = 63 and Sent'First = 0 and Sent'Last = 62)
+               or else raise Array_Out_Of_Bounds);
 
 
 end General_JT;

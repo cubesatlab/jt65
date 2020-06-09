@@ -4,8 +4,6 @@
 -- AUTHOR : (C) Copyright 2020 by Vermont Technical College
 --
 --------------------------------------------------------------------------------
-pragma SPARK_Mode(ON);
-
 with Pack_JT;
 with General_JT; use General_JT;
 with Ada.Command_Line; use Ada.Command_Line;
@@ -40,7 +38,7 @@ begin
    Arg_Counter := 0;
    IncorrectPress := False;
 
-    for I in 1 .. Argument_Count loop
+   for I in 1 .. Argument_Count loop
       Msgtmp := To_Unbounded_String(Argument(1));
       Arg_Counter :=  Argument_Count;
    end loop;
@@ -67,8 +65,12 @@ begin
       while Length(Msgtmp) < 100 loop
          Append(Msgtmp, " ");
       end loop;
-      MsgTmpString := To_String(Msgtmp);
-      Msg := MsgTmpString(1 .. 22);
+      if Length(Msgtmp) = 100 then
+         MsgTmpString := To_String(Msgtmp);
+         Msg := MsgTmpString(1 .. 22);
+      else
+         exit;
+      end if;
 
       -- This will be dealt with. Satisfies SPARK warning for now.
       for I in Era'Range loop

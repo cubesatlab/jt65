@@ -6,9 +6,6 @@
 --------------------------------------------------------------------------------
 pragma SPARK_Mode(On);
 
-with Init_Rs; use Init_Rs;
-with Ada.Text_IO; use Ada.Text_IO;
-
 package body Wrapkarn is
 
    procedure Encode_Rs_Int( Rs : in Rs_Access;
@@ -16,9 +13,8 @@ package body Wrapkarn is
                             Bb : out Integer_Array ) is
 
       Feedback, X : Integer;
-      Nroots : Integer := 51;
+      Nroots : constant Integer := 51;
       Rs_Null : constant Rs_Access := null;
-
    begin
       for I in Bb'Range loop
          Bb(I) := 0;
@@ -52,20 +48,20 @@ package body Wrapkarn is
                            No_Eras : in Integer ) return Integer_Array
    is
 
-      procedure Finish( Eras_Pos1 : in out Integer_Array;
-                        Counter : in Integer;
-                        Loc1 : in Integer_Array)
-      is
+      --procedure Finish( Eras_Pos1 : in out Integer_Array;
+      --                  Counter : in Integer;
+      --                  Loc1 : in Integer_Array)
+      --is
          --Eras_Pos_Null : constant Eras_Pos_Access := null;
-      begin
+      --begin
          --if Eras_Pos1 /= Eras_Pos_Null then
-            for I in 0 .. Counter - 1 loop
-               Eras_Pos1(I) := Loc1(I);
-            end loop;
+         --   for I in 0 .. Counter - 1 loop
+         --      Eras_Pos1(I) := Loc1(I);
+         --   end loop;
          --end if;
-      end Finish;
+      --end Finish;
 
-      Nroots : Integer := 51;
+      Nroots : constant Integer := 51;
       Deg_Lambda, El, Deg_Omega : Integer;
       --I, J, R,
       K : Integer;
@@ -73,27 +69,28 @@ package body Wrapkarn is
       Modnn_Tmp, Modnn_Tmp2, Modnn_Tmp3 : Integer;
 
       -- Err + Eras Locator Poly and syndrome poly
-      Lambda : Integer_Array(0 .. 51);
+      Lambda : Integer_Array(0 .. 51) := (others => 0);
       S : Integer_Array(0 .. 50);
 
-      B, T, Omega, Reg : Integer_Array(0 .. 51);
-      Root, Loc : Integer_Array(0 .. 51);
+      B, T, Omega, Reg : Integer_Array(0 .. 51) := (others => 0);
+      Root, Loc : Integer_Array(0 .. 51) := (others => 0);
       Syn_Error, Count : Integer;
       Rs_Null : constant Rs_Access := null;
       Data : Integer_Array(0 .. 62);
       Eras_Pos : Integer_Array(0 .. 49);
    begin
-      --Data(0 .. 62) := Data_In(0 .. 62);
+      -- Initialization
+      for I in Eras_Pos'Range loop
+         Eras_Pos(I) := Eras_Pos_In(I);
+      end loop;
       for I in Data'Range loop
          Data(I) := Data_In(I);
       end loop;
 
-      Eras_Pos(0 .. 49) := Eras_Pos_In(0 .. 49);
       if Rs /= Rs_Null then
          for I in 0 .. Nroots - 1 loop
             S(I) := Data(0);
          end loop;
-
          for J in 1 .. Rs.Nn - Rs.Pad-1 loop
             for I in 0 .. Nroots-1 loop
                if S(I) = 0 then
@@ -116,14 +113,14 @@ package body Wrapkarn is
          if Syn_Error = 0 then
             -- If syndrome is zero, data() is a codeword and there are no errors
             -- to corret. Return Data() unmodified.
-            Count := 0;
-            Finish(Eras_Pos, Count, Loc);
-            return Data;
-            --return Count;
+            --Count := 0;
+            --Finish(Eras_Pos, Count, Loc);
+            return Data; -- Always returning here, have never found an error.
+                         -- This needs looking into, to ensure the deep-search decoder
+                         -- is working properly.
          end if;
          Lambda(0 .. 50) := (others=>0);
          Lambda(0) := 1;
-
          if No_Eras > 0 then
             Y := Rs.Prim * (Rs.Nn - 1 - Eras_Pos(0));
             Lambda(1) := Rs.Alpha_To(Modnn(Rs, Y));
@@ -136,7 +133,7 @@ package body Wrapkarn is
                     Modnn_Tmp := U + Tmp;
                      Lambda(J) :=
                        Integer(Unsigned_8(Lambda(J)) xor
-                                            Unsigned_8(Rs.Alpha_To(Modnn(Rs, Modnn_Tmp))));
+                                 Unsigned_8(Rs.Alpha_To(Modnn(Rs, Modnn_Tmp))));
                   end if;
                end loop;
             end loop;
@@ -164,12 +161,6 @@ package body Wrapkarn is
             end loop;
             Discr_R := Rs.Index_Of(Discr_R);
 
-            -- Testing
-            --for I in 0 .. Nroots loop
-            --   null;
-              -- Put_Line("B("&I'Image&") = "&Integer'Image(B(I)));
-            --end loop;
-
             if Discr_R = Rs.Nn then
                B(1) := B(0);
                B(0) := Rs.Nn;
@@ -191,7 +182,7 @@ package body Wrapkarn is
                      B(I) := (if Lambda(I) = 0 then Rs.Nn else Modnn(Rs,Modnn_Tmp3));
                   end loop;
                else
-                  -- Error here
+                  -- TODO: Maybe error here?
                   -- 2 lines below: B(x) <-- inv(discr_r_) * lambda(x)
                   B(1) := B(0);
                   B(0) := Rs.Nn;
@@ -223,6 +214,7 @@ package body Wrapkarn is
                   Q := Integer(Unsigned_8(Q) xor Unsigned_8(Rs.Alpha_To(Reg(J))));
                end if;
             end loop;
+
             if Q /= 0 then
                null;
             else
@@ -242,12 +234,13 @@ package body Wrapkarn is
          if Deg_Lambda /= Count then
             -- Deg(Lambda unequal to number of roots => uncorrectable
             -- error detected
-            Count := -1;
-            Finish(Eras_Pos, Count, Loc);
+            -- Count := -1;
+            -- Finish(Eras_Pos, Count, Loc);
             return Data;
          end if;
          -- Compute err+eras evaluator poly omega(x) = s(x)*lambda(x) (modulo
          -- x **Nroots). In index form. Also find deg(omega).
+
          Deg_Omega := Deg_Lambda - 1;
          for I in 0 .. Deg_Omega loop
             Tmp := 0;
@@ -274,9 +267,9 @@ package body Wrapkarn is
             Num2 := Rs.Alpha_To(Modnn(Rs,Y));
             Den := 0;
 
-            --Lamda(I + 1) for I even is the formal dericative lambda_pr of lambda(I)
+            -- Lamda(I + 1) for I even is the formal dericative lambda_pr of lambda(I)
             -- Bitwise not operation in ada?
-            --Tmp := Integer(Unsigned_8((if Deg_Lambda < Nroots - 1 then Deg_Lambda else Nroots - 1)) and Unsigned_8((not 1)));
+            -- Tmp := Integer(Unsigned_8((if Deg_Lambda < Nroots - 1 then Deg_Lambda else Nroots - 1)) and Unsigned_8((not 1)));
             Tmp := 1;
             for I in reverse 0 .. Tmp loop
                if Lambda(I + 1) /= Rs.Nn then
@@ -288,10 +281,10 @@ package body Wrapkarn is
                   R := Rs.Index_Of(Num1) + Rs.Index_Of(Num2) + Rs.Nn - Rs.Index_Of(Den);
                   Data(Loc(J) - Rs.Pad) := Integer(Unsigned_8(Data(Loc(J) - Rs.Pad)) xor Unsigned_8(Rs.Alpha_To(Modnn(Rs,R))));
                end if;
-               Tmp := Tmp - 2;
+               --Tmp := Tmp - 2;
             end loop;
          end loop;
-         Finish(Eras_Pos, Count, Loc);
+         --Finish(Eras_Pos, Count, Loc);
          return Data;
       end if;
       return Data;
@@ -301,14 +294,15 @@ package body Wrapkarn is
                         Sent : in out Integer_Array )
    is
 
-      Dat1 : Integer_Array(0..11);
+      Dat1 : Integer_Array(0 .. 11);
       B : Integer_Array(0 .. 50);
-      Symsize : Integer := 6;
-      Gfpoly : Integer := 16#43#;
-      Fcr : Integer := 3;
-      Prim : Integer  := 1;
-      Nroots : Integer := 51;
-      Pad : Integer := 0;
+      Symsize : constant Integer := 6;
+      Gfpoly : constant Integer := 16#43#;
+      Fcr : constant Integer := 3;
+      Prim : constant Integer  := 1;
+      Nroots : constant Integer := 51;
+      Pad : constant Integer := 0;
+
    begin
       if First then
          -- Initialize the JT65 codec
@@ -346,12 +340,12 @@ package body Wrapkarn is
       Numera : Integer;
       Era_Pos : Integer_Array(0 .. 49);
       Recd, Recd_Out: Integer_Array(0 .. 62);
-      Symsize : Integer := 6;
-      Gfpoly : Integer := 16#43#;
-      Fcr : Integer := 3;
-      Prim : Integer  := 1;
-      Nroots : Integer := 51;
-      Pad : Integer := 0;
+      Symsize : constant Integer := 6;
+      Gfpoly : constant Integer := 16#43#;
+      Fcr : constant Integer := 3;
+      Prim : constant Integer  := 1;
+      Nroots : constant Integer := 51;
+      Pad : constant Integer := 0;
 
    begin
 
@@ -367,19 +361,18 @@ package body Wrapkarn is
          Recd(12 + I) := Recd0(50 - I);
       end loop;
 
-
-      for I in Era_Pos'Range loop
-         Era_Pos(I) := 0;
-      end loop;
-      --TO DO: proper handling of Era_Pos
       if Numera /= 0 then
          for I in 1 .. Numera loop
             Era_Pos(I) := Era(I);
          end loop;
+      else
+      for I in Era_Pos'Range loop
+            Era_Pos(I) := 0;
+      end loop;
       end if;
+
       -- No longer returning the number of errors to meet
       -- SPARK flow analysis requirements
-      --Nerr := Decode_Rs_Int( Reed_S, Recd, Era_Pos, Numera );
       Recd_Out := Decode_Rs_Int( Reed_S, Recd, Era_Pos, Numera );
       for I in Decoded'Range loop
          Decoded(I) := 0;
