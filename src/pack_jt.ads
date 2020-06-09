@@ -15,6 +15,7 @@ package Pack_JT is
    type Octet is new Unsigned_8;
    type Octet_Array is array(Positive range <>) of Octet;
    type Integer_Array is array(Positive range <>) of Integer;
+   type Unsigned_Array is array(Natural range <>) of Unsigned_32;
 
    -- Pack 0s and 1s from DBits into Sym with M0 bits per word.
    -- NB: NSymd is the number of packed output words.
@@ -45,9 +46,9 @@ package Pack_JT is
    --   5   Type 2 suffix
    --   6   Free text
    --  -1   Does not decode correctly
-   procedure Pack_Msg(Msg0 : String; Dat : out Integer_Array; IType : out Integer);
+   procedure Pack_Msg(Msg0 : String; Dat : out Unsigned_Array; IType : out Integer);
 
-   procedure Unpack_Msg(Dat : Integer_Array; Msg : out String);
+   procedure Unpack_Msg(Dat : Unsigned_Array; Msg : out String);
 
    procedure Pack_Text(Msg : String; Nc1, Nc2, Nc3 : out Unsigned_32);
 

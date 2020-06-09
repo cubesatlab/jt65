@@ -729,7 +729,7 @@ package body Pack_JT is
    end Unpack_Grid;
 
 
-   procedure Pack_Msg(Msg0 : String; Dat : out Integer_Array; IType : out Integer) is
+   procedure Pack_Msg(Msg0 : String; Dat : out Unsigned_Array; IType : out Integer) is
       Msg : String(1 .. 22);
       --NBASE : constant Integer := 37*36*10*27*27*27;
       --NBASE2 : constant Integer := 262178562;
@@ -952,23 +952,23 @@ package body Pack_JT is
       --JT_Nc1 := Nc1;
       --JT_Nc2 := Nc2;
       --JT_Ng := Ng;
-      Dat(1) := Integer(Shift_Right(Nc1, 22) and 63);
-      Dat(2) := Integer(Shift_Right(Nc1, 16) and 63);
-      Dat(3) := Integer(Shift_Right(Nc1, 10) and 63);
-      Dat(4) := Integer(Shift_Right(Nc1, 4) and 63);
-      Dat(5) := Integer(4 * (Nc1 and 15) + (Shift_Right(Nc2, 26) and 3));
-      Dat(6) := Integer(Shift_Right(Nc2, 20) and 63);
-      Dat(7) := Integer(Shift_Right(Nc2, 14) and 63);
-      Dat(8) := Integer(Shift_Right(Nc2, 8) and 63);
-      Dat(9) := Integer(Shift_Right(Nc2, 2) and 63);
-      Dat(10) := Integer(16 * (Nc2 and 3) + (Shift_Right(Ng, 12) and 15));
-      Dat(11) := Integer(Shift_Right(Ng, 6) and 63);
-      Dat(12) := Integer(Ng and 63);
+      Dat(0) := Shift_Right(Nc1, 22) and 63;
+      Dat(1) := Shift_Right(Nc1, 16) and 63;
+      Dat(2) := Shift_Right(Nc1, 10) and 63;
+      Dat(3) := Shift_Right(Nc1, 4) and 63;
+      Dat(4) := 4 * (Nc1 and 15) + (Shift_Right(Nc2, 26) and 3);
+      Dat(5) := Shift_Right(Nc2, 20) and 63;
+      Dat(6) := Shift_Right(Nc2, 14) and 63;
+      Dat(7) := Shift_Right(Nc2, 8) and 63;
+      Dat(8) := Shift_Right(Nc2, 2) and 63;
+      Dat(9) := 16 * (Nc2 and 3) + (Shift_Right(Ng, 12) and 15);
+      Dat(10) := Shift_Right(Ng, 6) and 63;
+      Dat(11) := Ng and 63;
 
    end Pack_Msg;
 
    -- Need to fix null character check
-   procedure Unpack_Msg(Dat : Integer_Array; Msg : out String) is
+   procedure Unpack_Msg(Dat : Unsigned_Array; Msg : out String) is
       NBASE : Integer := 37*36*10*27*27*27;
       NGBASE : Integer := 180*180;
       c1, c2 : String(1 .. 12);
@@ -1028,13 +1028,13 @@ package body Pack_JT is
       end Ten;
 
    begin
-      nc1 := Shift_Left(Unsigned_32(Dat(1)), 22) + Shift_Left(Unsigned_32(Dat(2)), 16) + Shift_Left(Unsigned_32(Dat(3)), 10) +
-        Shift_Left(Unsigned_32(Dat(4)), 4) + (Shift_Right(Unsigned_32(Dat(5)), 2) and 15);
+      nc1 := Shift_Left(Dat(0), 22) + Shift_Left(Dat(1), 16) + Shift_Left(Dat(2), 10) +
+        Shift_Left(Dat(3), 4) + (Shift_Right(Dat(4), 2) and 15);
 
-      nc2 := Shift_Left((Unsigned_32(Dat(5)) and 3), 26) + Shift_Left(Unsigned_32(Dat(6)), 20) + Shift_Left(Unsigned_32(Dat(7)), 14) +
-        Shift_Left(Unsigned_32(Dat(8)), 8) + Shift_Left(Unsigned_32(Dat(9)), 2) + (Shift_Right(Unsigned_32(Dat(10)), 4) and 3);
+      nc2 := Shift_Left((Dat(4) and 3), 26) + Shift_Left(Dat(5), 20) + Shift_Left(Dat(6), 14) +
+        Shift_Left(Dat(7), 8) + Shift_Left(Dat(8), 2) + (Shift_Right(Dat(9), 4) and 3);
 
-      ng := Shift_Left((Unsigned_32(Dat(10)) and 15), 12) + Shift_Left(Unsigned_32(Dat(11)), 6) + Unsigned_32(Dat(12));
+      ng := Shift_Left((Dat(9) and 15), 12) + Shift_Left(Dat(10), 6) + Dat(11);
 
       if ng >= 32768 then
          Unpack_Text(nc1, nc2, ng, Msg);
