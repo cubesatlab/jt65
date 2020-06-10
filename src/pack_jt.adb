@@ -6,14 +6,13 @@ package body Pack_JT is
    --JT_C1, JT_C2, JT_C3 : String(1 .. 6);
    add_pfx : String(1 .. 8);
 
-
-   procedure Pack_Bits(DBits : in out Octet_Array; NSymd : in out Integer; M0 : in out Integer; Sym : in out Unsigned_32_Array) is
+   --Might need to fix the index for the arrays
+   procedure Pack_Bits(DBits : Octet_Array; NSymd : Integer; M0 : Integer; Sym : out Unsigned_32_Array) is
       -- Might need to change the types for n and m
       k : Integer := 0;
-      n : Octet := 0;
+      n : Octet;
       m : Octet;
    begin
-      -- these loops might need to be shifted back by one because of how arrays work in Fortran
       for i in 0 .. NSymd-1 loop
          n := 0;
          for j in 0 .. M0-1 loop
@@ -23,14 +22,25 @@ package body Pack_JT is
          end loop;
          Sym(i) := Unsigned_32(n);
       end loop;
-
-      raise Not_Implemented with "Pack_Bits";
    end Pack_Bits;
 
-
-   procedure Unpack_Bits(Sym : Unsigned_32_Array; NSymd : Integer; M0 : Integer; DBits : Octet_Array) is
+   --Might need to fix the index for the arrays
+   procedure Unpack_Bits(Sym : Unsigned_32_Array; NSymd : Integer; M0 : Integer; DBits : out Octet_Array) is
+      K : Integer := 0;
+      Mask : Unsigned_32;
    begin
-      raise Not_Implemented with "Unpack_Bits";
+      for I in 0 .. NSymd - 1 loop
+         Mask := Shift_Left(1, M0 - 1);
+         for J in 0 .. M0 - 1 loop
+            K := K + 1;
+            DBits(K) := 0;
+            if (Mask and Sym(I)) /= 0 then
+               DBits(K) := 1;
+            end if;
+            Mask := Shift_Right(Mask, 1);
+         end loop;
+      end loop;
+
    end Unpack_Bits;
 
    --Packs a valid callsign into a 28-bit integer
@@ -66,7 +76,6 @@ package body Pack_JT is
          return;
       end if;
 
-      TMP := "      ";
 
       if Call(Call'First + 2) >= '0' and Call(Call'First + 2) <= '9' then
          --TMP := Call;
@@ -120,7 +129,7 @@ package body Pack_JT is
 
 
    procedure Unpack_Call(NCall : Unsigned_32; Word : out String; Iv2 : out Integer; Psfx : out String) is
-      NBASE : constant Integer := 37 * 36 * 10 * 27 * 27 * 27;
+      --NBASE : constant Integer := 37 * 36 * 10 * 27 * 27 * 27;
       C : constant String := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
       N : Integer := Integer(NCall);
       I : Integer := 0;
@@ -969,8 +978,8 @@ package body Pack_JT is
 
    -- Need to fix null character check
    procedure Unpack_Msg(Dat : Unsigned_32_Array; Msg : out String) is
-      NBASE : Integer := 37*36*10*27*27*27;
-      NGBASE : Integer := 180*180;
+      NBASE : constant Integer := 37*36*10*27*27*27;
+      --NGBASE : Integer := 180*180;
       c1, c2 : String(1 .. 12);
       grid, psfx , junk2 : String(1..4);
       grid6 : String(1..6);
@@ -1145,7 +1154,7 @@ package body Pack_JT is
          Get_Pfx2(K, c2);
       end if;
 
---        Index_Val := Index(c1, " "); -- Should be looking for null characters not blank space
+      --  Index_Val := Index(c1, Character'Val(0)); -- Should be looking for null characters not blank Space
 --
 --        if Index_Val >= 3 then
 --           --c1 := c1(1 .. Index_Val - 1) & "            ";
@@ -1315,7 +1324,7 @@ package body Pack_JT is
    procedure Unpack_Text(Nc1a, Nc2a, Nc3a : Unsigned_32; Msg : in out String) is
       Nc1, Nc2, Nc3 : Unsigned_32;
       J : Integer;
-      C : String := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ +-./?";
+      C : constant String := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ +-./?";
    begin
       Nc1 := Nc1a;
       Nc2 := Nc2a;
@@ -1540,15 +1549,33 @@ package body Pack_JT is
    end K2Grid;
 
 
-   procedure Grid2N(Grid : String; N : Integer) is
+   procedure Grid2N(Grid : String; N : out Integer) is
+      I1, I2, I : Integer;
    begin
-      raise Not_Implemented with "Grid2N";
+      I1 := Character'Pos(Grid(Grid'First)) - Character'Pos('A');
+      I2 := Character'Pos(Grid(Grid'First + 2)) - Character'Pos('0');
+      I := 10 * I1 + I2;
+      N := -I - 31;
    end Grid2N;
 
 
-   procedure N2Grid(N : Integer; Gride : String) is
+   procedure N2Grid(N : Integer; Grid : in out String) is
+      I, I1, I2 : Integer;
    begin
-      raise Not_Implemented with "N2Grid";
+
+      if N > -31 or N < -70 then
+         raise N2Grid_Error with "Error in N2Grid";
+      end if;
+
+      I := -(N + 31);
+      I1 := I / 10;
+      I2 := I mod 10;
+
+      Grid(Grid'First) := Character'Val(Character'Pos('A') + I1);
+      Grid(Grid'First + 1) := 'A';
+      Grid(Grid'First + 2) := Character'Val(Character'Pos('0') + I2);
+      Grid(Grid'First + 3) := '0';
+
    end N2Grid;
 
 
@@ -1573,9 +1600,29 @@ package body Pack_JT is
    end NChar;
 
 
-   procedure Pack50(N1, N2 : Integer; Dat : Unsigned_32_Array) is
+   procedure Pack50(N1, N2 : Unsigned_32; Dat : out Unsigned_32_Array) is
+      I1 : Unsigned_32;
    begin
-      raise Not_Implemented with "Pack50";
+
+      I1 := Shift_Right(N1, 20) and 255;
+      Dat(0) := I1;
+      I1 := Shift_Right(N1, 12) and 255;
+      Dat(1) := I1;
+      I1 := Shift_Right(N1, 4) and 255;
+      Dat(2) := I1;
+      I1 := 16 * (N1 and 15) + (Shift_Right(N2, 18) and 15);
+      Dat(3) := I1;
+      I1 := Shift_Right(N2, 10) and 255;
+      Dat(4) := I1;
+      I1 := Shift_Right(N2, 2) and 255;
+      Dat(5) := I1;
+      I1 := 64 * (N2 and 3);
+      Dat(6) := I1;
+      Dat(7) := 0;
+      Dat(8) := 0;
+      Dat(9) := 0;
+      Dat(10) := 0;
+
    end Pack50;
 
 

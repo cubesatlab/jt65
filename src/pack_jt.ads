@@ -12,6 +12,7 @@ package Pack_JT is
 
    Not_Implemented : exception;
    Invalid_Callsign : exception;
+   N2Grid_Error : exception;
 
    type Octet is new Unsigned_8;
    type Octet_Array is array(Positive range <>) of Octet;
@@ -19,12 +20,12 @@ package Pack_JT is
 
    -- Pack 0s and 1s from DBits into Sym with M0 bits per word.
    -- NB: NSymd is the number of packed output words.
-   procedure Pack_Bits(DBits : in out Octet_Array; NSymd : in out Integer; M0 : in out Integer; Sym : in out Unsigned_32_Array);
+   procedure Pack_Bits(DBits : Octet_Array; NSymd : Integer; M0 : Integer; Sym : out Unsigned_32_Array);
 
    -- Unpack bits from Sym into DBits, one bit per byte.
    -- NB: NSymd is the number of input words, and M0 their length.
    -- there will be M0*NSymd output bytes, each 0 or 1.
-   procedure Unpack_Bits(Sym : Unsigned_32_Array; NSymd : Integer; M0 : Integer; DBits : Octet_Array);
+   procedure Unpack_Bits(Sym : Unsigned_32_Array; NSymd : Integer; M0 : Integer; DBits : out Octet_Array);
 
    -- Pack a valid callsign into a 28-bit integer.
    procedure Pack_Call(Call : in out String; NCall : in out  Unsigned_32; Text : out Boolean);
@@ -62,14 +63,14 @@ package Pack_JT is
 
    procedure K2Grid(K : Integer; Grid : out String);
 
-   procedure Grid2N(Grid : String; N : Integer);
+   procedure Grid2N(Grid : String; N : out Integer);
 
-   procedure N2Grid(N : Integer; Gride : String);
+   procedure N2Grid(N : Integer; Grid : in out String);
 
    -- Convert ASCII number, letter, or space to 0-36 for callsign packing.
    function NChar(C : Character) return Integer;
 
-   procedure Pack50(N1, N2 : Integer; Dat : Unsigned_32_Array);
+   procedure Pack50(N1, N2 : Unsigned_32; Dat : out Unsigned_32_Array);
 
    procedure Pack_Pfx(Call1 : String; N1 : Integer; Ng : Integer; Nadd : Integer);
 
