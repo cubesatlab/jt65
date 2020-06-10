@@ -6,74 +6,54 @@
 --------------------------------------------------------------------------------
 pragma SPARK_Mode(On);
 
-with Interfaces; use Interfaces;
+--with Interfaces; use Interfaces;
 
 package body Init_Rs is
 
-   function Init_Rs_Int ( Symsize : in Integer;
-                          Gfpoly : in Integer;
-                          Fcr : in Integer;
-                          Prim : in Integer;
-                          Nroots : in Integer;
-                          Pad : in Integer) return Rs_Access
+   function Init_Rs_Int ( Symsize : in Unsigned_32;
+                          Gfpoly : in Unsigned_32;
+                          Fcr : in Unsigned_32;
+                          Prim : in Unsigned_32;
+                          Nroots : in Unsigned_32;
+                          Pad : in Unsigned_32) return Rs_Access
    is
 
       Rs_Ptr : constant Rs_Access := new Rs;
-      X, Sr, Root, Iprim : Integer;
+      X, Sr, Root, Iprim : Unsigned_32;
       Prop : Boolean;
 
-      Rs_Null_One,
-      Rs_Null_Two,
-      Rs_Null_Three,
-      Rs_Null_Four,
-      Rs_Null_Five,
-      Rs_Null_Six : constant Rs_Access := new Rs;
+      Rs_Null : constant Rs_Access := new Rs;
 
-      Placeholder : Unsigned_8;
-      One : constant Unsigned_8 := 1;
+      Placeholder : Unsigned_32;
+      One : constant Unsigned_32 := 1;
 
    begin
 
-      if Symsize < 0 or Symsize > Integer(8*Unsigned_8'Size) then
-         return Rs_Null_One;
-      end if;
-      if Fcr < 0 or Unsigned_8(Fcr) >= Shift_Left(1,Symsize) then
-         return Rs_Null_Two;
-      end if;
-      if Prim <= 0 or Unsigned_8(Prim) >= Shift_Left(1,Symsize) then
-         return Rs_Null_Three;
-      end if;
-      if Nroots < 0 or Unsigned_8(Nroots) >= Shift_Left(1,Symsize) then
-         return Rs_Null_Four;
-      end if;
-      if Pad < 0 or Unsigned_8(Pad) >=
-        Shift_Left(1,Symsize) - 1 - Unsigned_8(Nroots) then
-         return Rs_Null_Five;
-      end if;
-
       Rs_Ptr.Mm := Symsize;
-      Placeholder := Shift_Left(1,Symsize)-1;
-      Rs_Ptr.Nn := Integer(Placeholder);
+      Placeholder := Shift_Left(1,Integer(Symsize))-1;
+      Rs_Ptr.Nn := Placeholder;
       Rs_Ptr.Pad := Pad;
 
       Rs_Ptr.Index_Of(0) := Rs_Ptr.Nn;
-      Rs_Ptr.Alpha_To(Rs_Ptr.Nn) := 0;
+      Rs_Ptr.Alpha_To(Integer(Rs_Ptr.Nn)) := 0;
 
       Sr := 1;
       Prop := True;
       for I in 0 .. Rs_Ptr.Nn-1 loop
-         Rs_Ptr.Index_Of(Sr) := I;
-         Rs_Ptr.Alpha_To(I) := Sr;
-         Sr := Integer(Shift_Left(Unsigned_8(Sr),1));
-         if (Unsigned_8(Sr) and Shift_Left(One,Symsize)) /= 0 then
-            Sr := Integer(Unsigned_8(Sr) xor Unsigned_8(Gfpoly));
-         end if;
-         Sr := Integer(Unsigned_8(Sr) and Unsigned_8(Rs_Ptr.Nn));
+         --if Sr /= 0  and I <= Unsigned_32'Last and Sr <= Unsigned_32'Last then
+            Rs_Ptr.Index_Of(Integer(Sr)) := I;
+            Rs_Ptr.Alpha_To(Integer(I)) := Sr;
+            Sr := Shift_Left(Sr,1);
+            if (Sr and Shift_Left(One,Integer(Symsize))) /= 0 then
+               Sr := Sr xor Gfpoly;
+            end if;
+            Sr := Sr and Rs_Ptr.Nn;
+         --end if;
          pragma Loop_Invariant(if Sr > 0 then Prop);
       end loop;
 
       if Sr /= 1 then
-         return Rs_Null_Six;
+         return Rs_Null;
       else
 
          Rs_Ptr.Fcr := Fcr;
@@ -100,21 +80,23 @@ package body Init_Rs is
             for J in reverse 0 .. I loop
                if J > 0 then
                   if Rs_Ptr.Genpoly(J) /= 0 then
-                     X := Rs_Ptr.Index_Of(Rs_Ptr.Genpoly(J)) + Root;
-                     Rs_Ptr.Genpoly(J) := Integer(Unsigned_8(Rs_Ptr.Genpoly(J-1)) xor
-                                              Unsigned_8(Rs_Ptr.Alpha_To(Modnn(Rs_Ptr,X))));
+                     X := Rs_Ptr.Index_Of(Integer(Rs_Ptr.Genpoly(J))) + Root;
+                     Rs_Ptr.Genpoly(J) := Rs_Ptr.Genpoly(J-1) xor
+                                              Rs_Ptr.Alpha_To(Modnn(Rs_Ptr,X));
                   else
                      Rs_Ptr.Genpoly(J) := Rs_Ptr.Genpoly(J-1);
                   end if;
                end if;
             end loop;
-            X := Rs_Ptr.Index_Of(Rs_Ptr.Genpoly(0)) + Root;
-            Rs_Ptr.Genpoly(0) := Rs_Ptr.Alpha_To(Modnn(Rs_Ptr,X));
+            X := Rs_Ptr.Index_Of(Integer(Rs_Ptr.Genpoly(0))) + Root;
+            if X < 256 then
+               Rs_Ptr.Genpoly(0) := Rs_Ptr.Alpha_To(Modnn(Rs_Ptr,X));
+            end if;
             Root := Root + Prim;
          end loop;
          Prop := True;
          for I in 0 .. Nroots loop
-            Rs_Ptr.Genpoly(I) := Rs_Ptr.Index_Of(Rs_Ptr.Genpoly(I));
+            Rs_Ptr.Genpoly(Integer(I)) := Rs_Ptr.Index_Of(Integer(Rs_Ptr.Genpoly(Integer(I))));
             pragma Loop_Invariant(if Sr > 0 then Prop);
          end loop;
       end if;
@@ -122,16 +104,16 @@ package body Init_Rs is
    end Init_Rs_Int;
 
    function Modnn ( Rs : in Rs_Access;
-                    A : in Integer) return Integer
+                    A : in Unsigned_32) return Integer
    is
-      X : Integer := A;
+      X : Unsigned_32 := A;
    begin
       while X >= Rs.Nn loop
          X := X - Rs.Nn;
-         X := Integer(Shift_Right(Unsigned_8(X), Rs.Mm)
-                      + (Unsigned_8(X) and Unsigned_8(Rs.Nn)));
+         X := Shift_Right(X, Integer(Rs.Mm))
+                      + (X and Rs.Nn);
       end loop;
-      return X;
+      return Integer(X);
    end Modnn;
 
 end Init_Rs;

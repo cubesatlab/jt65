@@ -36,11 +36,11 @@ package body General_JT is
       end loop;
    end ChkMsg;
 
-   procedure Interleave63( Sent : in out Integer_Array;
+   procedure Interleave63( Sent : in out Unsigned_32_Array;
                            Num : in Integer ) is
 
-      type Interleave_Array_7by9 is array(0 .. 6, 0 .. 8) of Integer;
-      type Interleave_Array_9by7 is array(0 .. 8, 0 .. 6) of Integer;
+      type Interleave_Array_7by9 is array(0 .. 6, 0 .. 8) of Unsigned_32;
+      type Interleave_Array_9by7 is array(0 .. 8, 0 .. 6) of Unsigned_32;
 
       D1 : Interleave_Array_7by9;
       D2 : Interleave_Array_9by7;
@@ -91,27 +91,27 @@ package body General_JT is
       end if;
    end Interleave63;
 
-   procedure Graycode(Sent : in out Integer_Array;
+   procedure Graycode(Sent : in out Unsigned_32_Array;
                       Dir : in Integer)
    is
-      Temporary_Array : Integer_Array(Sent'Range);
+      Temporary_Array : Unsigned_32_Array(Sent'Range);
 
-      function IGray(Num : in Integer; Dir : in Integer) return Integer
+      function IGray(Num : in Unsigned_32; Dir : in Integer) return Unsigned_32
       is
-         Num_8: Unsigned_8;
-         Sh   : Unsigned_8;
-         Nn   : Unsigned_8;
+         Num_32: Unsigned_32;
+         Sh   : Unsigned_32;
+         Nn   : Unsigned_32;
       begin
-         Num_8 := Interfaces.Unsigned_8(Num);
-         if Dir > 0 then return Integer(Num_8 xor Shift_Right(Num_8, 1)); end if;
+         Num_32 := Num;
+         if Dir > 0 then return Num_32 xor Shift_Right(Num_32, 1); end if;
          Sh := 1;
-         Nn := Interfaces.Shift_Right(Num_8, 1);
+         Nn := Interfaces.Shift_Right(Num_32, 1);
            While Nn > 0 loop
-              Num_8 := Num_8 xor Nn;
+              Num_32 := Num_32 xor Nn;
               Sh := Shift_Left(Sh, 1);
-              Nn := Shift_Right(Num_8, Integer(Sh));
+              Nn := Shift_Right(Num_32, Integer(Sh));
            end loop;
-         return Integer(Num_8);
+         return Num_32;
       end IGray;
 
    begin

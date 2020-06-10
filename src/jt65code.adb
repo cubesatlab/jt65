@@ -10,6 +10,8 @@ with Ada.Command_Line; use Ada.Command_Line;
 with Ada.Text_IO; use Ada.Text_IO;
 with Testmsg; use Testmsg;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+with Unsigned_Array; use Unsigned_Array;
+with Interfaces; use Interfaces;
 
 
 procedure JT65Code
@@ -21,11 +23,10 @@ is
    Cok: String (1 .. 3);
    Bad : String (1 .. 1);
    Msgtype : String (1 .. 12);
-   Sent1, Sent_Channel, Tmp1: Integer_Array (0 .. 62);
-   Dat, Recd_Tmp : Pack_JT.Integer_Array(1 .. 12);
-   Dgen, Recd, Dgen_Packed : Integer_Array(0 .. 11);
-   Recd_Convert : Integer_Array(1 .. 12);
-   Era : Integer_Array (0 .. 50);
+   Sent, Sent_Channel : Unsigned_32_Array(0 .. 62);
+   Recd, Dat_Packed, Dat, Recd_Tmp : Unsigned_32_Array(0 .. 11);
+   Recd_Convert : Unsigned_32_Array(1 .. 12);
+   Era : Unsigned_32_Array (0 .. 50);
    Nspecial, Nmsg, Itype, Counter, Arg_Counter  : Integer;
    Testmsg, Testmsgchk : Testmsgarray;
 
@@ -84,9 +85,7 @@ begin
 
       -- Packing Message
       Pack_JT.Pack_Msg(Msg1, Dat, Itype);
-      -- Converting to type General_JT.Integer_Array
-      Dgen(0 .. 11) := Integer_Array(Dat(1 .. 12));
-      Dgen_Packed(0 .. 11) := Dgen(0 .. 11);
+      Dat_Packed(0 .. 11) := Dat(0 .. 11); -- Used for printing 6-bit symbols
 
       if ( Nspecial > 0 ) then
          if ( Nspecial = 2 ) then
@@ -121,15 +120,13 @@ begin
          end if;
       end if;
 
-      Rs_Encode(Dgen, Sent1);
-      Interleave63(Sent1, 1);
-      Graycode ( Sent1, 1);
-      Sent_Channel(0 .. 62) := Sent1(0 .. 62); -- Used for printing channel symbols
-      Tmp1(0 .. 62) := Sent1(0 .. 62);
-      Graycode ( Tmp1, -1);
-      Interleave63 ( Tmp1, -1 );
-      Sent1(0 .. 62) := Tmp1(0 .. 62);
-      Rs_Decode( Sent1, Era, 0, Recd);
+      Rs_Encode(Dat, Sent);
+      Interleave63(Sent, 1);
+      Graycode(Sent, 1);
+      Sent_Channel(0 .. 62) := Sent(0 .. 62); -- Used for printing channel symbols
+      Graycode ( Sent, -1);
+      Interleave63 ( Sent, -1 );
+      Rs_Decode( Sent, Era, 0, Recd);
 
       -- Converting to type Pack_JT.Integer_Array
       Counter := 1;
@@ -137,7 +134,7 @@ begin
          Recd_Convert(Counter) := Recd(I);
          Counter := Counter + 1;
       end loop;
-      Recd_Tmp(1 .. 12) := Pack_JT.Integer_Array(Recd_Convert(1 .. 12));
+      Recd_Tmp(0 .. 11) := Recd_Convert(1 .. 12);
       Pack_JT.Unpack_Msg( Recd_Tmp, Decoded );
       if ( Cok = "000" ) then
          Decoded ( 20 .. 22) := cok;
@@ -164,18 +161,17 @@ begin
       Put("    " & Expected);
       New_Line;New_Line;
       Put("Packed message, 6-bit symbols: ");
-      for I in Dgen_Packed'Range loop
-         Put(Integer'Image(Dgen_Packed(I)));
+      for I in Dat_Packed'Range loop
+         Put(Unsigned_32'Image(Dat_Packed(I)));
       end loop;
       New_Line;New_Line;
       Put_Line("Information-carrying channel symbols");
       for I in Sent_Channel'Range loop
-         Put(Integer'Image(Sent_Channel(I)));
+         Put(Unsigned_32'Image(Sent_Channel(I)));
          if I = 20 or I = 41 then
             New_Line;
          end if;
       end loop;
-
       New_Line;New_Line;New_Line;
    end loop;
 end JT65Code;
