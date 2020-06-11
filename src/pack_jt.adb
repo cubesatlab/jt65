@@ -141,10 +141,10 @@ package body Pack_JT is
       procedure Nine_Nine_Nine is
       begin
          if Word(Word'First .. Word'First + 2) = "3D0" then
-            Word := "3DA0" & Word(Word'First + 3 .. Word'Last);
+            Word := "3DA0" & Word(Word'First + 3 .. Word'Last - 1);
          end if;
          if Word(Word'First) = 'Q' and Word(Word'First + 1) >= 'A' and Word(Word'First + 1) <= 'Z' then
-            Word := "3X" & Word(Word'First + 1 .. Word'Last);
+            Word := "3X" & Word(Word'First + 1 .. Word'Last - 1);
          end if;
       end Nine_Nine_Nine;
 
@@ -301,7 +301,7 @@ package body Pack_JT is
       Word(Word'First) := C(I);
 
       for X in 1 .. 4 loop
-         if Word(X) /= ' ' then
+         if Word(Word'First + X - 1) /= ' ' then
             --Word := Word(X .. Word'Last);
             Move(Word(X .. Word'Last), Word, Right, Left, Space);
             --Word(Word'First .. Word(X .. Word'Last)'Length) := Word(X .. Word'Last);
@@ -434,9 +434,9 @@ package body Pack_JT is
 
    end Unpack_Call;
 
-   procedure Pack_Grid(Grid : in out String; NG : in out Unsigned_32; Text : in out Boolean) is
+   procedure Pack_Grid(Grid : in out String; NG : in out Unsigned_32; Text : out Boolean) is
       NGBASE : constant Unsigned_32 := 180 * 180;
-      C1 : Character;
+      C1 : Character := ' ';
       N, Long, Lat : Integer := 0;
       DLong, DLat : Float := 0.0;
 
@@ -544,14 +544,21 @@ package body Pack_JT is
 
       if Grid(Grid'First) = '-' then
 
+         if Grid(Grid'First + 1 .. Grid'First + 2) = "  " then
+            Eight_Hundred;
+            return;
+         end if;
+
          for I in Grid(Grid'First + 1 .. Grid'First + 2)'range loop
-            if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
+            if ((Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ') then
                Eight_Hundred;
                return;
             end if;
          end loop;
 
-         N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 2));
+            N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 2));
+
+         --N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 2));
 
 --           begin
 --              N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 2));
@@ -571,8 +578,14 @@ package body Pack_JT is
 
       elsif Grid(Grid'First .. Grid'First + 1) = "R-" then
 
+         if Grid(Grid'First + 2 .. Grid'First + 3) = "  " then
+            Eight_Hundred;
+            return;
+         end if;
+
+
          for I in Grid(Grid'First + 2 .. Grid'First + 3)'range loop
-            if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
+            if ((Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ') then
                Eight_Hundred;
                return;
             end if;

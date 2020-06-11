@@ -32,11 +32,14 @@ package Pack_JT is
    procedure Pack_Call(Call : in out String; NCall : in out  Unsigned_32; Text : out Boolean)
      with Pre => ((Call'Length = 6 and Call'First = 1 and Call'Last = 6) or else raise Array_Out_Of_Bounds);
 
-   procedure Unpack_Call(NCall : Unsigned_32; Word : out String; Iv2 : out Integer; Psfx : out String);
+   procedure Unpack_Call(NCall : Unsigned_32; Word : out String; Iv2 : out Integer; Psfx : out String)
+     with Pre => ((Word'Length = 12) and then (Psfx'Length = 4)) or else raise Array_Out_Of_Bounds;
 
-   procedure Pack_Grid(Grid : in out String; NG : in out Unsigned_32; Text : in out Boolean);
+   procedure Pack_Grid(Grid : in out String; NG : in out Unsigned_32; Text : out Boolean)
+     with Pre => (Grid'Length = 4 and Grid'First = 1 and Grid'Last = 4) or else raise Array_Out_Of_Bounds;
 
-   procedure Unpack_Grid(Ng : Integer; Grid : out String);
+   procedure Unpack_Grid(Ng : Integer; Grid : out String)
+   with Pre => (Grid'Length = 4 and Grid'First = 1 and Grid'Last = 4) or else raise Array_Out_Of_Bounds;
 
    -- Packs a JT4/JT9/JT65 message into twelve 6-bit symbols
    --
