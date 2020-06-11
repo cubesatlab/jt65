@@ -49,23 +49,27 @@ package body Pack_JT is
       NBASE : constant Unsigned_32 := 37*36*10*27*27*27;
       C : Character;
       TMP : String(1 .. 6);
-      N1, N2, N3, N4, N5 , N6, NFreq : Integer;
-
+      N1, N2, N3, N4, N5 , N6 : Integer;
+      NFreq : Unsigned_32;
    begin
 
       Text := False;
 
-      if Call(Call'First .. Call'First + 3) = "3DA0" then Call := "3D0" & Call(Call'First + 4 .. Call'First + 5); end if;
+      if Call(Call'First .. Call'First + 3) = "3DA0" then
+         Call := "3D0" & Call(Call'First + 4 .. Call'First + 5) & ' ';
+      end if;
 
-      if Call(Call'First .. Call'First + 1) = "3X" and Call(Call'First + 2) >= 'A' and Call(Call'First + 2) <= 'Z' then Call := 'Q' & Call(Call'First + 2 .. Call'First + 5); end if;
+      if Call(Call'First .. Call'First + 1) = "3X" and Call(Call'First + 2) >= 'A' and Call(Call'First + 2) <= 'Z' then
+         Call := 'Q' & Call(Call'First + 2 .. Call'First + 5) & ' ';
+      end if;
 
       if Call(Call'First .. Call'First + 2) = "CQ " then
 
          NCall := NBASE + 1;
 
          if Call(Call'First + 3) >= '0' and Call(Call'First + 3) <= '9' and Call(Call'First + 4) >= '0' and Call(Call'First + 4) <= '9' and Call(Call'First + 5) >= '0' and Call(Call'First + 5) <= '9' then
-            NFreq := Integer'Value(Call(Call'First + 3 .. Call'First + 5));
-            NCall := NBASE + 3 + Unsigned_32(NFreq);
+            NFreq := Unsigned_32'Value(Call(Call'First + 3 .. Call'First + 5));
+            NCall := NBASE + 3 + NFreq;
          end if;
          return;
       elsif Call(Call'First .. Call'First + 3) = "QRZ " then
@@ -300,6 +304,7 @@ package body Pack_JT is
          if Word(X) /= ' ' then
             --Word := Word(X .. Word'Last);
             Move(Word(X .. Word'Last), Word, Right, Left, Space);
+            --Word(Word'First .. Word(X .. Word'Last)'Length) := Word(X .. Word'Last);
             Nine_Nine_Nine;
             return;
          end if;
@@ -775,7 +780,7 @@ package body Pack_JT is
             return;
          end if;
 
-         Pack_Call(C1, Nc1, Text1);
+         Pack_Call(C1(1 .. 6), Nc1, Text1);
 
 
          if Text1 then
@@ -786,7 +791,7 @@ package body Pack_JT is
          Get_Pfx1(C2, K2, Nv2b);
 
 
-         Pack_Call(C2, Nc2, text2);
+         Pack_Call(C2(1 .. 6), Nc2, text2);
 
          if Text2 then
             --Ten;
@@ -1455,6 +1460,7 @@ package body Pack_JT is
 
          --Callsign := Callsign(islash + 1 .. iz);
          Move(Callsign(islash + 1 .. iz), Callsign, Right, Left, Space);
+         --Callsign(Callsign'First .. Callsign(islash + 1 .. iz)'Length) := Callsign(islash + 1 .. iz);
 
          for I in Prefixes'Range loop
             if Prefixes(I)(1 .. 4) = C(1 .. 4) then --Changed from original fortran code

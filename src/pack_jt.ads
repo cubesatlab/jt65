@@ -13,6 +13,7 @@ package Pack_JT is
    Not_Implemented : exception;
    Invalid_Callsign : exception;
    N2Grid_Error : exception;
+   Array_Out_Of_Bounds : exception;
 
    type Octet is new Unsigned_8;
    type Octet_Array is array(Positive range <>) of Octet;
@@ -28,7 +29,8 @@ package Pack_JT is
    procedure Unpack_Bits(Sym : Unsigned_32_Array; NSymd : Integer; M0 : Integer; DBits : out Octet_Array);
 
    -- Pack a valid callsign into a 28-bit integer.
-   procedure Pack_Call(Call : in out String; NCall : in out  Unsigned_32; Text : out Boolean);
+   procedure Pack_Call(Call : in out String; NCall : in out  Unsigned_32; Text : out Boolean)
+     with Pre => ((Call'Length = 6 and Call'First = 1 and Call'Last = 6) or else raise Array_Out_Of_Bounds);
 
    procedure Unpack_Call(NCall : Unsigned_32; Word : out String; Iv2 : out Integer; Psfx : out String);
 
