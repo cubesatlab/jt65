@@ -1381,9 +1381,77 @@ package body Pack_JT is
    end Pack50;
 
 
-   procedure Pack_Pfx(Call1 : String; N1 : Integer; Ng : Integer; Nadd : Integer) is
+   procedure Pack_Pfx(Call1 : String; N1 : in out Unsigned_32; Ng : in out Integer; Nadd : out Integer) is
+      Call0 : String (1 .. 12) := (others => ' ');
+      Pfx : String (1 .. 3);
+      Text : Boolean;
+      N, Nc, I1 : Integer;
    begin
-      raise Not_Implemented with "Pack_Pfx";
+
+      I1 := Index(Call1, "/");
+
+      if Call1(Call1'First + I1 + 1) = ' ' then
+
+         Call0 := Call1(Call1'First .. Call1'First + I1 - 2);
+         Pack_Call(Call0, N1, Text);
+         Nadd := 1;
+         Nc := Character'Pos(Call1(Call1'First + I1));
+
+         if Nc >= 48 and Nc <= 57 then
+            N := Nc - 48;
+         elsif Nc >= 65 and Nc <= 90 then
+            N := Nc - 65 + 10;
+         else
+            N := 38;
+         end if;
+
+         Ng := 60000 - 32768 + N;
+
+      elsif Call1(Call1'First + I1 + 2) = ' ' then
+
+         Call0 := Call1(Call1'First .. Call1'First + I1 - 2);
+         Pack_Call(Call0, N1, Text);
+         Nadd := 1;
+         N := 10 * (Character'Pos(Call1(Call1'First + I1)) - 48) + Character'Pos(Call1(Call1'First + I1 + 1)) - 48;
+         Ng := 60000 + 26 + N;
+
+      else
+
+         Move(Call1(Call1'First .. Call1'First + I1 - 2), Pfx, Right, Left, Space);
+         if Pfx(3) = ' ' then
+            Pfx := ' ' & Pfx(1 .. 2);
+         end if;
+
+         Call0 := Call1(Call1'First + I1 .. Call1'Last);
+
+         Pack_Call(Call0, N1, Text);
+
+         Ng := 0;
+
+         for I in 1 ..3 loop
+
+            Nc := Character'Pos(Pfx(I));
+
+            if Nc >= 48 and Nc <= 57 then
+               N := Nc - 48;
+            elsif Nc >= 65 and nc <= 90 then
+               N := NC - 65 + 10;
+            else
+               N := 36;
+            end if;
+
+            Ng := 37 * Ng + N;
+
+         end loop;
+
+         Nadd := 0;
+
+         if Ng >= 32768 then
+            Ng := Ng - 32768;
+            Nadd := 1;
+         end if;
+      end if;
+
    end Pack_Pfx;
 
    procedure Grid2Deg(Grid0 : String; DLong : out Float; DLat : out Float) is
@@ -1397,15 +1465,19 @@ package body Pack_JT is
       if Grid(5) = ' ' or I <= 64 or I >= 128 then
          Grid(5 .. 6) := "mm";
       end if;
+
       if Grid(1) >= 'a' and Grid(1) <= 'z' then
          Grid(1) := Character'Val(Character'Pos(Grid(1)) + Character'Pos('A') - Character'Pos('a'));
       end if;
+
       if Grid(2) >= 'a' and Grid(2) <= 'z' then
          Grid(2) := Character'Val(Character'Pos(Grid(2)) + Character'Pos('A') - Character'Pos('a'));
       end if;
+
       if Grid(5) >= 'A' and Grid(5) <= 'Z' then
          Grid(5) := Character'Val(Character'Pos(Grid(5)) - Character'Pos('A') + Character'Pos('a'));
       end if;
+
       if Grid(6) >= 'A' and Grid(6) <= 'Z' then
          Grid(6) := Character'Val(Character'Pos(Grid(6)) - Character'Pos('A') + Character'Pos('a'));
       end if;

@@ -78,7 +78,8 @@ package Pack_JT is
 
    procedure Pack50(N1, N2 : Unsigned_32; Dat : out Unsigned_32_Array);
 
-   procedure Pack_Pfx(Call1 : String; N1 : Integer; Ng : Integer; Nadd : Integer);
+   procedure Pack_Pfx(Call1 : String; N1 : in out Unsigned_32; Ng : in out Integer; Nadd : out Integer)
+     with Pre => Call1'Length = 12 or else raise Array_Out_Of_Bounds;
 
    -- Converts Maidenhead grid locator to degrees of West longitude and North latitude
    procedure Grid2Deg(Grid0 : String; DLong : out Float; DLat : out Float);
