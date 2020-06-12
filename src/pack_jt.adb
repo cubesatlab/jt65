@@ -312,126 +312,6 @@ package body Pack_JT is
 
       Nine_Nine_Nine;
 
-
---        <<Twenty>>
---        if N >= 267796946 then goto NineNineNine; end if;
---
---        if N >= 262178563 and N <= 264002071 then
---           Iv2 := 1;
---           N := N - 262178563;
---
---           I := (N mod 37) + 1;
---           Psfx(Psfx'First + 3) := C(I);
---           N := N / 37;
---
---           I := (N mod 37) + 1;
---           Psfx(Psfx'First + 2) := C(I);
---           N := N / 37;
---
---           I := (N mod 37) + 1;
---           Psfx(Psfx'First + 1) := C(I);
---           N := N / 37;
---
---           I := N + 1;
---           Psfx(Psfx'First) := C(I);
---
---        elsif N >= 264002072 and N <= 265825580 then
---           Iv2 := 2;
---           N := N - 264002072;
---
---           I := (N mod 37) + 1;
---           Psfx(Psfx'First + 3) := C(I);
---           N := N / 37;
---
---           I := (N mod 37) + 1;
---           Psfx(Psfx'First + 2) := C(I);
---           N := N / 37;
---
---           I := (N mod 37) + 1;
---           Psfx(Psfx'First + 1) := C(I);
---           N := N / 37;
---
---           I := N + 1;
---           Psfx(Psfx'First) := C(I);
---
---        elsif N >= 265825581 and N <= 267649089 then
---           Iv2 := 3;
---           N := N - 265825581;
---
---           I := (N mod 37) + 1;
---           Psfx(Psfx'First + 3) := C(I);
---           N := N / 37;
---
---           I := (N mod 37) + 1;
---           Psfx(Psfx'First + 2) := C(I);
---           N := N / 37;
---
---           I := (N mod 37) + 1;
---           Psfx(Psfx'First + 1) := C(I);
---           N := N / 37;
---
---           I := N + 1;
---           Psfx(Psfx'First) := C(I);
---
---        elsif N >= 267649090 and N <= 267698374 then
---           Iv2 := 4;
---           N := N - 267649090;
---
---           I := (N mod 37) + 1;
---           Psfx(Psfx'First + 2) := C(I);
---           N := N / 37;
---
---           I := (N mod 37) + 1;
---           Psfx(Psfx'First + 1) := C(I);
---           N := N / 37;
---
---           I := N + 1;
---           Psfx(Psfx'First) := C(I);
---
---        elsif N >= 267698375 and N <= 267747659 then
---           Iv2 := 5;
---           N := N - 267698375;
---
---           I := (N mod 37) + 1;
---           Psfx(Psfx'First + 2) := C(I);
---           N := N / 37;
---
---           I := (N mod 37) + 1;
---           Psfx(Psfx'First + 1) := C(I);
---           N := N / 37;
---
---           I := N + 1;
---           Psfx(Psfx'First) := C(I);
---
---        elsif N >= 267747660 and N <= 267796944 then
---           Iv2 := 6;
---           N := N - 267747660;
---
---           I := (N mod 37) + 1;
---           Psfx(Psfx'First + 2) := C(I);
---           N := N / 37;
---
---           I := (N mod 37) + 1;
---           Psfx(Psfx'First + 1) := C(I);
---           N := N / 37;
---
---           I := N + 1;
---           Psfx(Psfx'First) := C(I);
---
---        elsif N = 267796945 then
---           Iv2 := 7;
---           Psfx := "    ";
---
---        end if;
---
---        <<NineNineNine>>
---        if Word(Word'First .. Word'First + 2) = "3D0" then
---           Word := "3DA0" & Word(Word'First + 3 .. Word'Last);
---        end if;
---        if Word(Word'First) = 'Q' and Word(Word'First + 1) >= 'A' and Word(Word'First + 1) <= 'Z' then
---           Word := "3X" & Word(Word'First + 1 .. Word'Last);
---        end if;
-
    end Unpack_Call;
 
    procedure Pack_Grid(Grid : in out String; NG : in out Unsigned_32; Text : out Boolean) is
@@ -498,14 +378,6 @@ package body Pack_JT is
          end loop;
 
          N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 3));
---
---           begin
---              N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 3));
---           exception
---              when E : Constraint_Error =>
---                 Thirty;
---                 return;
---           end;
 
          Thirty;
       end Twenty;
@@ -523,14 +395,6 @@ package body Pack_JT is
          end loop;
 
          N := Integer'Value(Grid);
-
---           begin
---              N := Integer'Value(Grid);
---           exception
---              when E : Constraint_Error =>
---                 Twenty;
---                 return;
---           end;
 
       Thirty;
       end Ten;
@@ -556,17 +420,7 @@ package body Pack_JT is
             end if;
          end loop;
 
-            N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 2));
-
-         --N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 2));
-
---           begin
---              N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 2));
---           exception
---              when E : Constraint_Error =>
---                 Eight_Hundred;
---                 return;
---           end;
+         N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 2));
 
          if N >= 1 and N <= 30 then
             NG := NGBASE + 1 + Unsigned_32(N);
@@ -593,14 +447,6 @@ package body Pack_JT is
 
          N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
 
---           begin
---              N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
---           exception
---              when E : Constraint_Error =>
---                 Eight_Hundred;
---                 return;
---           end;
-
          if N >= 1 and N <= 30 then
             NG := NGBASE + 31 + Unsigned_32(N);
             return;
@@ -620,63 +466,6 @@ package body Pack_JT is
       end if;
 
       Ten;
-
---        <<Ten>>
---        N := 99;
---        C1 := Grid(Grid'First);
---        begin
---           N := Integer'Value(Grid);
---        exception
---           when E : Constraint_Error =>
---              goto Twenty;
---        end;
---
---        goto Thirty;
-
---        <<Twenty>>
---        begin
---           N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 3));
---        exception
---           when E : Constraint_Error =>
---              goto Thirty;
---        end;
-
---        <<Thirty>>
---        if N >= -50 and N <= 49 then
---           if C1 = 'R' then
---              --write(grid,1002) n+50
---              --format('LA',i2.2)
---              Grid := "LA" & Integer'Image(N + 50);
---           else
---              --write(grid,1003) n+50
---              --format('KA',i2.2)
---              Grid := "KA" & Integer'Image(N + 50);
---           end if;
---           goto Forty;
---        end if;
---
---        if Grid(Grid'First) < 'A' or Grid(Grid'First) > 'R' then Text := True; end if;
---        if Grid(Grid'First + 1) < 'A' or Grid(Grid'First + 1) > 'R' then Text := True; end if;
---        if Grid(Grid'First + 2) < '0' or Grid(Grid'First + 2) > '9' then Text := True; end if;
---        if Grid(Grid'First + 3) < '0' or Grid(Grid'First + 3) > '9' then Text := True; end if;
---        if Text then goto Nine_Hundred; end if;
-
---        <<Forty>>
---        Grid2Deg(Grid & "mm", DLong, DLat);
---        Long := Integer(Float'Floor(DLong));
---        Lat := Integer(Float'Floor(DLat + 90.0));
---        NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
---        goto Nine_Hundred;
-
---        <<Ninety>>
---        NG := NGBASE + 1;
---        goto Nine_Hundred;
-
---        <<Eight_Hundred>>
---        Text := True;
---
---        <<Nine_Hundred>>
---        return;
 
    end Pack_Grid;
 
@@ -734,24 +523,6 @@ package body Pack_JT is
       end if;
 
       return;
-
---        <<Ten>>
---        N := Ng - NGBASE - 1;
---
---        if N >= 1 and N <= 30 then
---           --Grid := Integer'Image(-N);
---           Move(Integer'Image(-N), Grid, Right, Left, Space);
---        elsif N >= 31 and N <= 60 then
---           N := N - 30;
---           --Grid := "R" & Integer'Image(-N);
---           Move("R" & Integer'Image(-N), Grid, Right, Left, Space);
---        elsif N = 61 then
---           Grid := "RO  ";
---        elsif N = 62 then
---           Grid := "RRR ";
---        elsif N = 63 then
---           Grid := "73  ";
---        end if;
 
    end Unpack_Grid;
 
@@ -1055,6 +826,9 @@ package body Pack_JT is
       end Ten;
 
    begin
+
+      Msg := (others => ' ');
+
       nc1 := Shift_Left(Dat(0), 22) + Shift_Left(Dat(1), 16) + Shift_Left(Dat(2), 10) +
         Shift_Left(Dat(3), 4) + (Shift_Right(Dat(4), 2) and 15);
 
@@ -1210,44 +984,6 @@ package body Pack_JT is
       Msg(J) := ' ';
 
       Ten;
---        <<Ten>>
---        for I in 1 .. 12 loop
---           if J <= 21 then J := J + 1; end if;
---           Msg(J) := c2(I);
---           if c2(I) = ' ' then goto Twenty; end if;
---        end loop;
---
---        if J <= 21 then J := J + 1; end if;
---        Msg(J) := ' ';
-
---        <<Twenty>>
---        if K = 0 then
---           for I in 1 .. 4 loop
---              if J <= 21 then J := J + 1; end if;
---              Msg(J) := grid(I);
---           end loop;
---
---           if J <= 21 then J := J + 1; end if;
---           Msg(J) := ' ';
---        end if;
-
-
---        <<One_Hundred>>
---        if Msg(Msg'First .. Msg'First + 5) = "CQ9DX " then
---           Msg(Msg'First + 2) := ' ';
---        end if;
---
---        if Msg(Msg'First .. Msg'First + 1) = "E9" and Msg(Msg'First + 2) >= 'A' and Msg(Msg'First + 2) <= 'Z' and Msg(Msg'First + 3) >= 'A' and Msg(Msg'First + 3) <= 'Z' and Msg(Msg'First + 4) = ' ' then
---
---           --Msg := "CQ " & Msg(Msg'First + 2 .. Msg'Last);
---           Move("CQ " & Msg(Msg'First + 2 .. Msg'Last), Msg, Right, Left, Space);
---        end if;
---
---        if Msg(Msg'First .. Msg'First + 4) = "CQ 00" and Msg(Msg'First + 5) >= '0' and Msg(Msg'First + 5) <= '9' then
---           --Msg := "CQ " & Msg(Msg'First + 5 .. Msg'Last);
---           Move("CQ " & Msg(Msg'First + 5 .. Msg'Last), Msg, Right, Left, Space);
---        end if;
-
 
    end Unpack_Msg;
 
@@ -1276,7 +1012,7 @@ package body Pack_JT is
 
          if not Skip_Step then
             J_Count := 37; --was 36 for some reason
-            Skip_Step := False;
+            --Skip_Step := False;
          end if;
          J_Count := J_Count - 1;
          Nc1 := 42 * Nc1 + J_Count;
@@ -1296,7 +1032,7 @@ package body Pack_JT is
 
          if not Skip_Step then
             J_Count := 37;
-            Skip_Step := False;
+            --Skip_Step := False;
          end if;
          J_Count := J_Count - 1;
          Nc2 := 42 * Nc2 + J_Count;
@@ -1316,7 +1052,7 @@ package body Pack_JT is
 
          if not Skip_Step then
             J_Count := 37;
-            Skip_Step := False;
+            --Skip_Step := False;
          end if;
          J_Count := J_Count - 1;
          Nc3 := 42 * Nc3 + J_Count;

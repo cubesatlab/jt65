@@ -39,7 +39,7 @@ package Pack_JT is
      with Pre => (Grid'Length = 4 and Grid'First = 1 and Grid'Last = 4) or else raise Array_Out_Of_Bounds;
 
    procedure Unpack_Grid(Ng : Integer; Grid : out String)
-   with Pre => (Grid'Length = 4 and Grid'First = 1 and Grid'Last = 4) or else raise Array_Out_Of_Bounds;
+     with Pre => (Grid'Length = 4 and Grid'First = 1 and Grid'Last = 4) or else raise Array_Out_Of_Bounds;
 
    -- Packs a JT4/JT9/JT65 message into twelve 6-bit symbols
    --
@@ -54,7 +54,8 @@ package Pack_JT is
    --  -1   Does not decode correctly
    procedure Pack_Msg(Msg0 : String; Dat : out Unsigned_32_Array; IType : out Integer);
 
-   procedure Unpack_Msg(Dat : Unsigned_32_Array; Msg : out String);
+   procedure Unpack_Msg(Dat : Unsigned_32_Array; Msg : out String)
+     with Pre => Msg'Length = 22 or else raise Array_Out_Of_Bounds;
 
    procedure Pack_Text(Msg : String; Nc1, Nc2, Nc3 : out Unsigned_32);
 
