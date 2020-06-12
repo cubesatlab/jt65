@@ -12,11 +12,11 @@ package body Pack_JT is
    add_pfx : String(1 .. 8);
 
    --Might need to fix the index for the arrays
-   procedure Pack_Bits(DBits : Octet_Array; NSymd : Integer; M0 : Integer; Sym : out Unsigned_32_Array) is
+   procedure Pack_Bits(DBits : Unsigned_8_Array; NSymd : Integer; M0 : Integer; Sym : out Unsigned_8_Array) is
       -- Might need to change the types for n and m
       k : Integer := 0;
-      n : Octet;
-      m : Octet;
+      n : Unsigned_8;
+      m : Unsigned_8;
    begin
       for i in 0 .. NSymd-1 loop
          n := 0;
@@ -25,14 +25,14 @@ package body Pack_JT is
             k := k + 1;
             n := Shift_Left(n,1) or m;
          end loop;
-         Sym(i) := Unsigned_32(n);
+         Sym(i) := n;
       end loop;
    end Pack_Bits;
 
    --Might need to fix the index for the arrays
-   procedure Unpack_Bits(Sym : Unsigned_32_Array; NSymd : Integer; M0 : Integer; DBits : out Octet_Array) is
+   procedure Unpack_Bits(Sym : Unsigned_8_Array; NSymd : Integer; M0 : Integer; DBits : out Unsigned_8_Array) is
       K : Integer := 0;
-      Mask : Unsigned_32;
+      Mask : Unsigned_8;
    begin
       for I in 0 .. NSymd - 1 loop
          Mask := Shift_Left(1, M0 - 1);
@@ -532,7 +532,7 @@ package body Pack_JT is
    end Unpack_Grid;
 
 
-   procedure Pack_Msg(Msg0 : String; Dat : out Unsigned_32_Array; IType : out Integer) is
+   procedure Pack_Msg(Msg0 : String; Dat : out Unsigned_8_Array; IType : out Integer) is
       Msg : String(1 .. 22);
       --NBASE : constant Integer := 37*36*10*27*27*27;
       --NBASE2 : constant Integer := 262178562;
@@ -755,23 +755,23 @@ package body Pack_JT is
       --JT_Nc1 := Nc1;
       --JT_Nc2 := Nc2;
       --JT_Ng := Ng;
-      Dat(0) := Shift_Right(Nc1, 22) and 63;
-      Dat(1) := Shift_Right(Nc1, 16) and 63;
-      Dat(2) := Shift_Right(Nc1, 10) and 63;
-      Dat(3) := Shift_Right(Nc1, 4) and 63;
-      Dat(4) := 4 * (Nc1 and 15) + (Shift_Right(Nc2, 26) and 3);
-      Dat(5) := Shift_Right(Nc2, 20) and 63;
-      Dat(6) := Shift_Right(Nc2, 14) and 63;
-      Dat(7) := Shift_Right(Nc2, 8) and 63;
-      Dat(8) := Shift_Right(Nc2, 2) and 63;
-      Dat(9) := 16 * (Nc2 and 3) + (Shift_Right(Ng, 12) and 15);
-      Dat(10) := Shift_Right(Ng, 6) and 63;
-      Dat(11) := Ng and 63;
+      Dat(0) := Unsigned_8(Shift_Right(Nc1, 22) and 63);
+      Dat(1) := Unsigned_8(Shift_Right(Nc1, 16) and 63);
+      Dat(2) := Unsigned_8(Shift_Right(Nc1, 10) and 63);
+      Dat(3) := Unsigned_8(Shift_Right(Nc1, 4) and 63);
+      Dat(4) := Unsigned_8(4 * (Nc1 and 15) + (Shift_Right(Nc2, 26) and 3));
+      Dat(5) := Unsigned_8(Shift_Right(Nc2, 20) and 63);
+      Dat(6) := Unsigned_8(Shift_Right(Nc2, 14) and 63);
+      Dat(7) := Unsigned_8(Shift_Right(Nc2, 8) and 63);
+      Dat(8) := Unsigned_8(Shift_Right(Nc2, 2) and 63);
+      Dat(9) := Unsigned_8(16 * (Nc2 and 3) + (Shift_Right(Ng, 12) and 15));
+      Dat(10) := Unsigned_8(Shift_Right(Ng, 6) and 63);
+      Dat(11) := Unsigned_8(Ng and 63);
 
    end Pack_Msg;
 
    -- Need to fix null character check
-   procedure Unpack_Msg(Dat : Unsigned_32_Array; Msg : out String) is
+   procedure Unpack_Msg(Dat0 : Unsigned_8_Array; Msg : out String) is
       NBASE : constant Integer := 37*36*10*27*27*27;
       --NGBASE : Integer := 180*180;
       c1, c2 : String(1 .. 12);
@@ -780,6 +780,7 @@ package body Pack_JT is
       cqnnn : Boolean := False;
       nc1, nc2, ng : Unsigned_32;
       iv2, NFreq, junk1, n1, n2, K, J : Integer;
+      Dat : Unsigned_32_Array (0 .. 11);
       --Index_Val : Integer;
 
       procedure One_Hundred is
@@ -831,6 +832,11 @@ package body Pack_JT is
       end Ten;
 
    begin
+
+      for M in Dat0'Range loop
+         Dat(M) := Unsigned_32(Dat0(M));
+      end loop;
+
 
       Msg := (others => ' ');
 
@@ -1382,7 +1388,6 @@ package body Pack_JT is
       Dat(8) := 0;
       Dat(9) := 0;
       Dat(10) := 0;
-
    end Pack50;
 
 

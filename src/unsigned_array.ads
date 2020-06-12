@@ -11,5 +11,6 @@ with Interfaces; use Interfaces;
 package Unsigned_Array is
 
    type Unsigned_32_Array is array (Natural range <>) of Unsigned_32;
+   type Unsigned_8_Array is array (Natural range <>) of Unsigned_8;
 
 end Unsigned_Array;

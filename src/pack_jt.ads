@@ -17,12 +17,12 @@ package Pack_JT is
 
    -- Pack 0s and 1s from DBits into Sym with M0 bits per word.
    -- NB: NSymd is the number of packed output words.
-   procedure Pack_Bits(DBits : Octet_Array; NSymd : Integer; M0 : Integer; Sym : out Unsigned_32_Array);
+   procedure Pack_Bits(DBits : Unsigned_8_Array; NSymd : Integer; M0 : Integer; Sym : out Unsigned_8_Array);
 
    -- Unpack bits from Sym into DBits, one bit per byte.
    -- NB: NSymd is the number of input words, and M0 their length.
    -- there will be M0*NSymd output bytes, each 0 or 1.
-   procedure Unpack_Bits(Sym : Unsigned_32_Array; NSymd : Integer; M0 : Integer; DBits : out Octet_Array);
+   procedure Unpack_Bits(Sym : Unsigned_8_Array; NSymd : Integer; M0 : Integer; DBits : out Unsigned_8_Array);
 
    -- Pack a valid callsign into a 28-bit integer.
    procedure Pack_Call(Call : in out String; NCall : in out  Unsigned_32; Text : out Boolean)
@@ -48,10 +48,10 @@ package Pack_JT is
    --   5   Type 2 suffix
    --   6   Free text
    --  -1   Does not decode correctly
-   procedure Pack_Msg(Msg0 : String; Dat : out Unsigned_32_Array; IType : out Integer)
+   procedure Pack_Msg(Msg0 : String; Dat : out Unsigned_8_Array; IType : out Integer)
      with Pre => (Dat'Length = 12 and Dat'First = 0 and Dat'Last = 11);
 
-   procedure Unpack_Msg(Dat : Unsigned_32_Array; Msg : out String)
+   procedure Unpack_Msg(Dat0 : Unsigned_8_Array; Msg : out String)
      with Pre => Msg'Length = 22 or else raise Array_Out_Of_Bounds;
 
    procedure Pack_Text(Msg : String; Nc1, Nc2, Nc3 : out Unsigned_32)
