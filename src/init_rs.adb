@@ -10,22 +10,22 @@ pragma SPARK_Mode(On);
 
 package body Init_Rs is
 
-   function Init_Rs_Int ( Symsize : in Unsigned_32;
-                          Gfpoly : in Unsigned_32;
-                          Fcr : in Unsigned_32;
-                          Prim : in Unsigned_32;
-                          Nroots : in Unsigned_32;
-                          Pad : in Unsigned_32) return Rs_Access
+   function Init_Rs_Int ( Symsize : in Unsigned_8;
+                          Gfpoly : in Unsigned_8;
+                          Fcr : in Unsigned_8;
+                          Prim : in Unsigned_8;
+                          Nroots : in Unsigned_8;
+                          Pad : in Unsigned_8) return Rs_Access
    is
 
       Rs_Ptr : constant Rs_Access := new Rs;
-      X, Sr, Root, Iprim : Unsigned_32;
+      X, Sr, Root, Iprim : Unsigned_8;
       Prop : Boolean;
 
       Rs_Null : constant Rs_Access := new Rs;
 
-      Placeholder : Unsigned_32;
-      One : constant Unsigned_32 := 1;
+      Placeholder : Unsigned_8;
+      One : constant Unsigned_8 := 1;
 
    begin
 
@@ -40,7 +40,7 @@ package body Init_Rs is
       Sr := 1;
       Prop := True;
       for I in 0 .. Rs_Ptr.Nn-1 loop
-         --if Sr /= 0  and I <= Unsigned_32'Last and Sr <= Unsigned_32'Last then
+         --if Sr /= 0  and I <= Unsigned_8'Last and Sr <= Unsigned_8'Last then
             Rs_Ptr.Index_Of(Integer(Sr)) := I;
             Rs_Ptr.Alpha_To(Integer(I)) := Sr;
             Sr := Shift_Left(Sr,1);
@@ -89,7 +89,7 @@ package body Init_Rs is
                end if;
             end loop;
             X := Rs_Ptr.Index_Of(Integer(Rs_Ptr.Genpoly(0))) + Root;
-            if X < 256 then
+            if X < 255 then
                Rs_Ptr.Genpoly(0) := Rs_Ptr.Alpha_To(Modnn(Rs_Ptr,X));
             end if;
             Root := Root + Prim;
@@ -104,9 +104,9 @@ package body Init_Rs is
    end Init_Rs_Int;
 
    function Modnn ( Rs : in Rs_Access;
-                    A : in Unsigned_32) return Integer
+                    A : in Unsigned_8) return Integer
    is
-      X : Unsigned_32 := A;
+      X : Unsigned_8 := A;
    begin
       while X >= Rs.Nn loop
          X := X - Rs.Nn;

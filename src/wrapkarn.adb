@@ -9,11 +9,11 @@ pragma SPARK_Mode(On);
 package body Wrapkarn is
 
    procedure Encode_Rs_Int( Rs : in Rs_Access;
-                            Data : in Unsigned_32_Array;
-                            Bb : out Unsigned_32_Array ) is
+                            Data : in Unsigned_8_array;
+                            Bb : out Unsigned_8_array ) is
 
-      Feedback, X : Unsigned_32;
-      Nroots : constant Unsigned_32 := 51;
+      Feedback, X : Unsigned_8;
+      Nroots : constant Unsigned_8 := 51;
       Rs_Null : constant Rs_Access := null;
    begin
       for I in Bb'Range loop
@@ -26,7 +26,7 @@ package body Wrapkarn is
                                (Bb(0))));
             if Feedback /= Rs.Nn then
                for J in 1 .. 50 loop
-                  X := Feedback + Rs.Genpoly(Integer(Nroots-Unsigned_32(J)));
+                  X := Feedback + Rs.Genpoly(Integer(Nroots-Unsigned_8(J)));
                   Bb(J) := Bb(J) xor Rs.Alpha_To(Modnn(Rs, X));
                end loop;
             end if;
@@ -42,14 +42,14 @@ package body Wrapkarn is
    end Encode_Rs_Int;
 
    function Decode_Rs_Int( Rs : in Rs_Access;
-                           Data_In : in  Unsigned_32_Array;
-                           Eras_Pos_In : in Unsigned_32_Array;
-                           No_Eras : in Unsigned_32 ) return Unsigned_32_Array
+                           Data_In : in  Unsigned_8_array;
+                           Eras_Pos_In : in Unsigned_8_array;
+                           No_Eras : in Unsigned_8 ) return Unsigned_8_array
    is
 
-      --procedure Finish( Eras_Pos1 : in out Unsigned_32_Array;
+      --procedure Finish( Eras_Pos1 : in out Unsigned_8_array;
       --                  Counter : in Integer;
-      --                  Loc1 : in Unsigned_32_Array)
+      --                  Loc1 : in Unsigned_8_array)
       --is
          --Eras_Pos_Null : constant Eras_Pos_Access := null;
       --begin
@@ -64,19 +64,19 @@ package body Wrapkarn is
       Deg_Lambda, Deg_Omega : Integer;
       --I, J, R,
       Q, Num1, Num2 : Integer;
-      X, Y, Z, U, K, R, Tmp, Den, El, Modnn_Tmp, Syn_Error, Discr_R, Modnn_Tmp2, Modnn_Tmp3 : Unsigned_32;
+      X, Y, Z, U, K, R, Tmp, Den, El, Modnn_Tmp, Syn_Error, Discr_R, Modnn_Tmp2, Modnn_Tmp3 : Unsigned_8;
 
       -- Err + Eras Locator Poly and syndrome poly
-      Lambda : Unsigned_32_Array(0 .. 51) := (others => 0);
-      S : Unsigned_32_Array(0 .. 50);
+      Lambda : Unsigned_8_array(0 .. 51) := (others => 0);
+      S : Unsigned_8_array(0 .. 50);
 
-      B, T, Omega, Reg : Unsigned_32_Array(0 .. 51) := (others => 0);
-      Root, Loc : Unsigned_32_Array(0 .. 51) := (others => 0);
+      B, T, Omega, Reg : Unsigned_8_array(0 .. 51) := (others => 0);
+      Root, Loc : Unsigned_8_array(0 .. 51) := (others => 0);
       Count : Integer;
 
       Rs_Null : constant Rs_Access := null;
-      Data : Unsigned_32_Array(0 .. 62);
-      Eras_Pos : Unsigned_32_Array(0 .. 49);
+      Data : Unsigned_8_array(0 .. 62);
+      Eras_Pos : Unsigned_8_array(0 .. 49);
    begin
       -- Initialization
       for I in Eras_Pos'Range loop
@@ -95,7 +95,7 @@ package body Wrapkarn is
                if S(I) = 0 then
                   S(I) := Data(Integer(J));
                else
-                  X := Rs.Index_Of(Integer(S(I))) + (Rs.Fcr + Unsigned_32(I))* (Rs.Prim);
+                  X := Rs.Index_Of(Integer(S(I))) + (Rs.Fcr + Unsigned_8(I))* (Rs.Prim);
                   S(I) := Data(Integer(J)) xor
                                     Rs.Alpha_To(Modnn(Rs, X));
                end if;
@@ -125,7 +125,7 @@ package body Wrapkarn is
             Lambda(1) := Rs.Alpha_To(Modnn(Rs, Y));
             for I in 1 .. No_Eras - 1 loop
                Z := Rs.Prim * (Rs.Nn - 1 - Eras_Pos(Integer(I)));
-               U := Unsigned_32(Modnn(Rs,Z));
+               U := Unsigned_8(Modnn(Rs,Z));
                for J in reverse 1 .. I + 1 loop
                   Tmp := Rs.Index_Of(Integer(Lambda(Integer(J) - 1)));
                   if Tmp /= Rs.Nn then
@@ -176,7 +176,7 @@ package body Wrapkarn is
                   El := R + No_Eras - El;
                   for I in 0 .. Nroots loop
                      Modnn_Tmp3 := Rs.Index_Of(Integer(Lambda(I) - Discr_R + Rs.Nn));
-                     B(I) := (if Lambda(I) = 0 then Rs.Nn else Unsigned_32(Modnn(Rs,Modnn_Tmp3)));
+                     B(I) := (if Lambda(I) = 0 then Rs.Nn else Unsigned_8(Modnn(Rs,Modnn_Tmp3)));
                   end loop;
                else
                   -- TODO: Maybe error here?
@@ -206,9 +206,9 @@ package body Wrapkarn is
             Q := 1; -- Lambda(0) is always 0
             for J in reverse 1 .. Deg_Lambda loop
                if Reg(J) /= Rs.Nn then
-                  Y := Reg(J) + Unsigned_32(J);
-                  Reg(J) := Unsigned_32(Modnn(Rs,Y));
-                  Q := Integer(Unsigned_32(Q) xor Rs.Alpha_To(Integer(Reg(J))));
+                  Y := Reg(J) + Unsigned_8(J);
+                  Reg(J) := Unsigned_8(Modnn(Rs,Y));
+                  Q := Integer(Unsigned_8(Q) xor Rs.Alpha_To(Integer(Reg(J))));
                end if;
             end loop;
 
@@ -225,7 +225,7 @@ package body Wrapkarn is
                end if;
             end if;
             X := K + Rs.Iprim;
-            K := Unsigned_32(Modnn(Rs,X));
+            K := Unsigned_8(Modnn(Rs,X));
          end loop;
 
          if Deg_Lambda /= Count then
@@ -256,8 +256,8 @@ package body Wrapkarn is
             Num1 := 0;
             for I in 0 .. Deg_Omega loop
                if Omega(I) /= Rs.Nn then
-                  X := Omega(I) + Unsigned_32(I) * Root(J);
-                  Num1 := Integer(Unsigned_32(Num1) xor Rs.Alpha_To(Modnn(Rs,X)));
+                  X := Omega(I) + Unsigned_8(I) * Root(J);
+                  Num1 := Integer(Unsigned_8(Num1) xor Rs.Alpha_To(Modnn(Rs,X)));
                end if;
             end loop;
             Y := Root(J) * (Rs.Fcr - 1) + Rs.Nn;
@@ -266,7 +266,7 @@ package body Wrapkarn is
 
             -- Lamda(I + 1) for I even is the formal dericative lambda_pr of lambda(I)
             -- Bitwise not operation in ada?
-            -- Tmp := Integer(Unsigned_32((if Deg_Lambda < Nroots - 1 then Deg_Lambda else Nroots - 1)) and Unsigned_32((not 1)));
+            -- Tmp := Integer(Unsigned_8((if Deg_Lambda < Nroots - 1 then Deg_Lambda else Nroots - 1)) and Unsigned_8((not 1)));
             Tmp := 1;
             for I in reverse 0 .. Tmp loop
                if Lambda(Integer(I) + 1) /= Rs.Nn then
@@ -287,18 +287,18 @@ package body Wrapkarn is
       return Data;
    end Decode_Rs_Int;
 
-   procedure Rs_Encode( Dgen : in Unsigned_32_Array;
-                        Sent : in out Unsigned_32_Array )
+   procedure Rs_Encode( Dgen : in Unsigned_8_array;
+                        Sent : in out Unsigned_8_array )
    is
 
-      Dat1 : Unsigned_32_Array(0 .. 11);
-      B : Unsigned_32_Array(0 .. 50);
-      Symsize : constant Unsigned_32 := 6;
-      Gfpoly : constant Unsigned_32 := 16#43#;
-      Fcr : constant Unsigned_32 := 3;
-      Prim : constant Unsigned_32  := 1;
-      Nroots : constant Unsigned_32 := 51;
-      Pad : constant Unsigned_32 := 0;
+      Dat1 : Unsigned_8_array(0 .. 11);
+      B : Unsigned_8_array(0 .. 50);
+      Symsize : constant Unsigned_8 := 6;
+      Gfpoly : constant Unsigned_8 := 16#43#;
+      Fcr : constant Unsigned_8 := 3;
+      Prim : constant Unsigned_8  := 1;
+      Nroots : constant Unsigned_8 := 51;
+      Pad : constant Unsigned_8 := 0;
 
    begin
       if First then
@@ -326,23 +326,23 @@ package body Wrapkarn is
 
    end Rs_Encode;
 
-   procedure Rs_Decode( Recd0 : in Unsigned_32_Array;
-                        Era : in Unsigned_32_Array;
-                        Num : in Unsigned_32;
-                        Decoded : out Unsigned_32_Array )
+   procedure Rs_Decode( Recd0 : in Unsigned_8_array;
+                        Era : in Unsigned_8_array;
+                        Num : in Unsigned_8;
+                        Decoded : out Unsigned_8_array )
    is
    -- Decode JT65 received data recd0[63], producing decoded[12].
    -- Erasures are indicated in era0[Numera].  The number of corrected
    -- errors is Nerr.  If the data are uncorrectable, Nerr=-1 is returned.
-      Numera : Unsigned_32;
-      Era_Pos : Unsigned_32_Array(0 .. 49);
-      Recd, Recd_Out: Unsigned_32_Array(0 .. 62);
-      Symsize : constant Unsigned_32 := 6;
-      Gfpoly : constant Unsigned_32 := 16#43#;
-      Fcr : constant Unsigned_32 := 3;
-      Prim : constant Unsigned_32  := 1;
-      Nroots : constant Unsigned_32 := 51;
-      Pad : constant Unsigned_32 := 0;
+      Numera : Unsigned_8;
+      Era_Pos : Unsigned_8_array(0 .. 49);
+      Recd, Recd_Out: Unsigned_8_array(0 .. 62);
+      Symsize : constant Unsigned_8 := 6;
+      Gfpoly : constant Unsigned_8 := 16#43#;
+      Fcr : constant Unsigned_8 := 3;
+      Prim : constant Unsigned_8  := 1;
+      Nroots : constant Unsigned_8 := 51;
+      Pad : constant Unsigned_8 := 0;
 
    begin
 

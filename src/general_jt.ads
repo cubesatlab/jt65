@@ -25,14 +25,14 @@ package General_JT is
                or else raise Array_Out_Of_Bounds);
 
    -- Performs Interleave / De-interleave
-   procedure Interleave63( Sent : in out Unsigned_32_Array;
+   procedure Interleave63( Sent : in out Unsigned_8_array;
                            Num : in Integer)
      with Pre => (Num = -1 or Num = 1)
      and then ((Sent'Length = 63 and Sent'First = 0 and Sent'Last = 62)
                or else raise Array_Out_Of_Bounds);
 
    -- Performs Graycode and applys the graycode to Output
-   procedure Graycode(Sent : in out Unsigned_32_Array; Dir : in Integer)
+   procedure Graycode(Sent : in out Unsigned_8_array; Dir : in Integer)
      with Pre => (Dir = -1 or Dir = 1)
      and then ((Sent'Length = 63 and Sent'First = 0 and Sent'Last = 62)
                or else raise Array_Out_Of_Bounds);

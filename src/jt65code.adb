@@ -23,10 +23,10 @@ is
    Cok: String (1 .. 3);
    Bad : String (1 .. 1);
    Msgtype : String (1 .. 12);
-   Sent, Sent_Channel : Unsigned_32_Array(0 .. 62);
-   Recd, Dat_Packed, Dat, Recd_Tmp : Unsigned_32_Array(0 .. 11);
-   Recd_Convert : Unsigned_32_Array(1 .. 12);
-   Era : Unsigned_32_Array (0 .. 50);
+   Sent, Sent_Channel : Unsigned_8_array(0 .. 62);
+   Recd, Dat_Packed, Dat, Recd_Tmp : Unsigned_8_array(0 .. 11);
+   Recd_Convert : Unsigned_8_array(1 .. 12);
+   Era : Unsigned_8_array (0 .. 50);
    Nspecial, Nmsg, Itype, Counter, Arg_Counter  : Integer;
    Testmsg, Testmsgchk : Testmsgarray;
 
@@ -162,12 +162,12 @@ begin
       New_Line;New_Line;
       Put("Packed message, 6-bit symbols: ");
       for I in Dat_Packed'Range loop
-         Put(Unsigned_32'Image(Dat_Packed(I)));
+         Put(Unsigned_8'Image(Dat_Packed(I)));
       end loop;
       New_Line;New_Line;
       Put_Line("Information-carrying channel symbols");
       for I in Sent_Channel'Range loop
-         Put(Unsigned_32'Image(Sent_Channel(I)));
+         Put(Unsigned_8'Image(Sent_Channel(I)));
          if I = 20 or I = 41 then
             New_Line;
          end if;
