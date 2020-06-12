@@ -20,13 +20,14 @@ package body General_JT is
             if I > 11 then
                if Msg(I-3 .. I) = " 000" or Msg(Msg'First + 19 .. Msg'First + 21) = " 00" then
                   Cok := "000";
-                  if (Msg(Msg'First + 19 .. Msg'First + 21) = " 00") then
-                     Msg := Msg(Msg'First .. Msg'First + 18);
+                  if (Msg(Msg'First + 19 .. Msg'Last) = " 00" and Msg(Msg'First .. Msg'First + 10) /= "           " )then
+                     Msg(20 .. 22) := "   ";
                   else
-                     Msg := Msg(Msg'First .. I-4);
+                     for J in 1 .. 4 loop
+                        Msg(I - J) := ' ';
+                     end loop;
                   end if;
                end if;
-
             end if;
          else
          if (Msg = "RO                    ") then NSpecial := 2; end if;
