@@ -1,5 +1,10 @@
 pragma SPARK_Mode(On);
 
+with Ada.Strings.Fixed; use Ada.Strings.Fixed;
+with Ada.Strings; use Ada.Strings;
+with pfx; use pfx;
+with Ada.Characters.Handling; use Ada.Characters.Handling;
+
 package body Pack_JT is
 
    --JT_IType, JT_Nc1, JT_Nc2, JT_Ng, JT_K1, JT_K2 : Integer;
@@ -1529,20 +1534,20 @@ package body Pack_JT is
    --Something is Wrong here
    procedure Fmtmsg ( Msg : in out String ) is
    begin
-      for I in Msg'Range loop
-         if Msg(I) = ' ' then
-            if I = Msg'Length then
-               exit;
-            else
-               if Msg(I+1) = ' ' then
-                  --Msg(I) := Character'Val (127);
-                  null;
-               end if;
-            end if;
-         else
-            null;
-         end if;
-      end loop;
+      --  for I in Msg'Range loop
+      --     if Msg(I) = ' ' then
+      --        if I = Msg'Length then
+      --           exit;
+      --        else
+      --           if Msg(I+1) = ' ' then
+      --              --Msg(I) := Character'Val (127);
+      --              null;
+      --           end if;
+      --        end if;
+      --     else
+      --        null;
+      --     end if;
+      --  end loop;
       Msg := To_Upper(Msg);
    end Fmtmsg;
 
