@@ -4,10 +4,9 @@
 -- AUTHOR : (C) Copyright 2020 by Vermont Technical College
 --
 --------------------------------------------------------------------------------
-with Init_Rs; use Init_Rs;
-with Wrapkarn; use Wrapkarn;
-with Text_IO;
+--with Wrapkarn; use Wrapkarn;
+--with Text_IO;
 
-procedure JT65Code
-  with Global =>  (In_Out => (Text_IO.File_System, Reed_S, First));
+procedure JT65Code;
+  --with Global =>  (In_Out => (Text_IO.File_System, Reed_S, First));
 

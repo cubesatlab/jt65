@@ -12,6 +12,7 @@ with Testmsg; use Testmsg;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Unsigned_Array; use Unsigned_Array;
 with Interfaces; use Interfaces;
+with Wrapkarn; use Wrapkarn;
 
 
 procedure JT65Code
@@ -85,7 +86,7 @@ begin
 
       -- Packing Message
       Pack_JT.Pack_Msg(Msg1, Dat, Itype);
-      Dat_Packed(0 .. 11) := Dat(0 .. 11); -- Used for printing 6-bit symbols
+      Dat_Packed(0 .. 11) := Dat(0 .. 11); -- Used for printing 6-bit symbols and for packed check in decode
 
       if ( Nspecial > 0 ) then
          if ( Nspecial = 2 ) then
@@ -126,7 +127,7 @@ begin
       Sent_Channel(0 .. 62) := Sent(0 .. 62); -- Used for printing channel symbols
       Graycode ( Sent, -1);
       Interleave63 ( Sent, -1 );
-      Rs_Decode( Sent, Era, 0, Recd);
+      Rs_Decode( Sent, Era, 0, Recd, Dat_Packed);
 
       -- Converting to type Pack_JT.Integer_Array
       Counter := 1;
