@@ -6,9 +6,7 @@
 --------------------------------------------------------------------------------
 pragma SPARK_Mode(On);
 
---with Pack_JT;
 with Interfaces; use Interfaces;
---with General_JT; use General_JT;
 with Unsigned_Array; use Unsigned_Array;
 
 package Wrapkarn is
@@ -32,7 +30,8 @@ package Wrapkarn is
        Pre => Num = 0 and then
        ((Recd0'First = 0 and Recd0'Last = 62 and Recd0'Length = 63
          and Era'First = 0 and Era'Last = 50 and Era'Length = 51
-         and Decoded'First = 0 and Decoded'Last = 11 and Decoded'Length = 12)
+         and Decoded'First = 0 and Decoded'Last = 11 and Decoded'Length = 12
+         and Dat_Packed'First = 0 and Dat_Packed'Last = 11 and Dat_Packed'Length = 12)
         or else raise Array_Out_Of_Bounds),
        Post => (Decoded'Length = 12 and Decoded'First = 0 and Decoded'Last = 11)
        or else raise Array_Out_Of_Bounds;
@@ -44,7 +43,7 @@ private
    type Unsigned_Array_2 is
      array(Natural range 0 .. 51) of Unsigned_8;
 
-   type Rs is
+   type Rs is limited
       record
          Mm : Unsigned_8 := 0;
          Nn : Unsigned_8 := 0;
@@ -69,7 +68,8 @@ private
                            Pad : in Unsigned_8)
      with
        Global => null,
-       Pre =>  Gfpoly > 0 and Symsize <= 6 and Prim > 0;
+       Pre =>  Gfpoly > 0 and Symsize <= 6 and Prim > 0,
+       Post => Reed_S.Nn <= 63;
 
    function Modnn ( Reed_S : in Rs;
                     A : in Unsigned_8) return Integer
@@ -83,9 +83,9 @@ private
                             Bb : out Unsigned_8_array)
      with
        Global => null,
-       Pre => (Bb'First = 0 and Bb'Last = 50 and Bb'Length = 51
+       Pre => Reed_S.Nroots <= 51 and then ((Bb'First = 0 and Bb'Last = 50 and Bb'Length = 51
                and Data'First = 0 and Data'Last = 11 and Data'Length = 12)
-               or else raise Array_Out_Of_Bounds;
+               or else raise Array_Out_Of_Bounds);
 
    function Decode_Rs_Int( Reed_S : in Rs;
                            Data_In : in Unsigned_8_array;
@@ -93,16 +93,13 @@ private
                            No_Eras : in  Unsigned_8 ) return Unsigned_8_array
      with
        Global => null,
-       Pre => No_Eras = 0 and then
+       Pre => (No_Eras = 0 and Reed_S.Nn <= 63) and then
        ((Data_In'First = 0 and Data_In'Last = 62 and Data_In'Length = 63 and
                Eras_Pos_In'First = 0 and Eras_Pos_In'Last = 49 and Eras_Pos_In'Length = 50)
         or else raise Array_Out_Of_Bounds),
        Post => Decode_Rs_Int'Result'Length = 63 and
        Decode_Rs_Int'Result'First = 0 and
        Decode_Rs_Int'Result'Last = 62;
-
-
-
 
 end Wrapkarn;
 

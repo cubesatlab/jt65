@@ -33,18 +33,18 @@ package body Wrapkarn is
          Dat1(I) := Dgen(11-I);
       end loop;
 
-      -- Compute the parity symbols
-      Encode_Rs_Int(Reed_S, Dat1, B);
+      if Reed_S.Nroots <= 51 then
+         -- Compute the parity symbols
+         Encode_Rs_Int(Reed_S, Dat1, B);
+         -- Move aprity symbols and data into sent array, in reverse order.
+         for I in 0 .. 50 loop
+            Sent(50 - I) := B(I);
+         end loop;
 
-      -- Move aprity symbols and data into sent array, in reverse order.
-      for I in 0 .. 50 loop
-         Sent(50 - I) := B(I);
-      end loop;
-
-      for I in 0 .. 11 loop
-         Sent(51 + I) := Dat1(11 - I);
-      end loop;
-
+         for I in 0 .. 11 loop
+            Sent(51 + I) := Dat1(11 - I);
+         end loop;
+      end if;
    end Rs_Encode;
 
    procedure Rs_Decode( Recd0 : in Unsigned_8_array;
@@ -57,7 +57,7 @@ package body Wrapkarn is
    -- Erasures are indicated in era0[Numera].  The number of corrected
    -- errors is Nerr.  If the data are uncorrectable, Nerr=-1 is returned.
       Numera : Unsigned_8;
-      Era_Pos : Unsigned_8_array(0 .. 49);
+      Era_Pos : Unsigned_8_array(0 .. 49) := (others => 0);
       Recd, Recd_Out: Unsigned_8_array(0 .. 62);
       Symsize : constant Unsigned_8 := 6;
       Gfpoly : constant Unsigned_8 := 16#43#;
@@ -65,12 +65,14 @@ package body Wrapkarn is
       Prim : constant Unsigned_8  := 1;
       Nroots : constant Unsigned_8 := 51;
       Pad : constant Unsigned_8 := 0;
-      Recd_Reverse : Unsigned_8_Array(0 .. 11);
+      Recd_Reverse : Unsigned_8_Array(0 .. 11) := (others => 0);
       Count : Integer := 0;
 
    begin
 
       Decoded := (others => 0);
+      --Era_Pos := (others => 0);
+      --Recd_Reverse :=
       Numera := Num;
       for I in Recd'Range loop
          Recd(I) := Recd0(62 - I);
@@ -78,7 +80,6 @@ package body Wrapkarn is
       for I in 0 .. 50 loop
          Recd(12 + I) := Recd0(50 - I);
       end loop;
-
       for I in reverse Recd_Reverse'Range loop
          Recd_Reverse(Count) := Recd(I);
          Count := Count + 1;
@@ -94,17 +95,20 @@ package body Wrapkarn is
             for I in 1 .. Numera loop
                Era_Pos(Integer(I)) := Era(Integer(I));
             end loop;
-         else
-            for I in Era_Pos'Range loop
-               Era_Pos(I) := 0;
-            end loop;
+            --for I in Era_Pos'Range loop
+            --   Era_Pos(I) := 0;
+            --end loop;
          end if;
          -- No longer returning the number of errors to meet
          -- SPARK flow analysis requirements
-         Recd_Out := Decode_Rs_Int( Reed_S, Recd, Era_Pos, Numera );
-         for I in 0 .. 11 loop
-            Decoded(I) := Recd_Out(11 - I);
-         end loop;
+         if Reed_S.Nn <= 63 then
+            Recd_Out := Decode_Rs_Int( Reed_S, Recd, Era_Pos, Numera );
+            for I in 0 .. 11 loop
+               Decoded(I) := Recd_Out(11 - I);
+            end loop;
+         end if;
+         -- Introduce an out error code here?
+
       -- The packed bits matched.
       -- Return the packed bits for packed-bits->message decoding
       else
@@ -180,15 +184,19 @@ package body Wrapkarn is
                   end if;
                end if;
             end loop;
-            X := Reed_S.Index_Of(Integer(Reed_S.Genpoly(0))) + Root;
-            if X < 255 then
-               Reed_S.Genpoly(0) := Reed_S.Alpha_To(Modnn(Reed_S,X));
+            if Reed_S.Genpoly(0) <= 63 then
+               X := Reed_S.Index_Of(Integer(Reed_S.Genpoly(0))) + Root;
+               if X < 255 then
+                  Reed_S.Genpoly(0) := Reed_S.Alpha_To(Modnn(Reed_S,X));
+               end if;
             end if;
             Root := Root + Prim;
          end loop;
          for I in 0 .. Nroots loop
-            if Nroots = 51 then
+            if Nroots = 51 and I <= 51 then
+               if Reed_S.Genpoly(Integer(I)) <= 63 then
                Reed_S.Genpoly(Integer(I)) := Reed_S.Index_Of(Integer(Reed_S.Genpoly(Integer(I))));
+               end if;
             end if;
          end loop;
       end if;
@@ -219,10 +227,11 @@ package body Wrapkarn is
          Bb(I) := 0;
       end loop;
 
-      --if Reed_S /= Rs_Null then
-         for I in 0 .. 11 loop
+      if Reed_S.Nn <= 63 then
+      for I in 0 .. 11 loop
+         if Integer(Data(I) xor Bb(0)) <= 63 then
             Feedback := Reed_S.Index_Of(Integer(Data(I) xor
-                               (Bb(0))));
+                                          (Bb(0))));
             if Feedback /= Reed_S.Nn then
                for J in 1 .. 50 loop
                   X := Feedback + Reed_S.Genpoly(Integer(Nroots-Unsigned_8(J)));
@@ -232,12 +241,13 @@ package body Wrapkarn is
             Bb(0 .. Integer(Nroots) - 2) := Bb(1 .. Integer(Nroots) - 1);
             if Feedback /= Reed_S.Nn then
                X := Feedback + Reed_S.Genpoly(0);
-               Bb(Integer(Reed_S.Nroots)-1) := Reed_S.Alpha_To(Modnn(Reed_S, X));
+               Bb(50) := Reed_S.Alpha_To(Modnn(Reed_S, X));
             else
-               Bb(51-1) := 0;
+               Bb(50) := 0;
             end if;
+         end if;
          end loop;
-      --end if;
+      end if;
    end Encode_Rs_Int;
 
    function Decode_Rs_Int( Reed_S : in Rs;
@@ -291,12 +301,16 @@ package body Wrapkarn is
       end loop;
       for J in 1 .. Reed_S.Nn - Reed_S.Pad-1 loop
          for I in 0 .. Nroots-1 loop
-            if S(I) = 0 then
-               S(I) := Data(Integer(J));
+            if S(I) = 0 and Integer(S(I)) <= 63 and Integer(J) <= 62 then
+                  S(I) := Data(Integer(J));
             else
-               X := Reed_S.Index_Of(Integer(S(I))) + (Reed_S.Fcr + Unsigned_8(I))* (Reed_S.Prim);
-               S(I) := Data(Integer(J)) xor
-                 Reed_S.Alpha_To(Modnn(Reed_S, X));
+               if Integer(S(I)) <= 63 and Integer(J) <= 62 then
+                  X := Reed_S.Index_Of(Integer(S(I))) + (Reed_S.Fcr + Unsigned_8(I))* (Reed_S.Prim);
+                  if Modnn(Reed_S,X) <= 63 then
+                     S(I) := Data(Integer(J)) xor
+                       Reed_S.Alpha_To(Modnn(Reed_S, X));
+                  end if;
+               end if;
             end if;
          end loop;
       end loop;
@@ -305,7 +319,9 @@ package body Wrapkarn is
       Syn_Error := 0;
       for I in 0 .. Nroots - 1 loop
          Syn_Error := Syn_Error or S(I);
-         S(I) := Reed_S.Index_Of(Integer(S(I)));
+         if S(I) <= 63 then
+            S(I) := Reed_S.Index_Of(Integer(S(I)));
+         end if;
       end loop;
 
       if Syn_Error = 0 then
@@ -348,12 +364,16 @@ package body Wrapkarn is
          while Integer(R) + 1 <= Nroots loop
             Discr_R := 0;
             for I in 0 .. R - 1 loop
-               if Lambda(Integer(I)) /= 0 and S(Integer(R - I) - 1) /= Reed_S.Nn then
-                  Modnn_Tmp := Reed_S.Index_Of(Integer(Lambda(Integer(I)))) + S(Integer(R-I)-1);
-                  Discr_R := Discr_R xor Reed_S.Alpha_To(Modnn(Reed_S,Modnn_Tmp));
+               if Integer(I) <= 51 and R > 0 then
+                  if Lambda(Integer(I)) /= 0 and S(Integer(R - I) - 1) /= Reed_S.Nn then
+                     Modnn_Tmp := Reed_S.Index_Of(Integer(Lambda(Integer(I)))) + S(Integer(R-I)-1);
+                     Discr_R := Discr_R xor Reed_S.Alpha_To(Modnn(Reed_S,Modnn_Tmp));
+                  end if;
                end if;
             end loop;
-            Discr_R := Reed_S.Index_Of(Integer(Discr_R));
+            if Integer(Discr_R) <= 63 then
+               Discr_R := Reed_S.Index_Of(Integer(Discr_R));
+            end if;
 
             if Discr_R = Reed_S.Nn then
                B(1) := B(0);
@@ -372,8 +392,10 @@ package body Wrapkarn is
                if 2 * El <= R + No_Eras - 1 then
                   El := R + No_Eras - El;
                   for I in 0 .. Nroots loop
-                     Modnn_Tmp3 := Reed_S.Index_Of(Integer(Lambda(I) - Discr_R + Reed_S.Nn));
-                     B(I) := (if Lambda(I) = 0 then Reed_S.Nn else Unsigned_8(Modnn(Reed_S,Modnn_Tmp3)));
+                     if Integer(Lambda(I) - Discr_R + Reed_S.Nn) <= 63 then
+                        Modnn_Tmp3 := Reed_S.Index_Of(Integer(Lambda(I) - Discr_R + Reed_S.Nn));
+                        B(I) := (if Lambda(I) = 0 then Reed_S.Nn else Unsigned_8(Modnn(Reed_S,Modnn_Tmp3)));
+                     end if;
                   end loop;
                else
                   -- TODO: Maybe error here?
@@ -481,8 +503,6 @@ package body Wrapkarn is
             return Data;
       end if;
    end Decode_Rs_Int;
-
-
 
 end Wrapkarn;
 
