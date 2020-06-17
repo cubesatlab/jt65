@@ -102,7 +102,7 @@ begin
          Msgtype := "Shorthand   ";
       else
          if ( Itype = 1 ) then
-            Msgtype := "1:Std Msg   ";
+            Msgtype := "1:Std msg   ";
          end if;
          if ( Itype = 2 ) then
             Msgtype := "2:Type 1 pfx";
@@ -117,7 +117,7 @@ begin
             Msgtype := "5:Type 2 sfx";
          end if;
          if ( Itype = 6 ) then
-            Msgtype := "6:Free Text ";
+            Msgtype := "6:Free text ";
          end if;
       end if;
 
@@ -152,28 +152,38 @@ begin
       end if;
 
       -- Printing to terminal
-      Put_Line("   Message                    Decoded             Err? Type             Expected");
-      Put_Line("--------------------------------------------------------------------------------");
+      Put_Line("   Message                Decoded              Err? Type          Expected");
+      Put_Line("----------------------------------------------------------------------------");
       Put(Imsg'Image);
       Put(". " & Msg0(1 .. 22));
-      Put("   " & Decoded(1 .. 22));
+      Put(" " & Decoded(1 .. 22));
       Put(" " & Bad);
       Put("  " & Msgtype);
-      Put("    " & Expected);
+      Put("  " & Expected);
       New_Line;New_Line;
-      Put("Packed message, 6-bit symbols: ");
+      Put("Packed message, 6-bit symbols ");
       for I in Dat_Packed'Range loop
-         Put(Unsigned_8'Image(Dat_Packed(I)));
+         if Dat_Packed(I) <= 9 then
+            Put(" " &Unsigned_8'Image(Dat_Packed(I)));
+         else
+            Put(Unsigned_8'Image(Dat_Packed(I)));
+         end if;
       end loop;
       New_Line;New_Line;
       Put_Line("Information-carrying channel symbols");
+      Put("  ");
       for I in Sent_Channel'Range loop
-         Put(Unsigned_8'Image(Sent_Channel(I)));
+         if Sent_Channel(I) <= 9 then
+            Put(" " &Unsigned_8'Image(Sent_Channel(I)));
+         else
+            Put(Unsigned_8'Image(Sent_Channel(I)));
+         end if;
          if I = 20 or I = 41 then
             New_Line;
+            Put("  ");
          end if;
       end loop;
-      New_Line;New_Line;New_Line;
+      New_Line;New_Line;
    end loop;
 end JT65Code;
 

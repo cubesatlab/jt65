@@ -6,7 +6,7 @@ with Unsigned_Array; use Unsigned_Array;
 
 procedure Check_Pack is
    IType : Integer;
-   Dat   : Unsigned_32_Array(0 .. 11);
+   Dat   : Unsigned_8_Array(0 .. 11);
    Test  : constant String := "DE KA1ABC/VE6 -22";
    Decoded_Message : String(1 .. 22);
 begin
@@ -14,7 +14,7 @@ begin
    Put_Line("Message: " & Test);
 
    for I in Dat'Range loop
-      Put(Unsigned_32'Image(Dat(I)) & " ");
+      Put(Unsigned_8'Image(Dat(I)) & " ");
    end loop;
 
    Put_Line(" Type: " & Integer'Image(IType));
