@@ -2,7 +2,7 @@ pragma SPARK_Mode(On);
 
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 with Ada.Strings; use Ada.Strings;
-with pfx; use pfx;
+with Pfx; use Pfx;
 with Ada.Characters.Handling; use Ada.Characters.Handling;
 
 package body Pack_JT is
@@ -1328,11 +1328,6 @@ package body Pack_JT is
    procedure N2Grid(N : Integer; Grid : in out String) is
       I, I1, I2 : Integer;
    begin
-
-      if N > -31 or N < -70 then
-         raise N2Grid_Error with "Error in N2Grid";
-      end if;
-
       I := -(N + 31);
       I1 := I / 10;
       I2 := I mod 10;
@@ -1341,29 +1336,21 @@ package body Pack_JT is
       Grid(Grid'First + 1) := 'A';
       Grid(Grid'First + 2) := Character'Val(Character'Pos('0') + I2);
       Grid(Grid'First + 3) := '0';
-
    end N2Grid;
 
 
    --Converts ascii number, letter, or space to 0-36
-   function NChar(C : Character) return Integer is
-      N : Integer;
-   begin
-      if C >= '0' and C <= '9' then
-         N := Character'Pos(C) - Character'Pos('0');
-      elsif C >= 'A' and C <= 'Z' then
-         N := Character'Pos(C) - Character'Pos('A') + 10;
-      elsif C >= 'a' and C <= 'z' then
-         N := Character'Pos(C) - Character'Pos('a') + 10;
-      elsif C >= ' ' then
-         N := 36;
-      else
-         raise Invalid_Callsign with "Invalid character in callsign: " & C;
-      end if;
-
-      return N;
-
-   end NChar;
+   function NChar(C : Callsign_Type) return Numeric_Callsign_Type is
+      (case (C) is
+         when '0' .. '9' =>
+            Character'Pos(C) - Character'Pos('0'),
+         when 'A' .. 'Z' =>
+            Character'Pos(C) - Character'Pos('A') + 10,
+         when 'a' .. 'z' =>
+            Character'Pos(C) - Character'Pos('a') + 10,
+         when ' ' =>
+             36,
+         when others => raise Program_Error);  -- Why is this necessary? Compiler bug?
 
 
    procedure Pack50(N1, N2 : Unsigned_32; Dat : out Unsigned_32_Array) is

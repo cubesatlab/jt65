@@ -1,8 +1,8 @@
 pragma SPARK_Mode(On);
 
-package body pfx is
+package body Pfx is
 
-   procedure Init_Pfx(Prefixes : out pfx_array; Suffixes : out sfx_array) is
+   procedure Init_Pfx(Prefixes : out Pfx_Array; Suffixes : out Sfx_Array) is
    begin
       Prefixes := ("1A   ","1S   ","3A   ","3B6  ","3B8  ","3B9  ","3C   ","3C0  ",
                    "3D2  ","3D2C ","3D2R ","3DA  ","3V   ","3W   ","3X   ","3Y   ",
@@ -52,6 +52,4 @@ package body pfx is
 
    end Init_Pfx;
 
-
-
-end pfx;
+end Pfx;
