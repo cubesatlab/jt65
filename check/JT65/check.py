@@ -4,24 +4,44 @@
 
 import subprocess
 
-program_name = "../../build/jt65code"
-process = subprocess.Popen([program_name, "Hello"], stdout=subprocess.PIPE, universal_newlines=True)
-actual_result = ""
-for line in process.stdout:
-    actual_result += line
 
-expected_name = "../expected-hello.txt"
-with open(expected_name) as input_file:
-    expected_result = input_file.read()
+class TestCase:
+    def __init__(self, case_command, case_result_file):
+        self.command = case_command
+        self.result_file = case_result_file
 
-print("ACTUAL OUTPUT:")
-print("----------")
-print(actual_result)
-print("----------\n")
 
-print("EXPECTED OUTPUT:")
-print("----------")
-print(expected_result)
-print("----------\n")
+test_cases = [TestCase("../../build/jt65code", "../expected-hello.txt")]
+overall_success = True
 
-print("Do they agree?", actual_result == expected_result)
+for test_case in test_cases:
+    process = subprocess.Popen([test_case.command, "Hello"], stdout=subprocess.PIPE, universal_newlines=True)
+    actual_result = ""
+    for line in process.stdout:
+        actual_result += line
+
+    with open(test_case.result_file) as input_file:
+        expected_result = input_file.read()
+    #expected_result.replace('\r', '')   # Not really needed?
+
+    # It might be nice to have an option to suppress this output.
+    print("ACTUAL OUTPUT:")
+    print("#####")
+    print(actual_result)
+    print("#####\n")
+
+    print("EXPECTED OUTPUT:")
+    print("#####")
+    print(expected_result)
+    print("#####", end="  ")
+
+    # TODO: Give test cases names and print the name here.
+    case_success = actual_result == expected_result
+    print("Do they agree?", case_success)
+    overall_success = overall_success and case_success
+
+# The final assessment...
+if overall_success:
+    print("PASS!")
+else:
+    print("FAIL!")

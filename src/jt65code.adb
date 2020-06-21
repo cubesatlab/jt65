@@ -152,7 +152,7 @@ begin
       end if;
 
       -- Printing to terminal
-      Put_Line("   Message                Decoded              Err? Type          Expected");
+      Put_Line("    Message                Decoded              Err? Type          Expected");
       Put_Line("----------------------------------------------------------------------------");
       Put(Imsg'Image);
       Put(". " & Msg0(1 .. 22));
@@ -183,11 +183,6 @@ begin
             Put("  ");
          end if;
       end loop;
-      New_Line;New_Line;
+      New_Line;
    end loop;
 end JT65Code;
-
-
-
-
-
