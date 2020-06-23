@@ -15,24 +15,22 @@ package body General_JT is
       NSpecial := 0;
       Cok := "   ";
 
-      for I in reverse Msg'Range loop
+      for I in Msg'Range loop
          if Msg(I) /= ' ' then
             if I > 11 then
-               if Msg(I-3 .. I) = " 000" or Msg(Msg'First + 19 .. Msg'First + 21) = " 00" then
-                  Cok := "000";
+               if Msg(I-3.. I) = " OOO" then
+                  Cok := "OOO";
                   if (Msg(Msg'First + 19 .. Msg'Last) = " 00" and Msg(Msg'First .. Msg'First + 10) /= "           " )then
                      Msg(20 .. 22) := "   ";
                   else
-                     for J in 1 .. 4 loop
-                        Msg(I - J) := ' ';
-                     end loop;
+                     Msg(I - 3 .. I) := "    ";
                   end if;
                end if;
             end if;
          else
-         if (Msg = "RO                    ") then NSpecial := 2; end if;
-         if (Msg = "RRR                   ") then NSpecial := 3; end if;
-         if (Msg = "73                    ") then NSpecial := 4; end if;
+            if (Msg = "RO                    ") then NSpecial := 2; end if;
+            if (Msg = "RRR                   ") then NSpecial := 3; end if;
+            if (Msg = "73                    ") then NSpecial := 4; end if;
          end if;
       end loop;
    end ChkMsg;
@@ -121,4 +119,35 @@ package body General_JT is
       end loop;
       Sent := Temporary_Array;
    end Graycode;
+
+   procedure Collapse_Blanks( Msg : in out String) is
+      I : Integer := 1;
+      Flag : Boolean := False;
+      Counter : Integer;
+   begin
+      while I <= 21 and I + 1 /= Msg'Length loop
+         if I >= 1 then
+            if Msg(I) = ' ' and Msg(I + 1) = ' ' then
+               Msg(Msg'First .. Msg'Last) :=
+                 Msg(Msg'First .. I - 1) & Msg(I + 1 .. Msg'Last) & Msg(I);
+               Counter := Msg'Last - I;
+               for X in I .. Msg'Last loop
+                  if Msg(X) = ' ' and Counter >= 0 then
+                     Counter := Counter - 1;
+                  end if;
+                  if Counter = 0 then
+                     Flag := True;
+                     exit;
+                  end if;
+               end loop;
+               if Flag then
+                  exit;
+               end if;
+            else
+               I := I + 1;
+            end if;
+         end if;
+      end loop;
+   end Collapse_Blanks;
+
 end General_JT;

@@ -80,6 +80,7 @@ begin
       end loop;
 
       Pack_JT.Fmtmsg(Msg);
+      Collapse_Blanks(Msg);
       Msg0 := Msg;
       Chkmsg(Msg, Cok, Nspecial);
       Msg1 := Msg;
@@ -99,7 +100,7 @@ begin
             Decoded(1 .. 2) := "73";
          end if;
          Itype := -1;
-         Msgtype := "Shorthand   ";
+         Msgtype := "-1:Shorthand";
       else
          if ( Itype = 1 ) then
             Msgtype := "1:Std msg   ";
@@ -137,10 +138,11 @@ begin
       end loop;
       Recd_Tmp(0 .. 11) := Recd_Convert(1 .. 12);
       Pack_JT.Unpack_Msg( Recd_Tmp, Decoded );
-      if ( Cok = "000" ) then
+      if ( Cok = "OOO" ) then
          Decoded ( 20 .. 22) := cok;
       end if;
       Pack_JT.Fmtmsg(Decoded);
+      Collapse_Blanks(Decoded);
 
       Bad := " ";
       Expected := "EXACT                 ";
@@ -160,29 +162,31 @@ begin
       Put(" " & Bad);
       Put("  " & Msgtype);
       Put("  " & Expected);
-      New_Line;New_Line;
-      Put("Packed message, 6-bit symbols ");
-      for I in Dat_Packed'Range loop
-         if Dat_Packed(I) <= 9 then
-            Put(" " &Unsigned_8'Image(Dat_Packed(I)));
-         else
-            Put(Unsigned_8'Image(Dat_Packed(I)));
-         end if;
-      end loop;
-      New_Line;New_Line;
-      Put_Line("Information-carrying channel symbols");
-      Put("  ");
-      for I in Sent_Channel'Range loop
-         if Sent_Channel(I) <= 9 then
-            Put(" " &Unsigned_8'Image(Sent_Channel(I)));
-         else
-            Put(Unsigned_8'Image(Sent_Channel(I)));
-         end if;
-         if I = 20 or I = 41 then
-            New_Line;
-            Put("  ");
-         end if;
-      end loop;
-      New_Line;
+      New_Line(2);
+      if Itype /= -1 then
+         Put("Packed message, 6-bit symbols ");
+         for I in Dat_Packed'Range loop
+            if Dat_Packed(I) <= 9 then
+               Put(" " &Unsigned_8'Image(Dat_Packed(I)));
+            else
+               Put(Unsigned_8'Image(Dat_Packed(I)));
+            end if;
+         end loop;
+         New_Line(2);
+         Put_Line("Information-carrying channel symbols");
+         Put("  ");
+         for I in Sent_Channel'Range loop
+            if Sent_Channel(I) <= 9 then
+               Put(" " &Unsigned_8'Image(Sent_Channel(I)));
+            else
+               Put(Unsigned_8'Image(Sent_Channel(I)));
+            end if;
+            if I = 20 or I = 41 then
+               New_Line;
+               Put("  ");
+            end if;
+         end loop;
+      end if;
+      New_Line(2);
    end loop;
 end JT65Code;

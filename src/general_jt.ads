@@ -6,17 +6,13 @@
 --------------------------------------------------------------------------------
 pragma SPARK_Mode(On);
 
--- For moving array to Unsigned_32
---with Interfaces; use Interfaces;
 with Unsigned_Array; use Unsigned_Array;
 
 package General_JT is
 
-   -- Rework using Unsigned_32
-   --type Integer_Array is array(Natural range <>) of Integer;
    Array_Out_Of_Bounds : exception;
 
-   -- Converted subroutines from References to be added here
+   -- Checks message for OOO report
    procedure Chkmsg( Msg : in out String;
                      Cok : out String;
                      Nspecial : out Integer )
@@ -36,6 +32,12 @@ package General_JT is
      with Pre => (Dir = -1 or Dir = 1)
      and then ((Sent'Length = 63 and Sent'First = 0 and Sent'Last = 62)
                or else raise Array_Out_Of_Bounds);
+
+   -- Collapse blank lines in Msg
+   procedure Collapse_Blanks( Msg : in out String)
+     with
+       Pre => (Msg'First >= 1 and Msg'Last <= 22 and Msg'Length = 22)
+     or else raise Array_Out_Of_Bounds;
 
 
 end General_JT;
