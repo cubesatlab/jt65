@@ -4,6 +4,7 @@ with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 with Ada.Strings; use Ada.Strings;
 with Pfx; use Pfx;
 with Ada.Characters.Handling; use Ada.Characters.Handling;
+with Ada.Text_IO; use Ada.Text_IO;
 
 package body Pack_JT is
 
@@ -14,18 +15,18 @@ package body Pack_JT is
    --Might need to fix the index for the arrays
    procedure Pack_Bits(DBits : Unsigned_8_Array; NSymd : Integer; M0 : Integer; Sym : out Unsigned_8_Array) is
       -- Might need to change the types for n and m
-      k : Integer := 0;
-      n : Unsigned_8;
-      m : Unsigned_8;
+      K : Integer := 0;
+      N : Unsigned_8;
+      M : Unsigned_8;
    begin
-      for i in 0 .. NSymd-1 loop
-         n := 0;
-         for j in 0 .. M0-1 loop
-            m := DBits(k);
-            k := k + 1;
-            n := Shift_Left(n,1) or m;
+      for I in 0 .. NSymd-1 loop
+         N := 0;
+         for J in 0 .. M0-1 loop
+            M := DBits(K);
+            K := K + 1;
+            N := Shift_Left(N,1) or M;
          end loop;
-         Sym(i) := n;
+         Sym(I) := N;
       end loop;
    end Pack_Bits;
 
@@ -142,6 +143,36 @@ package body Pack_JT is
       C : constant String := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
       N : Integer := Integer(NCall);
       I : Integer := 0;
+
+      procedure Collapse_Blanks_12( Msg : in out String) is
+         I : Integer := 1;
+         Flag : Boolean := False;
+         Counter : Integer;
+      begin
+         while I <= 12 and I + 1 /= Msg'Length loop
+            if I >= 1 then
+               if Msg(I) = ' ' and Msg(I + 1) = ' ' then
+                  Msg(Msg'First .. Msg'Last) :=
+                    Msg(Msg'First .. I - 1) & Msg(I + 1 .. Msg'Last) & Msg(I);
+                  Counter := Msg'Last - I;
+                  for X in I .. Msg'Last loop
+                     if Msg(X) = ' ' and Counter >= 0 then
+                        Counter := Counter - 1;
+                     end if;
+                     if Counter = 0 then
+                        Flag := True;
+                        exit;
+                     end if;
+                  end loop;
+                  if Flag then
+                     exit;
+                  end if;
+               else
+                  I := I + 1;
+               end if;
+            end if;
+         end loop;
+      end Collapse_Blanks_12;
 
       procedure Nine_Nine_Nine is
       begin
@@ -308,7 +339,9 @@ package body Pack_JT is
       for X in 1 .. 4 loop
          if Word(Word'First + X - 1) /= ' ' then
             --Word := Word(X .. Word'Last);
-            Move(Word(X .. Word'Last), Word, Right, Left, Space);
+            Collapse_Blanks_12(Word);
+            --Move(Word(X .. Word'Last), Word, Right, Left, Space);
+            --Put_Line(Word);
             --Word(Word'First .. Word(X .. Word'Last)'Length) := Word(X .. Word'Last);
             Nine_Nine_Nine;
             return;
@@ -780,7 +813,7 @@ package body Pack_JT is
       cqnnn : Boolean := False;
       nc1, nc2, ng : Unsigned_32;
       iv2, NFreq, junk1, n1, n2, K, J : Integer;
-      Dat : Unsigned_32_Array (0 .. 11);
+      Dat : Unsigned_32_Array (0 .. 11) := (others => 0);
       --Index_Val : Integer;
 
       procedure One_Hundred is
@@ -1179,7 +1212,7 @@ package body Pack_JT is
                   I := Index(Callsign0, "/");
 
                   --Callsign := Callsign0(1 .. I-1);
-                  Move(Callsign0(1 .. I-1), Callsign, Right, Left, Space);
+                  --Move(Callsign0(1 .. I-1), Callsign, Right, Left, Space); Statement has no effect
                   --Callsign := Callsign0(I+1 .. Callsign0'Length);
                   Move(Callsign0(I+1 .. Callsign0'Length), Callsign, Right, Left, Space);
                end if;
@@ -1253,7 +1286,6 @@ package body Pack_JT is
       end if;
 
       Ten;
-
 
    end Get_Pfx1;
 
@@ -1379,7 +1411,7 @@ package body Pack_JT is
 
 
    procedure Pack_Pfx(Call1 : String; N1 : in out Unsigned_32; Ng : in out Integer; Nadd : out Integer) is
-      Call0 : String (1 .. 12) := (others => ' ');
+      Call0 : String (1 .. 12);
       Pfx : String (1 .. 3);
       Text : Boolean;
       N, Nc, I1 : Integer;
@@ -1523,23 +1555,8 @@ package body Pack_JT is
    end Deg2Grid;
 
 
-   --Something is Wrong here
    procedure Fmtmsg ( Msg : in out String ) is
    begin
-      --  for I in Msg'Range loop
-      --     if Msg(I) = ' ' then
-      --        if I = Msg'Length then
-      --           exit;
-      --        else
-      --           if Msg(I+1) = ' ' then
-      --              --Msg(I) := Character'Val (127);
-      --              null;
-      --           end if;
-      --        end if;
-      --     else
-      --        null;
-      --     end if;
-      --  end loop;
       Msg := To_Upper(Msg);
    end Fmtmsg;
 

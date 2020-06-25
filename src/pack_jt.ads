@@ -94,6 +94,6 @@ package Pack_JT is
    -- collapsing multiple blanks into one
    procedure Fmtmsg( Msg : in out String )
      with
-       Pre => Msg'Length >= 1 and Msg'Length <= 22;
+       Pre => Msg'First >= 1 and Msg'Last <= 22 and Msg'Length = 22;
 
 end Pack_JT;

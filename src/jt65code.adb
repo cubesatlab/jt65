@@ -187,6 +187,6 @@ begin
             end if;
          end loop;
       end if;
-      New_Line(2);
+      New_Line;
    end loop;
 end JT65Code;
