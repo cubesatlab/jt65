@@ -4,20 +4,20 @@
 -- AUTHOR : (C) Copyright 2020 by Vermont Technical College
 --
 --------------------------------------------------------------------------------
-with Pack_JT;
-with General_JT; use General_JT;
-with Ada.Command_Line; use Ada.Command_Line;
-with Ada.Text_IO; use Ada.Text_IO;
-with Testmsg; use Testmsg;
+with Ada.Command_Line;      use Ada.Command_Line;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+with Ada.Text_IO;           use Ada.Text_IO;
+with Interfaces;            use Interfaces;
+
+
+with General_JT;     use General_JT;
+with Pack_JT;
+with Testmsg;        use Testmsg;
 with Unsigned_Array; use Unsigned_Array;
-with Interfaces; use Interfaces;
-with Wrapkarn; use Wrapkarn;
+with Wrapkarn;       use Wrapkarn;
 
 
-procedure JT65Code
-is
-
+procedure JT65Code is
    Msg, Msg0, Msg1, Decoded, Expected : String (1 .. 22);
    MsgTmpString : String(1 .. 100);
    Msgtmp : Unbounded_String;
@@ -33,9 +33,7 @@ is
 
    Testing : Boolean;
    IncorrectPress : Boolean;
-
 begin
-
    -- Initialization
    Arg_Counter := 0;
    IncorrectPress := False;

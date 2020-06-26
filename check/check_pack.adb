@@ -1,8 +1,9 @@
 
 with Ada.Text_IO; use Ada.Text_IO;
-with Pack_JT;     use Pack_JT;
-with Interfaces; use Interfaces;
+with Interfaces;  use Interfaces;
 with Unsigned_Array; use Unsigned_Array;
+
+with Pack_JT;     use Pack_JT;
 
 procedure Check_Pack is
    IType : Integer;
