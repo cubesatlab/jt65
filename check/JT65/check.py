@@ -6,16 +6,19 @@ import subprocess
 
 
 class TestCase:
-    def __init__(self, case_command, case_result_file):
+    def __init__(self, case_command, case_argument, case_result_file):
         self.command = case_command
+        self.argument = case_argument
         self.result_file = case_result_file
 
 
-test_cases = [TestCase("../../build/jt65code", "../expected-hello.txt")]
+test_cases = [TestCase("../../build/jt65code", "Hello", "../expected-hello.txt"),
+              TestCase("../../build/jt65code", "-t", "../expected-test.txt"),
+              TestCase("../../build/check_pack", "", "../expected-check-pack.txt")]
 overall_success = True
 
 for test_case in test_cases:
-    process = subprocess.Popen([test_case.command, "Hello"], stdout=subprocess.PIPE, universal_newlines=True)
+    process = subprocess.Popen([test_case.command, test_case.argument], stdout=subprocess.PIPE, universal_newlines=True)
     actual_result = ""
     for line in process.stdout:
         actual_result += line
@@ -25,7 +28,7 @@ for test_case in test_cases:
     #expected_result.replace('\r', '')   # Not really needed?
 
     # It might be nice to have an option to suppress this output.
-    print("ACTUAL OUTPUT:")
+    print("\nACTUAL OUTPUT:")
     print("#####")
     print(actual_result)
     print("#####\n")

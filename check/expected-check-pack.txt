@@ -1,0 +1,3 @@
+Message: DE KA1ABC/VE6 -22
+ 63  54  10  17  62  9  3  6  3  7  58  39  Type:  5
+Decoded Message: DE KA1ABC/VE6 -22     

@@ -1,0 +1,715 @@
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 1. HELLO WORLD A          HELLO WORLD A             6:Free text   EXACT                 
+
+Packed message, 6-bit symbols  25 47  9 63 51 26 17 10 17 45 62  6
+
+Information-carrying channel symbols
+   47 17 31 55 18 16 13 58 23 23 41 40 43  7 17 29 29 25 17 47 63
+   17 39 46  3 21 15  2 44 56  1 40 46 18 56 25 21 55 11 15 62 57
+   17 13 59 47  8 59 44 22 10 61 32 33 22  7 55 57 26 57 55 42  5
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 2. CUBESAT LABOR          CUBESAT LABOR             6:Free text   EXACT                 
+
+Packed message, 6-bit symbols  18 55 62 36 32 63 36 37 58 12 63 23
+
+Information-carrying channel symbols
+   62 11 59 47 10 12 52 48 32 44 51  4 29 11  7 57 33 54 42 61 10
+   49 62 51 23 27 55  6 35 20 47 46 37 33 44 39 53  5 26 10 50 62
+   58 33 10  1 45 59 11 47 16 52 54 32 35 11 48  1  5 54 30 48 28
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 3. QRZ WB9XYZ EN34        QRZ WB9XYZ EN34           1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  62 32 32 49 43 26 31 40 41 22  0 38
+
+Information-carrying channel symbols
+   11 10 61 22 63 24 11 39 23 51 28 41  5 16 63 59 30 16 47 12 22
+   25 55 19 59 33 60 20 62 49 18 40 21 47 48 61 60 29 54 63  4  1
+    1 48 29 48 46 17 18 45 23 47 41  0 33 53  4 22  1 47 26 62 53
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 4. KA1ABC WB9XYZ EN34     KA1ABC WB9XYZ EN34        1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 22  0 38
+
+Information-carrying channel symbols
+    3  9 34 51 45 36 45 61 23 50 18 51 58  3 44 15 28 16  8 36 47
+   61 44 50 44 51 60 46  3 28 51 36 28 46 24 61 55  5 30 58 45 34
+   62 41 29  5 63 24 45  2  3  9 48  0  1 30 53 45 59 63 61 42 53
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 5. KA1ABC WB9XYZ RO       KA1ABC WB9XYZ RO          1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 23 59 14
+
+Information-carrying channel symbols
+   16 44 38 12 58 22 23 56 23 43 17 43 53  5 14 16 21 16 51 43 42
+   52 48 50 38 51 60 45 36 31  1 41 49 39 24 61 25 37 40 17 46 43
+   32 41 28  5 39 40 21 14  5 24 48 38 10 61 30 24  7 11 43 42  9
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 6. KA1ABC WB9XYZ -21      KA1ABC WB9XYZ -21         1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 23 58 38
+
+Information-carrying channel symbols
+    6 47 41 47 20 28 30 37 23 14 39 55 58  7  4 17 52 16 27 29 30
+   10  1 24 13 51 60 16  2 36 15 22 24 60 24 61 59 54 40 55 28 51
+   24 41 28 56 13 10  2 35  9 53 48 39 61  1 38 17 58 24  1 42 53
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 7. KA1ABC WB9XYZ R-19     KA1ABC WB9XYZ R-19        1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 23 59  2
+
+Information-carrying channel symbols
+   22 60  8  0 25 50 49 34 23 22 33 48  0 40 18 63 49 16 32 31 25
+   45 41 33 12 51 60 59 33 15  7  9 57 55 24 61 28 45 19 43 48 53
+   23 41 28 59 44 29 25 49 44 11 48 38 36 13 51 20 55 15  1 42  3
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 8. KA1ABC WB9XYZ RRR      KA1ABC WB9XYZ RRR         1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 23 59 15
+
+Information-carrying channel symbols
+   49 39  1 44  4 48 24 50 23 23 52 24 33 50 37 14 51 16 40  6 31
+   46 42 41  9 51 60  7 21 20 32  7 25 44 24 61 40 13 53 53 44 41
+   29 41 28 41 31 60 53 27 58  3 48 38 45 24 41 56 34  3  4 42  8
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 9. KA1ABC WB9XYZ 73       KA1ABC WB9XYZ 73          1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 23 59 16
+
+Information-carrying channel symbols
+   31 52 15 18 63 46 26 49 23 29 11 16 39 43  8 11 45 16 44 11 55
+   58 62 45 53 51 60 58 44  7 14 43 21 63 24 61 17  1 17 26 29 24
+    7 41 28 52  4 58 11 13 17  7 48 38 35 39 48  6 29 49 56 42 24
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 10. KA1ABC WB9XYZ          KA1ABC WB9XYZ             1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 23 58 17
+
+Information-carrying channel symbols
+   60 61  6 57 35 31 14 27 23 46 31  7 37 53  0 48 55 16 20 12 59
+   41 34 23 11 51 60 56 37 54 53 60 39 46 24 61 28  9 50 35 11 36
+   20 41 28  5 47 21 20 16 18 58 48 39 18 57 20  7  2 49  7 42 25
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 11. CQ 010 WB9XYZ EN34     CQ 10 WB9XYZ EN34      *  1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  62 32 32 50 23 26 31 40 41 22  0 38
+
+Information-carrying channel symbols
+   40 12 24 19 49 30 11 25 23 59 30 55 47 47  2  1 58 16 60 28  8
+    1 23 53  8 33 60 40 17 56 53 50 61 42 48 61 45 53  1 51 62 22
+   15 48 29  2 20 26  9 25 51 61 43  0  1 59 48 15 59 24 45 28 53
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 12. CQ 999 WB9XYZ EN34     CQ 999 WB9XYZ EN34        1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  62 32 33 48 11 26 31 40 41 22  0 38
+
+Information-carrying channel symbols
+   34 30 43 43 22 47 38 41 23 49 54  4  5 39 53 18 24 16 24 54 32
+    9 26 38  6 33 60 42 57 40 24 30 31 44 48 61 13 50 33 34  0 13
+   46 49 29 32 27 36 52 46  7  7 40  0  5 51 51 11 11 47  1 14 53
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 13. CQ EU WB9XYZ EN34       WB9XYZ EN34           *  1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  61 33 12 25 39 26 31 40 41 22  0 38
+
+Information-carrying channel symbols
+   62 18  7 42  1 44 45 24 23 62 58 56 26  4 36 42 58 16 16 39  0
+   23  2 61 15 35 60 50  3 35 61 45 60 32 49 61 39 62 15 39 54 22
+    1 10 29 54 15 45 55 53 53 45 21  0 28 54  3 23 19 25 47 52 53
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 14. CQ WY WB9XYZ EN34       WB9XYZ EN34           *  1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  61 33 25 20 31 26 31 40 41 22  0 38
+
+Information-carrying channel symbols
+   42 39  4 13 48 60 62 45 23  4 24 16 51 58 56 11  5 16 51 61 34
+   22 15 10 52 35 60 51 25 48  3 45  6 18 49 61 18 28 22 41 51 46
+   31 21 29 26 34 51 62 44  1 29 30  0 42  4  9 61 33 25  4 16 53
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 15. 1A/KA1ABC WB9XYZ       1A/KA1ABC WB9XYZ          2:Type 1 pfx  EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 16  2 47
+
+Information-carrying channel symbols
+   37 18 10 50 26 15 18 47 23  6 37 31 29 28 21  0 15 16 53 50 57
+   61 62  2 33 51 60 46 38 54 43 62 19 38 24 61 49 55 24 43 49 21
+   54 41 24 61 13 58 49 22  9 10 48  3 40 38 17  7 49 15  8 42 56
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 16. E5/KA1ABC WB9XYZ       E5/KA1ABC WB9XYZ          2:Type 1 pfx  EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 18 63 14
+
+Information-carrying channel symbols
+   46 24 15  3 63 15 58 16 23  6  9 40 41 13 38 27 13 16 11 24 18
+   52  6 61 42 51 60 40 51 63  5 30 42 18 24 61 18 45 27 53 47  4
+   55 41 27 20 59 53 33 58 16 43 48 32 31 27  0 57 63 33 54 42  9
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 17. KA1ABC 1A/WB9XYZ       KA1ABC 1A/WB9XYZ          2:Type 1 pfx  EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 19 63 55
+
+Information-carrying channel symbols
+   60 32 13 47 60 45 38  2 23  4 14  9 30 35 52 26 12 16 36 40 11
+   14 31 32 51 51 60  0  0  8  5 46 11 53 24 61 28 33 28  0 44 51
+   23 41 26 45 17 24 58 25 21 60 48 32 59 24 35 33  5 31 21 42 44
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 18. KA1ABC E5/WB9XYZ       KA1ABC E5/WB9XYZ          2:Type 1 pfx  EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 22 60 22
+
+Information-carrying channel symbols
+   31 45 56 51 60 17 47  9 23 26  6 42 11 24 38 35 37 16 62 29 33
+   13  7  0 12 51 60 60 50 29 54  6 35 19 24 61 45 27 63  7 19 50
+   32 41 29 42 56 10 53 45 12 54 48 34 62 24 15  3 31 59 63 42 29
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 19. KA1ABC/P WB9XYZ        KA1ABC/P WB9XYZ           3:Type 1 sfx  EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 19 35 47
+
+Information-carrying channel symbols
+    6 55 15 56 18 25 32 10 23 14  5 30 26 31 20 20 10 16 26  3 45
+    4  6 40 48 51 60 59 58 47 50 47 33 47 24 61 58 13 19 21 42 21
+   38 41 26 49  4  4 42 46  8 12 48 50  9 14 25 22  1 61  4 42 56
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 20. KA1ABC/A WB9XYZ        KA1ABC/A WB9XYZ           3:Type 1 sfx  EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 19 41 24
+
+Information-carrying channel symbols
+   45 52 33  7 62 43 27 62 23 42 58  9 59 31  4 29 27 16  1 62 56
+   31 25 34 59 51 60 46 34 19 44 53 58 25 24 61 15 56 10 22 18  1
+   43 41 26 27 58 58 48 42  1 53 48 61 24 23 55  5 23 35  0 42 20
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 21. KA1ABC WB9XYZ/P        KA1ABC WB9XYZ/P           3:Type 1 sfx  EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 23 32 55
+
+Information-carrying channel symbols
+   55  2 56  8 17  7 53 19 23 18 10 28 56 10 20 44 34 16 47  6 30
+   61  7 21 22 51 60 47 59 13  1 55 40 46 24 61  5 59 55 39 22 35
+   49 41 28 15  7 59 62 57 20 17 48 48 40 13 22 44 33 39 13 42 44
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 22. KA1ABC WB9XYZ/A        KA1ABC WB9XYZ/A           3:Type 1 sfx  EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 23 38 32
+
+Information-carrying channel symbols
+   51 32  2 38 63 16 21 36 23 50 54 27 44 21 34  4 10 16 58 22 37
+   14 22 15 29 51 60 60 48 27 55 21 22 62 24 61 21 62 30 41 41 38
+   14 41 28 21 59  4 12 23  0 26 48 53 38 13 50 56 36  0  3 42 48
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 23. CQ KA1ABC/P            CQ KA1ABC/P               3:Type 1 sfx  EXACT                 
+
+Packed message, 6-bit symbols  62 32 32 49 38  9  3  6  3  7 32 55
+
+Information-carrying channel symbols
+   42 44  4 41 49 41 48 24 13 32 52 63 43 13 47 22 26  2 18 10 14
+   35  9 29  2 33  5 17  3 20 54 47 17  2 48  2 20 42 42 39 28  8
+   46 48  4 16  8  8 10 10 30  2 41 48 28 23  9 41 36 35 49 53 44
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 24. CQ WB9XYZ/A            CQ WB9XYZ/A               3:Type 1 sfx  EXACT                 
+
+Packed message, 6-bit symbols  62 32 32 49 39 26 31 40 41 23 38 32
+
+Information-carrying channel symbols
+   33 17  7 20 13 22  4 35 23 24 16 58 52 48 45  1  0 16 45 34 53
+    4 11 28  2 33 60 44 36 48 26 43  6 45 48 61 59  4 11 10 55 16
+    1 48 28  8 31 51 24 47 38 58 41 53 51 44 24 26 33 22  3 52 48
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 25. QRZ KA1ABC/P           QRZ KA1ABC/P              3:Type 1 sfx  EXACT                 
+
+Packed message, 6-bit symbols  62 32 32 49 42  9  3  6  3  7 32 55
+
+Information-carrying channel symbols
+   48 30 30 62 17 19  7  5 13 11 28  4 12 59 51 39 18  2 34 22 39
+   13 15 47 10 33  5 59 42 18 58 29  8 16 48  2 49  8 23  1 43 29
+   30 48  4 56 61 54 33 29 44  4 41 48 41 29 18 48 27 37 22 63 44
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 26. QRZ WB9XYZ/A           QRZ WB9XYZ/A              3:Type 1 sfx  EXACT                 
+
+Packed message, 6-bit symbols  62 32 32 49 43 26 31 40 41 23 38 32
+
+Information-carrying channel symbols
+   59 35 29  3 45 44 51 62 23 51 56  1 19  6 49 48  8 16 29 62 28
+   42 13 46 10 33 60  6 13 54 22 25 31 63 48 61 30 38 54 44  0  5
+   49 48 28 32 42 13 51 56 20 60 41 53  6 38  3  3 30 16 36 62 48
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 27. DE KA1ABC/P            DE KA1ABC/P               3:Type 1 sfx  EXACT                 
+
+Packed message, 6-bit symbols  63 54 16 29  6  9  3  6  3  7 32 55
+
+Information-carrying channel symbols
+   21 14 39 37 54 29 18  6 13 38 19 62 53 48 45 27 15  2 44 59  5
+   60 44 10 37 32  5 17 22  7 31 22  5 38 45  2 15  6 53 21 44 60
+   51 24  4  9 29 43 11 36  9  2 19 48 25 31 32 60 22 54  8  5 44
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 28. DE WB9XYZ/A            DE WB9XYZ/A               3:Type 1 sfx  EXACT                 
+
+Packed message, 6-bit symbols  63 54 16 29  7 26 31 40 41 23 38 32
+
+Information-carrying channel symbols
+   30 51 36 24 10 34 38 61 23 30 55 59 42 13 47 12 21 16 19 19 62
+   27 46 11 37 32 60 44 49 35 51 18 18  9 45 61 32 40 20 56  7 36
+   28 24 28 17 10 16 25  1 49 58 19 53 54 36 49 15 19  3 58  4 48
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 29. CQ 1A/KA1ABC           CQ 1A/KA1ABC              2:Type 1 pfx  EXACT                 
+
+Packed message, 6-bit symbols  62 32 32 49 38  9  3  6  3  3 63 55
+
+Information-carrying channel symbols
+   33 14 49 14 28  3 35  9 13 54 48 42 13 36 15 32 52  2 25 36 27
+   16 17 40 39 33  5 62 56 17 50 54 50 25 48  2 13 48  1  0 38 24
+    8 48  2 50 30 43 14 42 31 47 41 32 15  2 60 36  0 27 41 53 44
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 30. CQ E5/KA1ABC           CQ E5/KA1ABC              2:Type 1 pfx  EXACT                 
+
+Packed message, 6-bit symbols  62 32 32 49 38  9  3  6  3  6 60 22
+
+Information-carrying channel symbols
+    2  3  4 18 28 63 42  2 13 40 56  9 24 31 29 25 29  2  3 17 49
+   19  9  8 24 33  5  2 10  4  1 30 26 63 48  2 60 10 34  7 25 25
+   63 48  5 53 55 57  1 30  6 37 41 34 10  2 16  6 26 63  3 53 29
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 31. DE 1A/KA1ABC           DE 1A/KA1ABC              2:Type 1 pfx  EXACT                 
+
+Packed message, 6-bit symbols  63 54 16 29  6  9  3  6  3  3 63 55
+
+Information-carrying channel symbols
+   30 44 18  2 27 55  1 23 13 48 23 43 19 25 13 45 33  2 39 21 16
+   15 52 63  0 32  5 62 45  2 27 15 38 61 45  2 22 28 30 50 22 44
+   21 24  2 43 11  8 15  4  8 47 19 32 10 10 21 49 50 14 16  5 44
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 32. DE E5/KA1ABC           DE E5/KA1ABC              2:Type 1 pfx  EXACT                 
+
+Packed message, 6-bit symbols  63 54 16 29  6  9  3  6  3  6 60 22
+
+Information-carrying channel symbols
+   61 33 39 30 27 11  8 28 13 46 31  8  6 34 31 20  8  2 61 32 58
+   12 44 31 63 32  5  2 31 23 40 39 14 27 45  2 39 38 61 53 41 45
+   34 24  5 44 34 26  0 48 17 37 19 34 15 10 57 19 40 42 58  5 29
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 33. QRZ 1A/KA1ABC          QRZ 1A/KA1ABC             2:Type 1 pfx  EXACT                 
+
+Packed message, 6-bit symbols  62 32 32 49 42  9  3  6  3  3 63 55
+
+Information-carrying channel symbols
+   59 60 43 25 60 57 20 20 13 29 24 17 42 18 19 17 60  2 41 56 50
+   62 23 26 47 33  5 20 17 23 62  4 43 11 48  2 40 18 60 38 17 13
+   56 48  2 26 43 21 37 61 45 41 41 32 58  8 39 61 63 29 14 63 44
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 34. QRZ E5/KA1ABC          QRZ E5/KA1ABC             2:Type 1 pfx  EXACT                 
+
+Packed message, 6-bit symbols  62 32 32 49 42  9  3  6  3  6 60 22
+
+Information-carrying channel symbols
+   24 49 30  5 60  5 29 31 13  3 16 50 63 41  1 40 21  2 51 13 24
+   61 15 58 16 33  5 40 35  2 13 44  3 45 48  2 25 40 31 33 46 12
+   15 48  5 29  2  7 42  9 52 35 41 34 63  8 11 31 37 57 36 63 29
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 35. CQ WB9XYZ/1A           CQ WB9XYZ/1A              5:Type 2 sfx  EXACT                 
+
+Packed message, 6-bit symbols  63 52  1 51  7 26 31 40 41 23 58 17
+
+Information-carrying channel symbols
+   16 10 34 13 60  4 62 18 23 52 52 21 30 26 63 53  8 16  7 16 58
+   22  0 46 14 32 60 31 17 42 62 56 60  4 46 61 21  5  9 28 11 41
+    8  1 28 60  8 61 14 52 54  5 42 39 24  7 46 27  2 20 29  4 25
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 36. CQ WB9XYZ/E5           CQ WB9XYZ/E5              5:Type 2 sfx  EXACT                 
+
+Packed message, 6-bit symbols  63 52 18 63 55 26 31 40 41 23 58 17
+
+Information-carrying channel symbols
+   53 24 26  5  3 49 13 53 23 22 33  9 58 36 57 31 58 16 52 52  1
+   23 11  1  4 32 60  4  1 43 47 36  3 32 46 61 17 19  6 21 63 10
+   36 27 28 47 43 58 43 51  6 26 32 39 57 43  4 53 40 59 19 44 25
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 37. QRZ WB9XYZ/1A          QRZ WB9XYZ/1A             5:Type 2 sfx  EXACT                 
+
+Packed message, 6-bit symbols  63 52 49 59 27 26 31 40 41 23 58 17
+
+Information-carrying channel symbols
+   21 60 21  8  6 42 13  3 23  6 34 31 25 11  3 63 10 16 27 33 24
+   24 30  8  4 32 60 50  8 51 51 58  0 24 46 61  6 27 16 34 23 30
+   41 41 28 12 24 41 18 55 49 24 38 39  1 34 15 43 17  9 21 22 25
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 38. QRZ WB9XYZ/E5          QRZ WB9XYZ/E5             5:Type 2 sfx  EXACT                 
+
+Packed message, 6-bit symbols  63 53  3  8 11 26 31 40 41 23 58 17
+
+Information-carrying channel symbols
+   62 47 49 26 51  8 26 23 23 56 51 18  3 34 20  6 43 16 23 29 55
+   33 23 31 44 32 60 49  5 21 23 54 22 36 47 61 28 54 42 52 15 17
+   26  2 28 48  7 34  2 50 28  7 12 39  9 40 46 49 44 22 57 14 25
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 39. DE WB9XYZ/1A           DE WB9XYZ/1A              5:Type 2 sfx  EXACT                 
+
+Packed message, 6-bit symbols  63 53 34  3 47 26 31 40 41 23 58 17
+
+Information-carrying channel symbols
+   16  8 23 46 33 52 45 30 23 26 53 40 45 23 33 54 28 16 57 13 28
+   41 52 15 44 32 60 62 44  8 50 22 28 37 47 61  4 26 10 32 59  6
+   26 51 28 52 23 43  1  3 16  6  2 39 16 12 16 27 21 56 56 56 25
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 40. DE WB9XYZ/E5           DE WB9XYZ/E5              5:Type 2 sfx  EXACT                 
+
+Packed message, 6-bit symbols  63 53 51 16 31 26 31 40 41 23 58 17
+
+Information-carrying channel symbols
+   44 60 16 55 29 30 62 13 23 19 47 46 51 18 26 55 61 16 27 36  8
+   25 59 12  6 32 60 24 36 29  4 14  7 35 47 61  6 52  4 36 10 19
+   29 42 28  6 23 31 42 60 54 60 24 39 14 18 36  9 59 13 48 16 25
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 41. CQ A000/KA1ABC FM07    CQ A000/KA1ABC FM07       4:Type 2 pfx  EXACT                 
+
+Packed message, 6-bit symbols  62 40 16 26 22  9  3  6  3  5 44 51
+
+Information-carrying channel symbols
+   15 60 22 24 32 20 41  2 13 33  3 30 28 26 61  9 38  2 57  9 47
+   30 39 32 18 33  5 15 34 41 52 50 29 34 60  2 15 45  1 11 16  7
+   21 24  7  3 47 44 40  4 26  2 23 58 39 38 62 41 54 55 38 29 42
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 42. CQ ZZZZ/KA1ABC FM07    CQ ZZZZ/KA1ABC FM07       4:Type 2 pfx  EXACT                 
+
+Packed message, 6-bit symbols  62 60 21  9 30  9  3  6  3  5 44 51
+
+Information-carrying channel symbols
+   46 58 51 17 59 39  1 34 13 17 27 36 20 26 17 35 58  2 58  5 44
+   43 15 63 37 33  5 20 39 20 28 23 35 22 34  2 16 32 56  4 52 39
+   32 31  7  4 53 25 17 39 13 62 13 58 35  7  5  1 57 24 45 17 42
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 43. QRZ W4/KA1ABC FM07     QRZ W4/KA1ABC FM07        4:Type 2 pfx  EXACT                 
+
+Packed message, 6-bit symbols  63 21 12  7 18  9  3  6  3  5 44 51
+
+Information-carrying channel symbols
+   52 11 44 14 61 30 51 15 13 39 58  6 17 58  5 60 19  2 41 42 11
+   46 60 11 12 32  5 36 25 53 16  2 44 11 31  2 17  0 46 35 29 17
+   50 10  7 35 14 13  0 27 46 43  4 58 20 55 48 23 16 46 60 27 42
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 44. DE W4/KA1ABC FM07      DE W4/KA1ABC FM07         4:Type 2 pfx  EXACT                 
+
+Packed message, 6-bit symbols  63 49  0 56 38  9  3  6  3  5 44 51
+
+Information-carrying channel symbols
+   12 28 34 55 58 39 46 27 13 44 60 52 56 26 20 42  4  2 52 55 50
+    1  5 33 50 32  5 53 23 13  1 45 53 19 41  2  9 32 32 48 37 55
+   49  0  7 59  8 61 56 39 60  0 36 58 39 35  7 45 14 17 62 53 42
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 45. CQ W4/KA1ABC -22       CQ W4/KA1ABC -22          4:Type 2 pfx  EXACT                 
+
+Packed message, 6-bit symbols  62 57 23 21 62  9  3  6  3  7 58 39
+
+Information-carrying channel symbols
+   42 23  5 11  7  2  7 30 13 21 48  9  0  8 27 38 33  2 35 26 40
+   29 38 15 52 33  5 59 50 35 45 40 48 34 37  2 40 38 34 36 11  9
+   63 28  4 21 52 45 48 56 45  4 31 39 47  3 61 62 27 28 63 33 52
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 46. DE W4/KA1ABC -22       DE W4/KA1ABC -22          4:Type 2 pfx  EXACT                 
+
+Packed message, 6-bit symbols  63 49  0 56 38  9  3  6  3  7 58 39
+
+Information-carrying channel symbols
+   60 50 50 46 61 49 46 37 13 21 47  2 63 35 35 39 38  2  7 60 24
+   34 20 50  7 32  5  5 54 50 45 53 25 58 41  2  0 28 46  9 12 25
+   51  0  4 13 43  8 14 17 46 12 36 39 23  2 13 51 34  5  0 53 52
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 47. QRZ W4/KA1ABC -22      QRZ W4/KA1ABC -22         4:Type 2 pfx  EXACT                 
+
+Packed message, 6-bit symbols  63 21 12  7 18  9  3  6  3  7 58 39
+
+Information-carrying channel symbols
+    4 37 60 23 58  8 51 49 13 30 41 48 22  3 50 49 49  2 26 33 33
+   13 45 24 57 32  5 20 56 10 60 26  0 34 31  2 24 60 32 26 52 63
+   48 10  4 21 45 56 54 45 60 39  4 39 36 22 58  9 60 58  2 27 52
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 48. CQ W4/KA1ABC R-22      CQ W4/KA1ABC R-22         4:Type 2 pfx  EXACT                 
+
+Packed message, 6-bit symbols  62 57 23 21 62  9  3  6  3  7 59  5
+
+Information-carrying channel symbols
+   57 61 51 34 42 62 10 37 13 34 46  3 32 49 50 46 54  2 32 51 54
+    7 51 14 17 33  5 42 19 49 38 22 36 16 37  2 13  8 53 37 40  0
+   26 28  4 56 33 32 45 53 45  2 31 38 33 23 62 61 14 56 27 33  7
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 49. DE W4/KA1ABC R-22      DE W4/KA1ABC R-22         4:Type 2 pfx  EXACT                 
+
+Packed message, 6-bit symbols  63 49  0 56 38  9  3  6  3  7 59  5
+
+Information-carrying channel symbols
+   47 24  4  7 16 13 35 30 13 34 49  8 31 26 10 47 49  2  4 21  6
+   56  1 51 34 32  5 20 23 32 38 11 13  8 41  2 37 50 57  8 47 16
+   22  0  4 32 62  5 19 28 46 10 36 38 25 22 14 48 55 33 36 53  7
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 50. QRZ W4/KA1ABC R-22     QRZ W4/KA1ABC R-22        4:Type 2 pfx  EXACT                 
+
+Packed message, 6-bit symbols  63 21 12  7 18  9  3  6  3  7 59  5
+
+Information-carrying channel symbols
+   23 15 10 62 23 52 62 10 13 41 55 58 54 58 27 57 38  2 25  8 63
+   23 56 25 28 32  5  5 25 24 55 36 20 16 31  2 61 18 55 27 23 54
+   21 10  4 56 56 53 43 32 60 33  4 38 42  2 57 10 41 30 38 27  7
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 51. DE W4/KA1ABC 73        DE W4/KA1ABC 73           4:Type 2 pfx  EXACT                 
+
+Packed message, 6-bit symbols  63 49  0 56 38  9  3  6  3  7 59 16
+
+Information-carrying channel symbols
+    4 34 51 51 40 37 37 59 13 58 38 22 54 56  4 35 25  2 43  7  4
+    8 49 28 16 32  5  5 41 26 13 38 60 50 41  2 27  3 10  0 15 48
+   17  0  4 45 26 44 39 42  9 37 36 38 46  1 44  4 32 36 22 53 24
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 52. CQ KA1ABC FM07         CQ KA1ABC FM07            1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  62 32 32 49 38  9  3  6  3  5 44 51
+
+Information-carrying channel symbols
+   10 36 34 55 13  2 20 26 13 57 47 17 58 14 35 56  8  2 14 55 17
+   45  4 24  3 33  5 52 42  9 53 56 37 50 48  2 18 51 38 42 61 52
+   56 48  7 61 25 24 32 51 46 49 41 58 30 31  4 42 54  0 44 53 42
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 53. QRZ KA1ABC FM07        QRZ KA1ABC FM07           1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  62 32 32 49 42  9  3  6  3  5 44 51
+
+Information-carrying channel symbols
+   16 22 56 32 45 56 35  7 13 18  7 42 29 56 63  9  0  2 62 43 56
+    3  2 42 11 33  5 30  3 15 57 10 60 32 48  2 55 17 27 12 10 33
+    8 48  7 21 44 38 11 36 28 55 41 58 43 21 31 51  9  6 11 63 42
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 54. DE KA1ABC/VE6 FM07     DE KA1ABC/VE6 FM07        5:Type 2 sfx  EXACT                 
+
+Packed message, 6-bit symbols  63 54 10 17 62  9  3  6  3  5 44 51
+
+Information-carrying channel symbols
+   46 56 58 15 11 22 44 38 13  2 55 42 21 39 25 61 11  2  1 32 17
+   22 44 46  2 32  5 62 27 30 50 27 52 34 45  2 28  3 33 18 59  2
+   39 15  7 40 44  3 42 55 46 63 25 58 32 57  7 16 31 49 57 33 42
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 55. CQ KA1ABC/VE6 -22      CQ KA1ABC/VE6 -22         5:Type 2 sfx  EXACT                 
+
+Packed message, 6-bit symbols  63 52 42  1 22  9  3  6  3  7 58 39
+
+Information-carrying channel symbols
+    1 45 22 40 25 12 62 44 13 22 39 51 41 28 18 23  0  2 49 14 39
+   31 45 35 13 32  5 50 30 50  7 27  7 26 46  2 60 38 16 18 25 44
+   31 63  4 49 63 31 62 34 34 43  1 39 11  7 56 35 33 26 30 29 52
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 56. DE KA1ABC/VE6 -22      DE KA1ABC/VE6 -22         5:Type 2 sfx  EXACT                 
+
+Packed message, 6-bit symbols  63 54 10 17 62  9  3  6  3  7 58 39
+
+Information-carrying channel symbols
+   30 22 42 22 12  0 44 24 13 59 36 28 18 30 46 48 41  2 50 43 59
+   53 61 61 55 32  5 14 58 33 30  3 24 11 45  2 21 63 47 43 18 44
+   37 15  4 30 15 54 28  1 60 51 25 39 16 24 13 14 51 37  7 33 52
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 57. QRZ KA1ABC/VE6 -22     QRZ KA1ABC/VE6 -22        5:Type 2 sfx  EXACT                 
+
+Packed message, 6-bit symbols  63 53 26  9 42  9  3  6  3  7 58 39
+
+Information-carrying channel symbols
+   47 52 59 29 57  9 38 31 13 18 12 13 50 53 19 60  7  2 13 12 31
+    9 13  9 46 32  5  6 58 41 32 46 31 27 47  2 42 23 22 57 45 22
+   37 23  4  2 15 15 51 32 62 17 13 39 11 15 25 38 37 44 12 63 52
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 58. CQ KA1ABC/VE6 R-22     CQ KA1ABC/VE6 R-22        5:Type 2 sfx  EXACT                 
+
+Packed message, 6-bit symbols  63 52 42  1 22  9  3  6  3  7 59  5
+
+Information-carrying channel symbols
+   18  7 32  1 52 48 51 23 13 33 57 57  9 37 59 31 23  2 50 39 57
+    5 56 34 40 32  5 35 63 32 12 37 19 40 46  2 25  8  7 19 58 37
+   58 63  4 28 42 18 35 47 34 45  1 38  5 19 59 32 52 62 58 29  7
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 59. DE KA1ABC/VE6 R-22     DE KA1ABC/VE6 R-22        5:Type 2 sfx  EXACT                 
+
+Packed message, 6-bit symbols  63 54 10 17 62  9  3  6  3  7 59  5
+
+Information-carrying channel symbols
+   13 60 28 63 33 60 33 35 13 12 58 22 50 39  7 56 62  2 49  2 37
+   47 40 60 18 32  5 31 27 51 21 61 12 57 45  2 48 17 56 42 49 37
+    0 15  4 51 26 59  1 12 60 53 25 38 30 12 14 13 38  1 35 33  7
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 60. QRZ KA1ABC/VE6 R-22    QRZ KA1ABC/VE6 R-22       5:Type 2 sfx  EXACT                 
+
+Packed message, 6-bit symbols  63 53 26  9 42  9  3  6  3  7 59  5
+
+Information-carrying channel symbols
+   60 30 13 52 20 53 43 36 13 37 18  7 18 12 58 52 16  2 14 37  1
+   19 24  8 11 32  5 23 27 59 43 16 11 41 47  2 15 57  1 56 14 31
+    0 23  4 47 26  2 46 45 62 23 13 38  5 27 26 37 48  8 40 63  7
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 61. DE KA1ABC 73           DE KA1ABC 73              1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  63 54 16 29  6  9  3  6  3  7 59 16
+
+Information-carrying channel symbols
+   61 56 16 63 24 52 61 36 13 41 18 50 42 17 49 60  0  2 47 54 44
+   59 21 50  6 32  5  4  1 13 16 10 56 55 45  2 27 60 19 40 39  7
+    5 24  4 50 30 42 62 16 12 20 19 38 18 53  6 22 42 32 61  5 24
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 62. HELLO WORLD            HELLO WORLD               6:Free text   EXACT                 
+
+Packed message, 6-bit symbols  25 47  9 63 51 26 17 10 17 45 62 32
+
+Information-carrying channel symbols
+   29 23 60 48 34  6 39  9 23 26 55 15 47 12 16 42 11 25 63 63  9
+   10 60  0 46 21 15 54 54 62 51 48 39 20 56 25 15 62 52 36  3  4
+   41 13 59 10 41 63 43 39 15 19 32 33 53 25 60 62  4 55 26 42 48
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 63. ZL4/KA1ABC 73          ZL4/KA1ABC 73             6:Free text   EXACT                 
+
+Packed message, 6-bit symbols  52 43 25 29 36 59 33 45 37 15 36 57
+
+Information-carrying channel symbols
+   10 34 22  3 57 33 49 17 38 16 33  0 57  8 56 20 34 49 17 63 16
+    0 59 53 27 46 59 24 46 18 51 17  9 44 62 55 58 18 57 50 37 49
+    8 21  8 24 45 25 12 44 15 13 19 54  6 19 23 51 26  2 12 54 37
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 64. KA1ABC XL/WB9XYZ       KA1ABC XL/WB9          *  6:Free text   TRUNCATED             
+
+Packed message, 6-bit symbols  30  1 57 60 29 12 26 60 47 13 57 23
+
+Information-carrying channel symbols
+   49 59  0  6  1 52 39 57 10 31 41 57 10 20 34  5  0 23 12 31 44
+    3 15 52 18 17 34 61 48 22 50 46 33 31  1 56 52 31 36 32 55 15
+   19 37 11 32 10 42  1 24 11 18 34 37 63 13 11 36 32 51 13 19 28
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 65. KA1ABC WB9XYZ/W4       KA1ABC WB9XYZ          *  6:Free text   TRUNCATED             
+
+Packed message, 6-bit symbols  30  1 57 60 29 12 26 43 27 46 36 27
+
+Information-carrying channel symbols
+   14 50 48 27 25  9 31 25 10  4 30 63 11 20 59 48 12 23 29 40 48
+   35 32 54 57 17 62 45  0 62 50 12 29  6  1 22 57 35 30 36 12 38
+   17 37 57 34 61 22 29 53 63 39 34 54 38  1 27 35 53 20 59 19 22
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 66. DE KA1ABC/QRP 2W       DE KA1ABC/QRP          *  6:Free text   TRUNCATED             
+
+Packed message, 6-bit symbols  19 52  7 28 20  7 24 46  6 11 30 47
+
+Information-carrying channel symbols
+    2 26 21  8 51 41 58  1  4 61 59 51 60 25 41 54 39 20 63 28 62
+   48 59 30 22 26 57 11 33 46 49 37 35 49 46  5  5  6 27 62 62  6
+   53  4 14 12 40 51 13 48 45 44 18 17 34 28 51 31 27  2 24 30 56
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 67. KA1ABC/1 WB9XYZ/1      KA1ABC/1 WB9X          *  6:Free text   TRUNCATED             
+
+Packed message, 6-bit symbols  30  1 57 60 25 12 56 19 54 12 53 39
+
+Information-carrying channel symbols
+   29 59 35 11 56  3  4 42 10 43 57 46 53 32 20 45 57 36 21 18 40
+   35 42 14 47 17 26 59 46  9  7 49 42 52  1 45  4 59  5 50 54 41
+   40 37 10 45  7 36  2  9 36 53 34 47 27 61 58 49 36 36  8 21 52
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 68. 123456789ABCDEFGH      123456789ABCD          *  6:Free text   TRUNCATED             
+
+Packed message, 6-bit symbols   1 35 41 39  8 36 40  9 46 12 55 17
+
+Information-carrying channel symbols
+    0 37 21 59 60 26 47 50 54 57 52 63  3 30 24 56 18 60 22 50 40
+   35  4 31 39  1 13 39 23 16 17 17 53 36 50 57  6 15 19 62 30 51
+    6 61 10  5 13 57 49 61 58 27 52 44 30 19 16 46 10 38 23 12 25
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 69. KA1ABC WB9XYZ EN34 OOO KA1ABC WB9XYZ EN34 OOO    1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 22  0 38
+
+Information-carrying channel symbols
+    3  9 34 51 45 36 45 61 23 50 18 51 58  3 44 15 28 16  8 36 47
+   61 44 50 44 51 60 46  3 28 51 36 28 46 24 61 55  5 30 58 45 34
+   62 41 29  5 63 24 45  2  3  9 48  0  1 30 53 45 59 63 61 42 53
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 70. KA1ABC WB9XYZ OOO      KA1ABC WB9XYZ OOO         1:Std msg     EXACT                 
+
+Packed message, 6-bit symbols  34 16 49 32 51 26 31 40 41 23 58 17
+
+Information-carrying channel symbols
+   60 61  6 57 35 31 14 27 23 46 31  7 37 53  0 48 55 16 20 12 59
+   41 34 23 11 51 60 56 37 54 53 60 39 46 24 61 28  9 50 35 11 36
+   20 41 28  5 47 21 20 16 18 58 48 39 18 57 20  7  2 49  7 42 25
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 71. RO                     RO                        -1:Shorthand  EXACT                 
+
+
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 72. RRR                    RRR                       -1:Shorthand  EXACT                 
+
+
+    Message                Decoded              Err? Type          Expected
+----------------------------------------------------------------------------
+ 73. 73                     73                        -1:Shorthand  EXACT                 
+
+
