@@ -9,6 +9,8 @@ package Pack_JT is
    type Octet is new Unsigned_8;
    type Octet_Array is array(Positive range <>) of Octet;
 
+     add_pfx : String(1 .. 8);
+
    -- Pack 0s and 1s from DBits into Sym with M0 bits per word.
    -- NB: NSymd is the number of packed output words.
    procedure Pack_Bits
@@ -59,12 +61,12 @@ package Pack_JT is
    --  -1   Does not decode correctly
    procedure Pack_Msg(Msg0 : String; Dat : out Unsigned_8_Array; IType : out Integer)
      with
-       Global => null,
+       Global => add_pfx,
        Pre => (Dat'Length = 12 and Dat'First = 0 and Dat'Last = 11);
 
    procedure Unpack_Msg(Dat0 : Unsigned_8_Array; Msg : out String)
      with
-       Global => null,
+       Global => add_pfx,
        Pre => Msg'Length = 22;
 
    procedure Pack_Text(Msg : String; Nc1, Nc2, Nc3 : out Unsigned_32)

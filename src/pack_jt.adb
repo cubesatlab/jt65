@@ -3,13 +3,14 @@ pragma SPARK_Mode(On);
 with Ada.Characters.Handling; use Ada.Characters.Handling;
 with Ada.Strings;             use Ada.Strings;
 with Ada.Strings.Fixed;       use Ada.Strings.Fixed;
+--with Ada.Text_IO;             use Ada.Text_IO;
 
 with Pfx;
 use  Pfx;
 
-package body Pack_JT is
 
-   add_pfx : String(1 .. 8);
+
+package body Pack_JT is
 
    -----------------------
    -- Forward Declarations
@@ -218,19 +219,19 @@ package body Pack_JT is
       N : Integer := Integer(NCall);
       I : Integer := 0;
 
-      procedure Collapse_Blanks_12( Msg : in out String) is
+      procedure Collapse_Blanks_12( Word : in out String) is
          I : Integer := 1;
          Flag : Boolean := False;
          Counter : Integer;
       begin
-         while I <= 12 and I + 1 /= Msg'Length loop
+         while I <= 12 and I + 1 /= Word'Length loop
             if I >= 1 then
-               if Msg(I) = ' ' and Msg(I + 1) = ' ' then
-                  Msg(Msg'First .. Msg'Last) :=
-                    Msg(Msg'First .. I - 1) & Msg(I + 1 .. Msg'Last) & Msg(I);
-                  Counter := Msg'Last - I;
-                  for X in I .. Msg'Last loop
-                     if Msg(X) = ' ' and Counter >= 0 then
+               if (Word(I) = ' ' and Word(I + 1) = ' ') or (I = 1 and Word(I) = ' ') then
+                  Word(Word'First .. Word'Last) :=
+                    Word(Word'First .. I - 1) & Word(I + 1 .. Word'Last) & Word(I);
+                  Counter := Word'Last - I;
+                  for X in I .. Word'Last loop
+                     if Word(X) = ' ' and Counter >= 0 then
                         Counter := Counter - 1;
                      end if;
                      if Counter = 0 then
@@ -413,15 +414,13 @@ package body Pack_JT is
       for X in 1 .. 4 loop
          if Word(Word'First + X - 1) /= ' ' then
             --Word := Word(X .. Word'Last);
-            Collapse_Blanks_12(Word);
+            Collapse_Blanks_12(Word); --
             --Move(Word(X .. Word'Last), Word, Right, Left, Space);
-            --Put_Line(Word);
             --Word(Word'First .. Word(X .. Word'Last)'Length) := Word(X .. Word'Last);
             Nine_Nine_Nine;
             return;
          end if;
       end loop;
-
       Nine_Nine_Nine;
    end Unpack_Call;
 
@@ -640,7 +639,7 @@ package body Pack_JT is
       C1       : String(1 .. 12);
       C2       : String(1 .. 12);
       C3       : String(1 ..  4);
-      Grid6    : String(1 ..  6);
+      Grid6    : String(1 ..  6) := (others => ' ');
       Text1    : Boolean := True;
       Text2    : Boolean := True;
       Text3    : Boolean := True;
@@ -1237,7 +1236,7 @@ package body Pack_JT is
       Suffixes   : sfx_array;
       Prefixes   : pfx_array;
       Callsign0  : String(1 .. 12);
-      C          : String(1 ..  8) := (others => ' ');
+      C          : String(1 ..  8);
       Iz, Islash : Integer;
 
       procedure Ten is
@@ -1318,9 +1317,12 @@ package body Pack_JT is
          Move(Callsign(Callsign'First .. islash - 1), C, Right, Left, Space);
 
          --Callsign := Callsign(islash + 1 .. iz);
+
+         -- Testing --
+         --Put("Callsign Before = " &Callsign); Put("End"); New_Line;
          Move(Callsign(islash + 1 .. iz), Callsign, Right, Left, Space);
          --Callsign(Callsign'First .. Callsign(islash + 1 .. iz)'Length) := Callsign(islash + 1 .. iz);
-
+         --Put("Callsign After = " &Callsign); Put("End"); New_Line;
          for I in Prefixes'Range loop
             if Prefixes(I)(1 .. 4) = C(1 .. 4) then
                K := I;
@@ -1339,8 +1341,12 @@ package body Pack_JT is
       elsif islash = iz -1 then
          --C := Callsign(islash + 1 .. iz);
          Move(Callsign(islash + 1 .. iz), C, Right, Left, Space);
-         --Callsign := Callsign(1 .. islash - 1);
+
+         -- Testing --
+         -- Callsign := Callsign(1 .. islash - 1);
+         --Put("Callsign Before 2 = " &Callsign); Put("End"); New_Line;
          Move(Callsign(Callsign'First .. islash - 1), Callsign, Right, Left, Space);
+         --Put("Callsign After 2 = " &Callsign); Put("End"); New_Line;
          for I in Suffixes'Range loop
             if Suffixes(I) = C(1) then
                K := 400 + I;

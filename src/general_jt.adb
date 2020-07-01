@@ -127,7 +127,7 @@ package body General_JT is
    begin
       while I <= 21 and I + 1 /= Msg'Length loop
          if I >= 1 then
-            if Msg(I) = ' ' and Msg(I + 1) = ' ' then
+            if (Msg(I) = ' ' and Msg(I + 1) = ' ') or (I = 1 and Msg(I) = ' ') then
                Msg(Msg'First .. Msg'Last) :=
                  Msg(Msg'First .. I - 1) & Msg(I + 1 .. Msg'Last) & Msg(I);
                Counter := Msg'Last - I;
