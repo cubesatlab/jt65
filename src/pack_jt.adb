@@ -3,7 +3,6 @@ pragma SPARK_Mode(On);
 with Ada.Characters.Handling; use Ada.Characters.Handling;
 with Ada.Strings;             use Ada.Strings;
 with Ada.Strings.Fixed;       use Ada.Strings.Fixed;
---with Ada.Text_IO;             use Ada.Text_IO;
 
 with Pfx;
 use  Pfx;
@@ -36,16 +35,18 @@ package body Pack_JT is
        Global => null,
        Pre => Grid'Length = 6;
 
-   procedure Grid2N(Grid : String; N : out Integer)
-     with
-       Global => null,
-       Pre => Grid'Length = 4;
+   --  Grid2N is currently not used
+   --  procedure Grid2N(Grid : String; N : out Integer)
+   --    with
+   --      Global => null,
+   --      Pre => Grid'Length = 4;
 
-   procedure N2Grid(N : Integer; Grid : in out String)
-     with
-       Global => null,
-       Pre => Grid'Length = 4 and N in -70 .. -31;
-
+   --  N2Grid is currently not used
+   --  procedure N2Grid(N : Integer; Grid : in out String)
+   --    with
+   --      Global => null,
+   --      Pre => Grid'Length = 4 and N in -70 .. -31;
+   --
    -- Convert ASCII number, letter, or space to 0-36 for callsign packing.
    subtype Numeric_Callsign_Type is Natural range 0 .. 36;
    subtype Callsign_Type is Character
@@ -54,16 +55,18 @@ package body Pack_JT is
    function NChar(C : Callsign_Type) return Numeric_Callsign_Type
      with Global => null;
 
-   procedure Pack50(N1, N2 : Unsigned_32; Dat : out Unsigned_32_Array)
-     with
-       Global => null,
-       Pre => Dat'Length = 11;
+   --  Pack50 is currently not used
+   --  procedure Pack50(N1, N2 : Unsigned_32; Dat : out Unsigned_32_Array)
+   --    with
+   --      Global => null,
+   --      Pre => Dat'Length = 11;
 
-   procedure Pack_Pfx(Call1 : String; N1 : in out Unsigned_32; Ng : in out Integer; Nadd : out Integer)
-     with
-       Global => null,
-       Pre => Call1'Length = 12;
-
+   --  Pack_Pfx is currently not used
+   --  procedure Pack_Pfx(Call1 : String; N1 : in out Unsigned_32; Ng : in out Integer; Nadd : out Integer)
+   --    with
+   --      Global => null,
+   --      Pre => Call1'Length = 12;
+   --
    -- Converts Maidenhead grid locator to degrees of West longitude and North latitude
    procedure Grid2Deg(Grid0 : String; DLong : out Float; DLat : out Float)
      with
@@ -218,36 +221,6 @@ package body Pack_JT is
       C : constant String := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
       N : Integer := Integer(NCall);
       I : Integer := 0;
-
-      procedure Collapse_Blanks_12( Word : in out String) is
-         I : Integer := 1;
-         Flag : Boolean := False;
-         Counter : Integer;
-      begin
-         while I <= 12 and I + 1 /= Word'Length loop
-            if I >= 1 then
-               if (Word(I) = ' ' and Word(I + 1) = ' ') or (I = 1 and Word(I) = ' ') then
-                  Word(Word'First .. Word'Last) :=
-                    Word(Word'First .. I - 1) & Word(I + 1 .. Word'Last) & Word(I);
-                  Counter := Word'Last - I;
-                  for X in I .. Word'Last loop
-                     if Word(X) = ' ' and Counter >= 0 then
-                        Counter := Counter - 1;
-                     end if;
-                     if Counter = 0 then
-                        Flag := True;
-                        exit;
-                     end if;
-                  end loop;
-                  if Flag then
-                     exit;
-                  end if;
-               else
-                  I := I + 1;
-               end if;
-            end if;
-         end loop;
-      end Collapse_Blanks_12;
 
       procedure Nine_Nine_Nine is
       begin
@@ -1236,6 +1209,7 @@ package body Pack_JT is
       Suffixes   : sfx_array;
       Prefixes   : pfx_array;
       Callsign0  : String(1 .. 12);
+      Temp       : String(1 .. 12) := (others => ' ');
       C          : String(1 ..  8);
       Iz, Islash : Integer;
 
@@ -1317,12 +1291,11 @@ package body Pack_JT is
          Move(Callsign(Callsign'First .. islash - 1), C, Right, Left, Space);
 
          --Callsign := Callsign(islash + 1 .. iz);
-
-         -- Testing --
-         --Put("Callsign Before = " &Callsign); Put("End"); New_Line;
-         Move(Callsign(islash + 1 .. iz), Callsign, Right, Left, Space);
+         Temp(islash + 1 .. iz) := Callsign(islash + 1 .. iz);
+         Collapse_Blanks_12(Temp);
+         Callsign(Callsign'First .. Callsign'Last) := Temp(Temp'First .. Temp'Last);
+         --Move(Callsign(islash + 1 .. iz), Callsign, Right, Left, Space);
          --Callsign(Callsign'First .. Callsign(islash + 1 .. iz)'Length) := Callsign(islash + 1 .. iz);
-         --Put("Callsign After = " &Callsign); Put("End"); New_Line;
          for I in Prefixes'Range loop
             if Prefixes(I)(1 .. 4) = C(1 .. 4) then
                K := I;
@@ -1344,9 +1317,10 @@ package body Pack_JT is
 
          -- Testing --
          -- Callsign := Callsign(1 .. islash - 1);
-         --Put("Callsign Before 2 = " &Callsign); Put("End"); New_Line;
-         Move(Callsign(Callsign'First .. islash - 1), Callsign, Right, Left, Space);
-         --Put("Callsign After 2 = " &Callsign); Put("End"); New_Line;
+         Temp(Temp'First .. islash - 1) := Callsign(Callsign'First .. islash - 1);
+         Collapse_Blanks_12(Temp);
+         Callsign(Callsign'First .. Callsign'Last) := Temp(Temp'First .. Temp'Last);
+         --Move(Callsign(Callsign'First .. islash - 1), Callsign, Right, Left, Space);
          for I in Suffixes'Range loop
             if Suffixes(I) = C(1) then
                K := 400 + I;
@@ -1418,29 +1392,29 @@ package body Pack_JT is
       Deg2Grid(DLong, DLat, Grid);
    end K2Grid;
 
+   --  Grid2N is currently not used
+   --  procedure Grid2N(Grid : String; N : out Integer) is
+   --     I1, I2, I : Integer;
+   --  begin
+   --     I1 := Character'Pos(Grid(Grid'First)) - Character'Pos('A');
+   --     I2 := Character'Pos(Grid(Grid'First + 2)) - Character'Pos('0');
+   --     I := 10 * I1 + I2;
+   --     N := -I - 31;
+   --  end Grid2N;
 
-   procedure Grid2N(Grid : String; N : out Integer) is
-      I1, I2, I : Integer;
-   begin
-      I1 := Character'Pos(Grid(Grid'First)) - Character'Pos('A');
-      I2 := Character'Pos(Grid(Grid'First + 2)) - Character'Pos('0');
-      I := 10 * I1 + I2;
-      N := -I - 31;
-   end Grid2N;
-
-
-   procedure N2Grid(N : Integer; Grid : in out String) is
-      I, I1, I2 : Integer;
-   begin
-      I := -(N + 31);
-      I1 := I / 10;
-      I2 := I mod 10;
-
-      Grid(Grid'First) := Character'Val(Character'Pos('A') + I1);
-      Grid(Grid'First + 1) := 'A';
-      Grid(Grid'First + 2) := Character'Val(Character'Pos('0') + I2);
-      Grid(Grid'First + 3) := '0';
-   end N2Grid;
+   --  N2Grid is currently not used
+   --  procedure N2Grid(N : Integer; Grid : in out String) is
+   --     I, I1, I2 : Integer;
+   --  begin
+   --     I := -(N + 31);
+   --     I1 := I / 10;
+   --     I2 := I mod 10;
+   --
+   --     Grid(Grid'First) := Character'Val(Character'Pos('A') + I1);
+   --     Grid(Grid'First + 1) := 'A';
+   --     Grid(Grid'First + 2) := Character'Val(Character'Pos('0') + I2);
+   --     Grid(Grid'First + 3) := '0';
+   --  end N2Grid;
 
 
    --Converts ascii number, letter, or space to 0-36
@@ -1456,96 +1430,96 @@ package body Pack_JT is
              36,
          when others => raise Program_Error);  -- Why is this necessary? Compiler bug?
 
+   --  Pack50 is currently not used
+   --  procedure Pack50(N1, N2 : Unsigned_32; Dat : out Unsigned_32_Array) is
+   --  begin
+   --     Dat := (others => 0);
+   --     Dat(Dat'First +  0) := Shift_Right(N1, 20) and 255;
+   --     Dat(Dat'First +  1) := Shift_Right(N1, 12) and 255;
+   --     Dat(Dat'First +  2) := Shift_Right(N1, 4) and 255;
+   --     Dat(Dat'First +  3) := 16 * (N1 and 15) + (Shift_Right(N2, 18) and 15);
+   --     Dat(Dat'First +  4) := Shift_Right(N2, 10) and 255;
+   --     Dat(Dat'First +  5) := Shift_Right(N2, 2) and 255;
+   --     Dat(Dat'First +  6) := 64 * (N2 and 3);
+   --     Dat(Dat'First +  7) := 0;
+   --     Dat(Dat'First +  8) := 0;
+   --     Dat(Dat'First +  9) := 0;
+   --     Dat(Dat'First + 10) := 0;
+   --  end Pack50;
 
-   procedure Pack50(N1, N2 : Unsigned_32; Dat : out Unsigned_32_Array) is
-   begin
-      Dat := (others => 0);
-      Dat(Dat'First +  0) := Shift_Right(N1, 20) and 255;
-      Dat(Dat'First +  1) := Shift_Right(N1, 12) and 255;
-      Dat(Dat'First +  2) := Shift_Right(N1, 4) and 255;
-      Dat(Dat'First +  3) := 16 * (N1 and 15) + (Shift_Right(N2, 18) and 15);
-      Dat(Dat'First +  4) := Shift_Right(N2, 10) and 255;
-      Dat(Dat'First +  5) := Shift_Right(N2, 2) and 255;
-      Dat(Dat'First +  6) := 64 * (N2 and 3);
-      Dat(Dat'First +  7) := 0;
-      Dat(Dat'First +  8) := 0;
-      Dat(Dat'First +  9) := 0;
-      Dat(Dat'First + 10) := 0;
-   end Pack50;
-
-
-   procedure Pack_Pfx(Call1 : String; N1 : in out Unsigned_32; Ng : in out Integer; Nadd : out Integer) is
-      Call0 : String (1 .. 12);
-      Pfx : String (1 .. 3);
-      Text : Boolean;
-      N, Nc, I1 : Integer;
-   begin
-
-      I1 := Index(Call1, "/");
-
-      if Call1(Call1'First + I1 + 1) = ' ' then
-
-         Call0 := Call1(Call1'First .. Call1'First + I1 - 2);
-         Pack_Call(Call0, N1, Text);
-         Nadd := 1;
-         Nc := Character'Pos(Call1(Call1'First + I1));
-
-         if Nc >= 48 and Nc <= 57 then
-            N := Nc - 48;
-         elsif Nc >= 65 and Nc <= 90 then
-            N := Nc - 65 + 10;
-         else
-            N := 38;
-         end if;
-
-         Ng := 60000 - 32768 + N;
-
-      elsif Call1(Call1'First + I1 + 2) = ' ' then
-
-         Call0 := Call1(Call1'First .. Call1'First + I1 - 2);
-         Pack_Call(Call0, N1, Text);
-         Nadd := 1;
-         N := 10 * (Character'Pos(Call1(Call1'First + I1)) - 48) + Character'Pos(Call1(Call1'First + I1 + 1)) - 48;
-         Ng := 60000 + 26 + N;
-
-      else
-
-         Move(Call1(Call1'First .. Call1'First + I1 - 2), Pfx, Right, Left, Space);
-         if Pfx(3) = ' ' then
-            Pfx := ' ' & Pfx(1 .. 2);
-         end if;
-
-         Call0 := Call1(Call1'First + I1 .. Call1'Last);
-
-         Pack_Call(Call0, N1, Text);
-
-         Ng := 0;
-
-         for I in 1 ..3 loop
-
-            Nc := Character'Pos(Pfx(I));
-
-            if Nc >= 48 and Nc <= 57 then
-               N := Nc - 48;
-            elsif Nc >= 65 and nc <= 90 then
-               N := NC - 65 + 10;
-            else
-               N := 36;
-            end if;
-
-            Ng := 37 * Ng + N;
-
-         end loop;
-
-         Nadd := 0;
-
-         if Ng >= 32768 then
-            Ng := Ng - 32768;
-            Nadd := 1;
-         end if;
-      end if;
-
-   end Pack_Pfx;
+   --  Pack_Pfx is currently not used
+   --  procedure Pack_Pfx(Call1 : String; N1 : in out Unsigned_32; Ng : in out Integer; Nadd : out Integer) is
+   --     Call0 : String (1 .. 12);
+   --     Pfx : String (1 .. 3);
+   --     Text : Boolean;
+   --     N, Nc, I1 : Integer;
+   --  begin
+   --
+   --     I1 := Index(Call1, "/");
+   --
+   --     if Call1(Call1'First + I1 + 1) = ' ' then
+   --
+   --        Call0 := Call1(Call1'First .. Call1'First + I1 - 2);
+   --        Pack_Call(Call0, N1, Text);
+   --        Nadd := 1;
+   --        Nc := Character'Pos(Call1(Call1'First + I1));
+   --
+   --        if Nc >= 48 and Nc <= 57 then
+   --           N := Nc - 48;
+   --        elsif Nc >= 65 and Nc <= 90 then
+   --           N := Nc - 65 + 10;
+   --        else
+   --           N := 38;
+   --        end if;
+   --
+   --        Ng := 60000 - 32768 + N;
+   --
+   --     elsif Call1(Call1'First + I1 + 2) = ' ' then
+   --
+   --        Call0 := Call1(Call1'First .. Call1'First + I1 - 2);
+   --        Pack_Call(Call0, N1, Text);
+   --        Nadd := 1;
+   --        N := 10 * (Character'Pos(Call1(Call1'First + I1)) - 48) + Character'Pos(Call1(Call1'First + I1 + 1)) - 48;
+   --        Ng := 60000 + 26 + N;
+   --
+   --     else
+   --
+   --        Move(Call1(Call1'First .. Call1'First + I1 - 2), Pfx, Right, Left, Space);
+   --        if Pfx(3) = ' ' then
+   --           Pfx := ' ' & Pfx(1 .. 2);
+   --        end if;
+   --
+   --        Call0 := Call1(Call1'First + I1 .. Call1'Last);
+   --
+   --        Pack_Call(Call0, N1, Text);
+   --
+   --        Ng := 0;
+   --
+   --        for I in 1 ..3 loop
+   --
+   --           Nc := Character'Pos(Pfx(I));
+   --
+   --           if Nc >= 48 and Nc <= 57 then
+   --              N := Nc - 48;
+   --           elsif Nc >= 65 and nc <= 90 then
+   --              N := NC - 65 + 10;
+   --           else
+   --              N := 36;
+   --           end if;
+   --
+   --           Ng := 37 * Ng + N;
+   --
+   --        end loop;
+   --
+   --        Nadd := 0;
+   --
+   --        if Ng >= 32768 then
+   --           Ng := Ng - 32768;
+   --           Nadd := 1;
+   --        end if;
+   --     end if;
+   --
+   --  end Pack_Pfx;
 
    procedure Grid2Deg(Grid0 : String; DLong : out Float; DLat : out Float) is
       Grid : String := Grid0;
@@ -1619,5 +1593,35 @@ package body Pack_JT is
       Grid(Grid'First + 3) := Character'Val(Character'Pos('0') + N2);
       Grid(Grid'First + 5) := Character'Val(Character'Pos('a') + N3);
    end Deg2Grid;
+
+   procedure Collapse_Blanks_12( Word : in out String) is
+      I : Integer := 1;
+      Flag : Boolean := False;
+      Counter : Integer;
+   begin
+      while I <= 12 and I + 1 /= Word'Length loop
+         if I >= 1 then
+            if (Word(I) = ' ' and Word(I + 1) = ' ') or (I = 1 and Word(I) = ' ') then
+               Word(Word'First .. Word'Last) :=
+                 Word(Word'First .. I - 1) & Word(I + 1 .. Word'Last) & Word(I);
+               Counter := Word'Last - I;
+               for X in I .. Word'Last loop
+                  if Word(X) = ' ' and Counter >= 0 then
+                     Counter := Counter - 1;
+                  end if;
+                  if Counter = 0 then
+                     Flag := True;
+                     exit;
+                  end if;
+               end loop;
+               if Flag then
+                  exit;
+               end if;
+            else
+               I := I + 1;
+            end if;
+         end if;
+      end loop;
+   end Collapse_Blanks_12;
 
 end Pack_JT;

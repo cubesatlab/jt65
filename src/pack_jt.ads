@@ -79,10 +79,14 @@ package Pack_JT is
        Global => null,
        Pre => Msg'Length = 22;
 
-   -- Formats a message by converting all letters to upper case and
-   -- collapsing multiple blanks into one
+   -- Formats a message by converting all letters to upper case
+   -- Fmtmsg can be removed
    procedure Fmtmsg( Msg : in out String )
      with
        Pre => Msg'First >= 1 and Msg'Last <= 22 and Msg'Length = 22;
+
+   procedure Collapse_Blanks_12( Word : in out String)
+     with
+       Pre => Word'First = 1 and Word'Last = 12 and Word'Length = 12;
 
 end Pack_JT;
