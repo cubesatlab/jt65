@@ -10,8 +10,8 @@ package body Testmsg is
 
    begin
 
-      Msg(1) := To_Unbounded_String("Hello  World a");
-      Msg(2) := To_Unbounded_String("CUBESAT LABOR   ");
+      Msg(1) := To_Unbounded_String("CQ WB9XYZ EN34");
+      Msg(2) := To_Unbounded_String("CQ DX WB9XYZ EN34");
       Msg(3) := To_Unbounded_String("QRZ WB9XYZ EN34");
       Msg(4) := To_Unbounded_String("KA1ABC WB9XYZ EN34");
       Msg(5) := To_Unbounded_String("KA1ABC WB9XYZ RO");

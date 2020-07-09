@@ -15,14 +15,20 @@ package Pack_JT is
    -- NB: NSymd is the number of packed output words.
    procedure Pack_Bits
      (DBits : Unsigned_8_Array; NSymd : Integer; M0 : Integer; Sym : out Unsigned_8_Array)
-     with Global => null;
+     with
+       Global => null,
+       Pre => NSymd >= 1 and NSymd <= 255 and M0 >= 1 and M0 <= 255 and DBits'Length >= 1 and Sym'Length >= 1;
+
+
 
    -- Unpack bits from Sym into DBits, one bit per byte.
    -- NB: NSymd is the number of input words, and M0 their length.
    -- there will be M0*NSymd output bytes, each 0 or 1.
    procedure Unpack_Bits
      (Sym : Unsigned_8_Array; NSymd : Integer; M0 : Integer; DBits : out Unsigned_8_Array)
-     with Global => null;
+     with
+       Global => null,
+       Pre => NSymd >= 1 and NSymd <= 255 and M0 >= 1 and M0 <= 255 and Sym'Length >= 1 and DBits'Length >= 1;
 
    -- Pack a valid callsign into a 28-bit integer.
    procedure Pack_Call

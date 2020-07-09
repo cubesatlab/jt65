@@ -1,23 +1,23 @@
     Message                Decoded              Err? Type          Expected
 ----------------------------------------------------------------------------
- 1. HELLO WORLD A          HELLO WORLD A             6:Free text   EXACT                 
+ 1. CQ WB9XYZ EN34         CQ WB9XYZ EN34            1:Std msg     EXACT                 
 
-Packed message, 6-bit symbols  25 47  9 63 51 26 17 10 17 45 62  6
+Packed message, 6-bit symbols  62 32 32 49 39 26 31 40 41 22  0 38
 
 Information-carrying channel symbols
-   47 17 31 55 18 16 13 58 23 23 41 40 43  7 17 29 29 25 17 47 63
-   17 39 46  3 21 15  2 44 56  1 40 46 18 56 25 21 55 11 15 62 57
-   17 13 59 47  8 59 44 22 10 61 32 33 22  7 55 57 26 57 55 42  5
+   17 56 39  1 31 34 60 58 23 24 52 18 34 38 35 10 22 16 31 16 63
+   55 49 33 51 33 60 62 23 55 30 26 12 61 48 61 25 63 11 25 51 20
+   49 48 29 24 27 47 57 58 37 41 41  0 20 63 31 15 62 41 61 52 53
     Message                Decoded              Err? Type          Expected
 ----------------------------------------------------------------------------
- 2. CUBESAT LABOR          CUBESAT LABOR             6:Free text   EXACT                 
+ 2. CQ DX WB9XYZ EN34      CQ DX WB9XYZ EN34         1:Std msg     EXACT                 
 
-Packed message, 6-bit symbols  18 55 62 36 32 63 36 37 58 12 63 23
+Packed message, 6-bit symbols  21 34 19  3 39 26 31 40 41 22  0 38
 
 Information-carrying channel symbols
-   62 11 59 47 10 12 52 48 32 44 51  4 29 11  7 57 33 54 42 61 10
-   49 62 51 23 27 55  6 35 20 47 46 37 33 44 39 53  5 26 10 50 62
-   58 33 10  1 45 59 11 47 16 52 54 32 35 11 48  1  5 54 30 48 28
+   63 40 42 20 19 52 63  0 23 25 31  6  0 60 21 50 44 16 61 25 50
+   59 53  9  1 31 60 62 57 19 52 32 18 39 51 61 40 25 13 17 45  6
+   51 26 29 29 57 51  3  2 57  2  2  0  9 57 55 11 30 35 10 52 53
     Message                Decoded              Err? Type          Expected
 ----------------------------------------------------------------------------
  3. QRZ WB9XYZ EN34        QRZ WB9XYZ EN34           1:Std msg     EXACT                 
@@ -100,7 +100,7 @@ Information-carrying channel symbols
    20 41 28  5 47 21 20 16 18 58 48 39 18 57 20  7  2 49  7 42 25
     Message                Decoded              Err? Type          Expected
 ----------------------------------------------------------------------------
- 11. CQ 010 WB9XYZ EN34     CQ 10 WB9XYZ EN34      *  1:Std msg     EXACT                 
+ 11. CQ 010 WB9XYZ EN34     CQ 010 WB9XYZ EN34        1:Std msg     EXACT                 
 
 Packed message, 6-bit symbols  62 32 32 50 23 26 31 40 41 22  0 38
 
@@ -120,7 +120,7 @@ Information-carrying channel symbols
    46 49 29 32 27 36 52 46  7  7 40  0  5 51 51 11 11 47  1 14 53
     Message                Decoded              Err? Type          Expected
 ----------------------------------------------------------------------------
- 13. CQ EU WB9XYZ EN34       WB9XYZ EN34           *  1:Std msg     EXACT                 
+ 13. CQ EU WB9XYZ EN34      CQ EU WB9XYZ EN34         1:Std msg     EXACT                 
 
 Packed message, 6-bit symbols  61 33 12 25 39 26 31 40 41 22  0 38
 
@@ -130,7 +130,7 @@ Information-carrying channel symbols
     1 10 29 54 15 45 55 53 53 45 21  0 28 54  3 23 19 25 47 52 53
     Message                Decoded              Err? Type          Expected
 ----------------------------------------------------------------------------
- 14. CQ WY WB9XYZ EN34       WB9XYZ EN34           *  1:Std msg     EXACT                 
+ 14. CQ WY WB9XYZ EN34      CQ WY WB9XYZ EN34         1:Std msg     EXACT                 
 
 Packed message, 6-bit symbols  61 33 25 20 31 26 31 40 41 22  0 38
 

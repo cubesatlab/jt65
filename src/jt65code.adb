@@ -135,10 +135,11 @@ begin
          Counter := Counter + 1;
       end loop;
       Recd_Tmp(0 .. 11) := Recd_Convert(1 .. 12);
-      Pack_JT.Unpack_Msg( Recd_Tmp, Decoded );
+      Pack_JT.Unpack_Msg( Recd_Tmp, Decoded ); -- 0T0 error in Unpack_Msg
       if ( Cok = "OOO" ) then
          Decoded ( 20 .. 22) := cok;
       end if;
+
       Pack_JT.Fmtmsg(Decoded);
       Collapse_Blanks(Decoded);
 
