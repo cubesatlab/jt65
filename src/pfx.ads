@@ -8,6 +8,8 @@ package Pfx is
    type Pfx_Array is array (1 .. Maxpfx) of String (1 .. 5);
    type Sfx_Array is array (1 .. Maxsfx) of Character;
 
-   procedure Init_Pfx(Prefixes : out Pfx_Array; Suffixes : out Sfx_Array);
+   procedure Init_Pfx
+     (Prefixes : out Pfx_Array;
+      Suffixes : out Sfx_Array);
 
 end pfx;

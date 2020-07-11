@@ -8,8 +8,9 @@ pragma SPARK_Mode(On);
 
 package body Wrapkarn is
 
-   procedure Rs_Encode( Dgen : in Unsigned_8_array;
-                        Sent : in out Unsigned_8_array )
+   procedure Rs_Encode
+     (Dgen : in Unsigned_8_array;
+      Sent : in out Unsigned_8_array)
    is
 
       Dat1 : Unsigned_8_array(0 .. 11);
@@ -47,11 +48,12 @@ package body Wrapkarn is
       end if;
    end Rs_Encode;
 
-   procedure Rs_Decode( Recd0 : in Unsigned_8_array;
-                        Era : in Unsigned_8_array;
-                        Num : in Unsigned_8;
-                        Decoded : out Unsigned_8_array;
-                        Dat_Packed : in Unsigned_8_Array)
+   procedure Rs_Decode
+     (Recd0 : in Unsigned_8_array;
+      Era : in Unsigned_8_array;
+      Num : in Unsigned_8;
+      Decoded : out Unsigned_8_array;
+      Dat_Packed : in Unsigned_8_Array)
    is
    -- Decode JT65 received data recd0[63], producing decoded[12].
    -- Erasures are indicated in era0[Numera].  The number of corrected
@@ -119,13 +121,14 @@ package body Wrapkarn is
 
    end Rs_Decode;
 
-   procedure Init_Rs_Int ( Reed_S : in out Rs;
-                          Symsize : in Unsigned_8;
-                          Gfpoly : in Unsigned_8;
-                          Fcr : in Unsigned_8;
-                          Prim : in Unsigned_8;
-                          Nroots : in Unsigned_8;
-                          Pad : in Unsigned_8)
+   procedure Init_Rs_Int
+     (Reed_S : in out Rs;
+      Symsize : in Unsigned_8;
+      Gfpoly : in Unsigned_8;
+      Fcr : in Unsigned_8;
+      Prim : in Unsigned_8;
+      Nroots : in Unsigned_8;
+      Pad : in Unsigned_8)
    is
       X, Sr, Root, Iprim, Placeholder : Unsigned_8;
       One : constant Unsigned_8 := 1;
@@ -202,8 +205,9 @@ package body Wrapkarn is
       end if;
    end Init_Rs_Int;
 
-   function Modnn ( Reed_S : in Rs;
-                    A : in Unsigned_8) return Integer
+   function Modnn
+     (Reed_S : in Rs;
+      A : in Unsigned_8) return Integer
    is
       X : Unsigned_8 := A;
    begin
@@ -215,10 +219,11 @@ package body Wrapkarn is
       return Integer(X);
    end Modnn;
 
-   procedure Encode_Rs_Int( Reed_S : in Rs;
-                            Data : in Unsigned_8_array;
-                            Bb : out Unsigned_8_array ) is
-
+   procedure Encode_Rs_Int
+     (Reed_S : in Rs;
+      Data : in Unsigned_8_array;
+      Bb : out Unsigned_8_array )
+   is
       Feedback, X : Unsigned_8;
       Nroots : constant Unsigned_8 := 51;
       --Rs_Null : constant Rs := null;
@@ -250,10 +255,11 @@ package body Wrapkarn is
       end if;
    end Encode_Rs_Int;
 
-   function Decode_Rs_Int( Reed_S : in Rs;
-                           Data_In : in  Unsigned_8_array;
-                           Eras_Pos_In : in Unsigned_8_array;
-                           No_Eras : in Unsigned_8 ) return Unsigned_8_array
+   function Decode_Rs_Int
+     (Reed_S : in Rs;
+      Data_In : in  Unsigned_8_array;
+      Eras_Pos_In : in Unsigned_8_array;
+      No_Eras : in Unsigned_8 ) return Unsigned_8_array
    is
 
       --procedure Finish( Eras_Pos1 : in out Unsigned_8_array;
@@ -294,7 +300,6 @@ package body Wrapkarn is
       for I in Data'Range loop
          Data(I) := Data_In(I);
       end loop;
-
 
       for I in 0 .. Nroots - 1 loop
          S(I) := Data(0);

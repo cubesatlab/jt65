@@ -10,7 +10,10 @@ with Interfaces; use Interfaces;
 
 package body General_JT is
 
-   procedure Chkmsg(Msg : in out String; Cok : out String; NSpecial : out Integer) is
+   procedure Chkmsg
+     (Msg : in out String;
+      Cok : out String;
+      NSpecial : out Integer) is
    begin
       NSpecial := 0;
       Cok := "   ";
@@ -35,8 +38,9 @@ package body General_JT is
       end loop;
    end ChkMsg;
 
-   procedure Interleave63( Sent : in out Unsigned_8_array;
-                           Num : in Integer ) is
+   procedure Interleave63
+     (Sent : in out Unsigned_8_array;
+      Num : in Integer ) is
 
       type Interleave_Array_7by9 is array(0 .. 6, 0 .. 8) of Unsigned_8;
       type Interleave_Array_9by7 is array(0 .. 8, 0 .. 6) of Unsigned_8;
@@ -90,12 +94,15 @@ package body General_JT is
       end if;
    end Interleave63;
 
-   procedure Graycode(Sent : in out Unsigned_8_array;
-                      Dir : in Integer)
+   procedure Graycode
+     (Sent : in out Unsigned_8_array;
+      Dir : in Integer)
    is
       Temporary_Array : Unsigned_8_array(Sent'Range);
 
-      function IGray(Num : in Unsigned_8; Dir : in Integer) return Unsigned_8
+      function IGray
+        (Num : in Unsigned_8;
+         Dir : in Integer) return Unsigned_8
       is
          Num_8: Unsigned_8;
          Sh   : Unsigned_8;
@@ -120,7 +127,9 @@ package body General_JT is
       Sent := Temporary_Array;
    end Graycode;
 
-   procedure Collapse_Blanks( Msg : in out String) is
+   procedure Collapse_Blanks
+     (Msg : in out String)
+   is
       I : Integer := 1;
       Flag : Boolean := False;
       Counter : Integer;

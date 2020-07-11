@@ -9,82 +9,16 @@ use  Pfx;
 
 package body Pack_JT is
 
-   -----------------------
-   -- Forward Declarations
-   -----------------------
-
-   procedure Get_Pfx1(Callsign : in out String; K : out Integer; Nv2 : out Integer)
-     with
-       Global => (Input => add_pfx),
-       Pre => Callsign'First = 1 and Callsign'Last = 12 and Callsign'Length = 12;
-
-   procedure Get_Pfx2(K0 : Integer; Callsign : in out String)
-     with
-       Global => (Input => add_pfx),
-       Pre => Callsign'First = 1 and Callsign'Last = 12 and Callsign'Length = 12;
-
-   procedure Grid2k(Grid : String; K : out Integer)
-     with
-       Global => null,
-       Pre => Grid'Length = 6;
-
-   procedure K2Grid(K : Integer; Grid : out String)
-     with
-       Global => null,
-       Pre => Grid'Length = 6;
-
-   --  Grid2N is currently not used
-   --  procedure Grid2N(Grid : String; N : out Integer)
-   --    with
-   --      Global => null,
-   --      Pre => Grid'Length = 4;
-
-   --  N2Grid is currently not used
-   --  procedure N2Grid(N : Integer; Grid : in out String)
-   --    with
-   --      Global => null,
-   --      Pre => Grid'Length = 4 and N in -70 .. -31;
-   --
-   -- Convert ASCII number, letter, or space to 0-36 for callsign packing.
-   subtype Numeric_Callsign_Type is Natural range 0 .. 36;
-   subtype Callsign_Type is Character
-     with Static_Predicate => (Callsign_Type in '0' .. '9' | 'A' .. 'Z' | 'a' .. 'z' | ' ');
-
-   --type Callsign_String is array (Integer range <>) of Callsign_Type;
-
-   function NChar(C : Callsign_Type) return Numeric_Callsign_Type
-     with Global => null;
-
-   --  Pack50 is currently not used
-   --  procedure Pack50(N1, N2 : Unsigned_32; Dat : out Unsigned_32_Array)
-   --    with
-   --      Global => null,
-   --      Pre => Dat'Length = 11;
-
-   --  Pack_Pfx is currently not used
-   --  procedure Pack_Pfx(Call1 : String; N1 : in out Unsigned_32; Ng : in out Integer; Nadd : out Integer)
-   --    with
-   --      Global => null,
-   --      Pre => Call1'Length = 12;
-   --
-   -- Converts Maidenhead grid locator to degrees of West longitude and North latitude
-   procedure Grid2Deg(Grid0 : String; DLong : out Float; DLat : out Float)
-     with
-       Global => null,
-       Pre => Grid0'Length = 6;
-
-   procedure Deg2Grid(DLong0 : Float; DLat : Float; Grid : out String)
-     with
-       Global => null,
-       Pre => Grid'Length = 6;
-
    -----------------------------------------
    -- Implementations of Visible Subprograms
    -----------------------------------------
 
    -- Might need to fix the index for the arrays.
    procedure Pack_Bits
-     (DBits : Unsigned_8_Array; NSymd : Integer; M0 : Integer; Sym : out Unsigned_8_Array)
+     (DBits : Unsigned_8_Array;
+      NSymd : Integer;
+      M0 : Integer;
+      Sym : out Unsigned_8_Array)
    is
       -- Might need to change the types for n and m.
       K : Integer := 0;
@@ -97,6 +31,7 @@ package body Pack_JT is
             M := DBits(K);
             K := K + 1;
             N := Shift_Left(N,1) or M;
+            pragma Loop_Invariant(K in Dbits'Range);
          end loop;
          Sym(I) := N;
       end loop;
@@ -104,7 +39,10 @@ package body Pack_JT is
 
    -- Might need to fix the index for the arrays.
    procedure Unpack_Bits
-     (Sym : Unsigned_8_Array; NSymd : Integer; M0 : Integer; DBits : out Unsigned_8_Array)
+     (Sym : Unsigned_8_Array;
+      NSymd : Integer;
+      M0 : Integer;
+      DBits : out Unsigned_8_Array)
    is
       K : Integer := 0;
       Mask : Unsigned_8;
@@ -124,7 +62,9 @@ package body Pack_JT is
 
    --Packs a valid callsign into a 28-bit integer
    procedure Pack_Call
-     (Call : in out String; NCall : in out Unsigned_32; Text : out Boolean)
+     (Call : in out String;
+      NCall : in out Unsigned_32;
+      Text : out Boolean)
    is
       NBASE : constant Unsigned_32 := 37*36*10*27*27*27;
       C : Character;
@@ -203,7 +143,10 @@ package body Pack_JT is
    end Pack_Call;
 
    procedure Unpack_Call
-     (NCall : Unsigned_32; Word : out String; Iv2 : out Integer; Psfx : out String)
+     (NCall : Unsigned_32;
+      Word : out String;
+      Iv2 : out Integer;
+      Psfx : out String)
    is
       --NBASE : constant Integer := 37 * 36 * 10 * 27 * 27 * 27;
       C : constant String := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
@@ -220,7 +163,12 @@ package body Pack_JT is
          end if;
       end Nine_Nine_Nine;
 
-      procedure Twenty is
+      procedure Twenty
+        with
+          Pre => Word'First = 1 and Word'Last = 12 and Word'Length = 12
+        and Psfx'First = 1 and Psfx'Last = 4 and Psfx'Length = 4
+   is
+
       begin
          if N >= 267796946 then
             Nine_Nine_Nine;
@@ -385,7 +333,11 @@ package body Pack_JT is
       Nine_Nine_Nine;
    end Unpack_Call;
 
-   procedure Pack_Grid(Grid : in out String; NG : in out Unsigned_32; Text : out Boolean) is
+   procedure Pack_Grid
+     (Grid : in out String;
+      NG : in out Unsigned_32;
+      Text : out Boolean)
+   is
       NGBASE : constant Unsigned_32 := 180 * 180;
       C1 : Character := ' ';
       N, Long, Lat : Integer := 0;
@@ -402,7 +354,10 @@ package body Pack_JT is
          return;
       end Ninety;
 
-      procedure Forty is
+      procedure Forty
+        with
+          Pre => Grid'First = 1 and Grid'Last = 4 and Grid'Length = 4
+      is
       begin
          Grid2Deg(Grid & "mm", DLong, DLat);
          Long := Integer(Float'Floor(DLong));
@@ -411,7 +366,10 @@ package body Pack_JT is
          return;
       end Forty;
 
-      procedure Thirty is
+      procedure Thirty
+        with
+          Pre => Grid'First = 1 and Grid'Last = 4 and Grid'Length = 4
+      is
       begin
          if N >= -50 and N <= 49 then
             if C1 = 'R' then
@@ -436,7 +394,10 @@ package body Pack_JT is
          Forty;
       end Thirty;
 
-      procedure Twenty is
+      procedure Twenty
+        with
+          Pre => Grid'First = 1 and Grid'Last = 4 and Grid'Length = 4
+      is
       begin
          for I in Grid(Grid'First + 1 .. Grid'First + 3)'range loop
             if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
@@ -448,7 +409,10 @@ package body Pack_JT is
          Thirty;
       end Twenty;
 
-      procedure Ten is
+      procedure Ten
+        with
+          Pre => Grid'First = 1 and Grid'Last = 4 and Grid'Length = 4
+      is
       begin
          N := 99;
          C1 := Grid(Grid'First);
@@ -517,22 +481,41 @@ package body Pack_JT is
       Ten;
    end Pack_Grid;
 
-   procedure Unpack_Grid(Ng : Integer; Grid : out String) is
+   procedure Unpack_Grid
+     (Ng : Integer;
+      Grid : out String)
+   is
       NGBASE : constant Integer := 180 * 180;
-      Grid6 : String(1 .. 6);
+      Grid6 : String(1 .. 6) := (others => ' ');
       DLat, DLong : Float;
       N : Integer;
+      Grid_Temp : String(1 .. 3) := (others => ' ');
+      N_Temp : String(1 .. 2) := (others => ' ');
 
       procedure Ten is
       begin
          N := Ng - NGBASE - 1;
+
          if N >= 1 and N <= 30 then
             --Grid := Integer'Image(-N);
             Move(Integer'Image(-N), Grid, Right, Left, Space);
          elsif N >= 31 and N <= 60 then
-            N := N - 30;
-            --Grid := "R" & Integer'Image(-N);
-            Move("R" & Integer'Image(-N), Grid, Right, Left, Space);
+            if N >= 31 and N <= 39 then
+               N := N - 30;
+               N_Temp(1 .. 2) := Integer'Image(N);
+               if N_Temp(1) = ' ' then
+                  N_Temp(1) := '0';
+                  Move("R-" & N_Temp, Grid, Right, Left, Space);
+               else
+                  N_Temp(1) := '+';
+                  Move("R-" & N_Temp, Grid, Right, Left, Space);
+               end if;
+            else
+               N := N - 30;
+               --Grid := "R" & Integer'Image(-N);
+               -- PERFORM THIS CHEK FOR 31 .. 60?
+               Move("R" & Integer'Image(-N), Grid, Right, Left, Space);
+            end if;
          elsif N = 61 then
             Grid := "RO  ";
          elsif N = 62 then
@@ -552,20 +535,41 @@ package body Pack_JT is
       DLong := Float((Ng / 180) * 2 - 180 + 2);
       Deg2Grid(DLong, DLat, Grid6);
       Grid := Grid6(Grid6'First .. Grid6'First + 3);
+      -- Handling -31 through -49.
       if Grid(Grid'First .. Grid'First + 1) = "KA" then
          N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
          N := N - 50;
-         Grid := Trim(Integer'Image(N), Both);
-         if Grid(Grid'First) = ' ' then Grid(Grid'First) := '+'; end if;
+         if N > 0 then
+            if N >= 31 and N <= 49 then
+               Grid_Temp(Grid_Temp'First .. Grid_Temp'First + 2) := Integer'Image(N);
+               Grid(Grid'First .. Grid'First + 1) := "  ";
+               Grid(Grid'First + 1) := '-';
+               Grid(Grid'First + 2 .. Grid'First + 3) := Grid_Temp(2 .. 3);
+            else
+               -- Need to work on results here
+               Grid(Grid'First .. Grid'First + 3) := "    ";
+               Grid(Grid'First + 1 .. Grid'First + 2) := Integer'Image(N);
+               --Grid(Grid'First + 2 .. Grid'First + 2) := Integer'Image(N);
+            ---Grid := Trim(Integer'Image(N), Both); -- Use of Trim was constraint error
+               if Grid(Grid'First) = ' ' then Grid(Grid'First) := '+';
+               end if; -- Now collapsing
+            end if;
+         end if;
       elsif Grid(Grid'First + 2 .. Grid'First + 3) = "LA" then
          N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
          N := N - 50;
-         Grid := "R" & Trim(Integer'Image(N), Both);
-         if Grid(Grid'First + 1) = ' ' then Grid(Grid'First + 1) := '+'; end if;
+         if N > 0 then
+            Grid := "R" & Trim(Integer'Image(N), Both);
+            if Grid(Grid'First + 1) = ' ' then Grid(Grid'First + 1) := '+'; end if;
+         end if;
       end if;
    end Unpack_Grid;
 
-   procedure Pack_Msg(Msg0 : String; Dat : out Unsigned_8_Array; IType : out Integer) is
+   procedure Pack_Msg
+     (Msg0 : String;
+      Dat : out Unsigned_8_Array;
+      IType : out Integer)
+   is
       Msg      : String(1 .. 22);
       C1       : String(1 .. 12);
       C2       : String(1 .. 12);
@@ -634,7 +638,7 @@ package body Pack_JT is
             return;
          end if;
          Nc1 := 0;
-         if Nv2b = 4 then
+         if Nv2b = 4 and K2 >= 0 then
            if C1(1 .. 3) = "CQ " and not Text3 then
                Nc1 := 262178563 + Unsigned_32(K2);
             end if;
@@ -644,7 +648,7 @@ package body Pack_JT is
             if C1(1 ..3) = "DE " and not Text3 then
                Nc1 := 265825581 + Unsigned_32(K2);
            end if;
-         elsif Nv2b = 5 then
+         elsif Nv2b = 5 and K2 >= 0 then
             if C1(1 .. 3) = "CQ " and not Text3 then
                Nc1 := 267649090 + Unsigned_32(K2);
             end if;
@@ -701,10 +705,12 @@ package body Pack_JT is
 
    begin
       IType := 1;
+      Dat(0 .. 11) := (others => 0);
       --Msg := Msg0;
       Move(Msg0, Msg, Right, Left, Space);
       --Fmtmsg(Msg); --This Needs to be fixed for now I am just using To_Upper
-      Msg := To_Upper(Msg); --This was causing trouble
+      --Msg := To_Upper(Msg); --This was causing trouble
+      FmtMsg(Msg);
       if Msg(1 .. 3) = "CQ " and Msg(4) >= '0' and Msg(4) <= '9' and Msg(5) = ' ' then
          Msg := "CQ 00" & Msg(4..Msg'Last - 2); --The Last character of the Msg is cut off, I dont think it matters but it might.
       end if;
@@ -764,7 +770,10 @@ package body Pack_JT is
    end Pack_Msg;
 
    -- Need to fix null character check
-   procedure Unpack_Msg(Dat0 : Unsigned_8_Array; Msg : out String) is
+   procedure Unpack_Msg
+     (Dat0 : Unsigned_8_Array;
+      Msg : out String)
+   is
       NBASE : constant Integer := 37*36*10*27*27*27;
       --NGBASE : Integer := 180*180;
       c1, c2 : String(1 .. 12);
@@ -791,20 +800,52 @@ package body Pack_JT is
          end if;
       end One_Hundred;
 
-      procedure Twenty is
+      procedure Twenty
+        with
+          Pre => Msg'First = 1 and Msg'Last = 22 and Msg'Length = 22 and J > 0
+      is
+         Flag : Boolean := False;
       begin
          if K = 0 then
             for I in 1 .. 4 loop
-               if J <= 21 then J := J + 1; end if;
+               if J <= 21 then
+                  J := J + 1;
+               end if;
+               if I = 1 and grid(I) = '-' then
+                  case (grid(I + 1)) is
+                  when '0' .. '9' =>
+                     case (grid(I + 2)) is
+                     when ' ' =>
+                        Flag := True;
+                     when others =>
+                        Flag := False;
+                     end case;
+                  when others =>
+                     Flag := False;
+                  end case;
+                  if Flag then
+                     Msg(J) := grid(I);
+                     Msg(J + 2) := grid(I+1);
+                     exit;
+                  end if;
+               end if;
                Msg(J) := grid(I);
             end loop;
-            if J <= 21 then J := J + 1; end if;
+            if J <= 21 then
+               J := J + 1;
+            end if;
             Msg(J) := ' ';
+            if Flag then
+               Msg(J) := '0';
+            end if;
          end if;
          One_Hundred;
       end Twenty;
 
-      procedure Ten is
+      procedure Ten
+        with
+          Pre => Msg'First = 1 and Msg'Last = 22 and Msg'Length = 22 and J > 0
+      is
       begin
          for I in 1 .. 12 loop
             if J <= 21 then J := J + 1; end if;
@@ -831,7 +872,6 @@ package body Pack_JT is
         Shift_Left(Dat(7), 8) + Shift_Left(Dat(8), 2) + (Shift_Right(Dat(9), 4) and 3);
 
       ng := Shift_Left((Dat(9) and 15), 12) + Shift_Left(Dat(10), 6) + Dat(11);
-
       if ng >= 32768 then
          Unpack_Text(nc1, nc2, ng, Msg);
          One_Hundred;
@@ -915,7 +955,7 @@ package body Pack_JT is
             end if;
          end if;
          if iv2 = 8 then
-            Msg := " ";
+            Msg := "                      ";
          end if;
          One_Hundred;
          return;
@@ -941,7 +981,6 @@ package body Pack_JT is
 --           --c2 := c2(1 .. Index_Val - 1) & "            ";
 --           Move(c2(1 .. Index_Val - 1) & "            ", c2, Right, Left, Space);
 --        end if;
-
       Msg := "                      ";
       J := 0;
       if cqnnn then
@@ -963,9 +1002,11 @@ package body Pack_JT is
       Ten;
    end Unpack_Msg;
 
-
    -- I did some limited testing with this and ended up getting the same result as its fortran equivalent
-   procedure Pack_Text(Msg : String; Nc1, Nc2, Nc3 : out Unsigned_32) is
+   procedure Pack_Text
+     (Msg : String;
+      Nc1, Nc2, Nc3 : out Unsigned_32)
+   is
       C : String(1 .. 42);
       Skip_Step : Boolean;
       J_Count : Unsigned_32;
@@ -1038,7 +1079,10 @@ package body Pack_JT is
    end Pack_Text;
 
    --Parameters might need to be integers not unsigned
-   procedure Unpack_Text(Nc1a, Nc2a, Nc3a : Unsigned_32; Msg : in out String) is
+   procedure Unpack_Text
+     (Nc1a, Nc2a, Nc3a : Unsigned_32;
+      Msg : in out String)
+   is
       Nc1, Nc2, Nc3 : Unsigned_32;
       J : Integer;
       C : constant String := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ +-./?";
@@ -1069,7 +1113,9 @@ package body Pack_JT is
       Msg(Msg'First + 13 .. Msg'First + 21) := "         ";
    end Unpack_Text;
 
-   procedure Fmtmsg(Msg : in out String) is
+   procedure Fmtmsg
+     (Msg : in out String)
+   is
    begin
       Msg := To_Upper(Msg);
    end Fmtmsg;
@@ -1079,7 +1125,11 @@ package body Pack_JT is
    ------------------------------------------
 
    -- Something is broken in this.
-   procedure Get_Pfx1(Callsign : in out String; K : out Integer; Nv2 : out Integer) is
+   procedure Get_Pfx1
+     (Callsign : in out String;
+      K : out Integer;
+      Nv2 : out Integer)
+   is
       Suffixes   : sfx_array;
       Prefixes   : pfx_array;
       Callsign0  : String(1 .. 12);
@@ -1091,7 +1141,10 @@ package body Pack_JT is
       Islash : Slash_Loc;
       Iz : Iz_Loc;
 
-      procedure Ten is
+      procedure Ten
+        with
+          Pre => Callsign0'First = 1 and Callsign0'Last = 12 and Callsign0'Last = 12
+      is
          llof, lrof, I : Integer;
          t_pfx : String(1 .. 4);
          t_sfx : String(1 .. 3);
@@ -1141,7 +1194,9 @@ package body Pack_JT is
                   --Callsign := Callsign0(1 .. I-1);
                   --Move(Callsign0(1 .. I-1), Callsign, Right, Left, Space); Statement has no effect
                   --Callsign := Callsign0(I+1 .. Callsign0'Length);
-                  Move(Callsign0(I+1 .. Callsign0'Length), Callsign, Right, Left, Space);
+                  if I >= 1 and I <= 12 then
+                     Move(Callsign0(I+1 .. Callsign0'Length), Callsign, Right, Left, Space);
+                  end if;
                end if;
                -- Same issue here. Predicate check might fail. Should think about moving to a "Callsign String"?
                if is_sfx then
@@ -1152,7 +1207,9 @@ package body Pack_JT is
                   nv2 := 5;
                   I := Index(Callsign0, "/");
                   --Callsign := Callsign0(1 .. I-1);
-                  Move(Callsign0(1 .. I-1), Callsign, Right, Left, Space);
+                  if I >- 1 and I <= 12 then
+                     Move(Callsign0(1 .. I-1), Callsign, Right, Left, Space);
+                  end if;
                end if;
             end if;
          end if;
@@ -1212,7 +1269,10 @@ package body Pack_JT is
       Ten;
    end Get_Pfx1;
 
-   procedure Get_Pfx2(K0 : Integer; Callsign : in out String) is
+   procedure Get_Pfx2
+     (K0 : Integer;
+      Callsign : in out String)
+   is
       K : Integer := K0;
       Iz : Integer;
       Suffix : sfx_array;
@@ -1236,20 +1296,28 @@ package body Pack_JT is
       end if;
    end Get_Pfx2;
 
-   procedure Grid2k(Grid : String; K : out Integer) is
+   procedure Grid2k
+     (Grid : String;
+      K : out Integer)
+   is
       NLong, NLat : Integer;
       XLong, XLat : Float;
    begin
       Grid2Deg(Grid, XLong, XLat);
       NLong := Integer(XLong);
       NLat := Integer(XLat);
+      --Put_Line(Float'Image(XLong));
+      --Put_Line(Float'Image(XLat));
       K := 0;
       if NLat >= 85 then
          K := 5 * (NLong + 179) / 2 + NLat - 84;
       end if;
    end Grid2k;
 
-   procedure K2Grid(K : Integer; Grid : out String) is
+   procedure K2Grid
+     (K : Integer;
+      Grid : out String)
+   is
       NLong, NLat : Integer;
       DLong, DLat : Float;
    begin
@@ -1286,8 +1354,10 @@ package body Pack_JT is
    --  end N2Grid;
 
    --Converts ascii number, letter, or space to 0-36
-   function NChar(C : Callsign_Type) return Numeric_Callsign_Type is
-      (case (C) is
+   function NChar
+     (C : Callsign_Type) return Numeric_Callsign_Type
+   is
+     (case (C) is
          when '0' .. '9' =>
             Character'Pos(C) - Character'Pos('0'),
          when 'A' .. 'Z' =>
@@ -1295,7 +1365,7 @@ package body Pack_JT is
          when 'a' .. 'z' =>
             Character'Pos(C) - Character'Pos('a') + 10,
          when ' ' =>
-             36,
+            36,
          when others => raise Program_Error);  -- Why is this necessary? Compiler bug?
 
    --  Pack50 is currently not used
@@ -1389,7 +1459,11 @@ package body Pack_JT is
    --
    --  end Pack_Pfx;
 
-   procedure Grid2Deg(Grid0 : String; DLong : out Float; DLat : out Float) is
+   procedure Grid2Deg
+     (Grid0 : String;
+      DLong : out Float;
+      DLat : out Float)
+   is
       Grid : String := Grid0;
       G1, G2, G3, G4, G5, G6 : Character;
       I, NLong, NLat, N20d : Integer;
@@ -1428,7 +1502,11 @@ package body Pack_JT is
       DLat := Float(NLat) + XMinLat/60.0;
    end Grid2Deg;
 
-   procedure Deg2Grid(DLong0 : Float; DLat : Float; Grid : out String) is
+   procedure Deg2Grid
+     (DLong0 : Float;
+      DLat : Float;
+      Grid : out String)
+   is
       DLong : Float := DLong0;
       NLat, NLong, N1, N2, N3 : Integer;
    begin
@@ -1452,13 +1530,15 @@ package body Pack_JT is
       Grid(Grid'First + 5) := Character'Val(Character'Pos('a') + N3);
    end Deg2Grid;
 
-   procedure Collapse_Blanks_12( Word : in out String) is
+   procedure Collapse_Blanks_12
+     (Word : in out String)
+   is
       I : Integer := 1;
       Flag : Boolean := False;
       Counter : Integer;
    begin
       while I <= 12 and I + 1 /= Word'Length loop
-         if I >= 1 then
+         if I >= 1 and I /= Word'Last then
             if (Word(I) = ' ' and Word(I + 1) = ' ') or (I = 1 and Word(I) = ' ') then
                Word(Word'First .. Word'Last) :=
                  Word(Word'First .. I - 1) & Word(I + 1 .. Word'Last) & Word(I);

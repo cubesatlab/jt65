@@ -6,8 +6,10 @@
 --------------------------------------------------------------------------------
 package body Testmsg is
 
-   procedure Init_Testmsg(Msg : in out Testmsgarray; Msgchk : in out Testmsgarray) is
-
+   procedure Init_Testmsg
+     (Msg : in out Testmsgarray;
+      Msgchk : in out Testmsgarray)
+   is
    begin
 
       Msg(1) := To_Unbounded_String("CQ WB9XYZ EN34");
