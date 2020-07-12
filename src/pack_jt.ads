@@ -98,7 +98,7 @@ package Pack_JT is
      with
        Global => add_pfx,
        Pre => ((Dat'First = 0 and Dat'Last = 11 and Dat'Length = 12)
-               or else raise Unsigned_8_Array_Out_Of_Bounds) and Msg0'Length = 22,
+               or else raise Unsigned_8_Array_Out_Of_Bounds),
      Post => ((Dat'First = 0 and Dat'Last = 11 and Dat'Length = 12)
              or else raise Unsigned_8_Array_Out_Of_Bounds);
 
