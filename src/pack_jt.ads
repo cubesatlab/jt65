@@ -9,9 +9,15 @@ package Pack_JT is
    type Octet is new Unsigned_8;
    type Octet_Array is array(Positive range <>) of Octet;
 
-   String_Out_Of_Bounds : exception;
-   Unsigned_8_Array_Out_Of_Bounds : exception;
-   Signed_Number : exception;
+   subtype JT65_Character is Character
+     with Static_Predicate =>
+       (JT65_Character in '0' .. '9' | 'A' .. 'Z' | 'a' .. 'z' | ' ' | '+' | '-' | '.' | '/' | '?');
+
+   subtype JT65_String is String
+     with Dynamic_Predicate =>
+       (for all I in JT65_String'Range =>
+          JT65_String(I) in JT65_Character);
+
    add_pfx : String(1 .. 8);
 
    -- Pack 0s and 1s from DBits into Sym with M0 bits per word.
@@ -48,8 +54,8 @@ package Pack_JT is
       Text : out Boolean)
      with
        Global => null,
-       Pre => ((Call'First = 1 and Call'Last = 6 and Call'Length = 6)
-               or else raise String_Out_Of_Bounds);
+       Pre => (Call'First = 1 and Call'Last = 6),
+     Post => (Call'First = 1 and Call'Last = 6);
 
    procedure Unpack_Call
      (NCall : Unsigned_32;
@@ -59,9 +65,9 @@ package Pack_JT is
      with
        Global => null,
        Pre => NCall <= 2147483647 and
-       ((Word'First = 1 and Word'Last = 12 and Word'Length = 12 and
-               Psfx'First = 1 and Psfx'Last = 4 and Psfx'Length = 4)
-        or else raise String_Out_Of_Bounds);
+       (Word'First = 1 and Word'Last = 12 and Word'Length = 12 and
+          Psfx'First = 1 and Psfx'Last = 4 and Psfx'Length = 4),
+   Post => Psfx'First = 1 and Psfx'Last = 4;
 
    procedure Pack_Grid
      (Grid : in out String;
@@ -69,16 +75,17 @@ package Pack_JT is
       Text : out Boolean)
      with
        Global => null,
-       Pre => ((Grid'Length = 4 and Grid'First = 1 and Grid'Last = 4)
-               or else raise String_Out_Of_Bounds);
+       Pre => (Grid'Length = 4 and Grid'First = 1 and Grid'Last = 4) and
+     (for all I in Grid'Range =>
+        Grid(I) in '0' .. '9' | 'A' .. 'Z' | 'a' .. 'z' | ' ' | '+' | '-' | '.' | '/' | '?');
 
    procedure Unpack_Grid
      (Ng : Integer;
       Grid : out String)
      with
        Global => null,
-       Pre => ((Grid'Length = 4 and Grid'First = 1 and Grid'Last = 4)
-              or else raise String_Out_Of_Bounds);
+       Pre => (Grid'Length = 4 and Grid'First = 1 and Grid'Last = 4),
+   Post => (Grid'First = 1 and Grid'Last = 4);
 
    -- Packs a JT4/JT9/JT65 message into twelve 6-bit symbols
    --
@@ -97,42 +104,36 @@ package Pack_JT is
       IType : out Integer)
      with
        Global => add_pfx,
-       Pre => ((Dat'First = 0 and Dat'Last = 11 and Dat'Length = 12)
-               or else raise Unsigned_8_Array_Out_Of_Bounds),
-     Post => ((Dat'First = 0 and Dat'Last = 11 and Dat'Length = 12)
-             or else raise Unsigned_8_Array_Out_Of_Bounds);
+       Pre => (Dat'First = 0 and Dat'Last = 11 and Dat'Length = 12),
+     Post => (Dat'First = 0 and Dat'Last = 11 and Dat'Length = 12);
 
    procedure Unpack_Msg
      (Dat0 : Unsigned_8_Array;
       Msg : out String)
      with
        Global => add_pfx,
-       Pre => ((Msg'First = 1 and Msg'Last = 22 and  Msg'Length = 22)
-               or else raise String_Out_Of_Bounds);
+       Pre => (Dat0'First = 0 and Dat0'Last = 11 and Msg'First = 1 and Msg'Last = 22 and  Msg'Length = 22);
 
    procedure Pack_Text
      (Msg : String;
       Nc1, Nc2, Nc3 : out Unsigned_32)
      with
        Global => null,
-       Pre => ((Msg'First = 1 and Msg'Last = 22 and Msg'Length = 22)
-              or else raise String_Out_Of_Bounds);
+       Pre => (Msg'First = 1 and Msg'Last = 22 and Msg'Length = 22);
 
    procedure Unpack_Text
      (Nc1a, Nc2a, Nc3a : Unsigned_32;
       Msg : in out String)
      with
        Global => null,
-       Pre => ((Msg'First = 1 and Msg'Last = 22 and Msg'Length = 22)
-               or else raise String_Out_Of_Bounds);
+       Pre => (Msg'First = 1 and Msg'Last = 22 and Msg'Length = 22);
 
    -- Formats a message by converting all letters to upper case
    -- Fmtmsg can be removed
    procedure Fmtmsg
      (Msg : in out String)
      with
-       Pre => (Msg'First >= 1 and Msg'Last <= 22 and Msg'Length = 22)
-   or else raise String_Out_Of_Bounds;
+       Pre => (Msg'First >= 1 and Msg'Last <= 22 and Msg'Length = 22);
 
 private
 
@@ -149,34 +150,29 @@ private
       Nv2 : out Integer)
      with
        Global => (Input => add_pfx),
-     Pre => ((Callsign'First = 1 and Callsign'Last = 12 and Callsign'Length = 12)
-             or else raise String_Out_Of_Bounds),
-     Post => Nv2 >= 0 and Nv2 <= 10 and K >= -1;
+     Pre => (Callsign'First = 1 and Callsign'Last = 12),
+      Post => Nv2 >= 0 and Nv2 <= 10 and K >= -1;
 
    procedure Get_Pfx2
      (K0 : Integer;
       Callsign : in out String)
      with
-       Global => (Input => add_pfx),
-     Pre => ((Callsign'First = 1 and Callsign'Last = 12 and
-                 Callsign'Length = 12) or else raise String_Out_Of_Bounds)
-       and K0 >= 1;
+       Global => (Input => add_pfx);
+    -- Pre => (Callsign'First = 1 and Callsign'Last = 12); --K0 >= 1 and
 
    procedure Grid2k
      (Grid : String;
       K : out Integer)
      with
        Global => null,
-       Pre => ((Grid'First = 1 and Grid'Last = 6 and Grid'Length = 6)
-               or else raise String_Out_Of_Bounds);
+       Pre => (Grid'First = 1 and Grid'Last = 6 and Grid'Length = 6);
 
    procedure K2Grid
      (K : Integer;
       Grid : out String)
      with
        Global => null,
-       Pre => ((Grid'First = 1 and Grid'Last = 6 and Grid'Length = 6)
-               or else raise String_Out_Of_Bounds) and K >= -1;
+       Pre => (Grid'First = 1 and Grid'Last = 6 and Grid'Length = 6)and K >= -1;
 
    --  Grid2N - unused
    --  procedure Grid2N(Grid : String; N : out Integer)
@@ -192,7 +188,7 @@ private
    --
    -- Convert ASCII number, letter, or space to 0-36 for callsign packing.
    function NChar
-     (C : Callsign_Type) return Numeric_Callsign_Type
+     (C : Character) return Numeric_Callsign_Type
      with Global => null;
 
    --  Pack50 - unused
@@ -214,10 +210,10 @@ private
       DLat : out Float)
      with
        Global => null,
-       Pre => ((Grid0'First = 1 and Grid0'Last = 6 and Grid0'Length = 6)
-               or else raise String_Out_Of_Bounds),
-     Post => DLong >= -2000.0 and DLong <= 2000.0
-     and DLat >= -1000.0 and DLat <= 1000.0;
+       Pre => Grid0'First = 1 and Grid0'Last = 6;
+       --Pre => (Grid0'First = 1 and Grid0'Last = 6 and Grid0'Length = 6),
+     --Post => DLong >= -2000.0 and DLong <= 2000.0
+     --and DLat >= -1000.0 and DLat <= 1000.0;
 
    procedure Deg2Grid
      (DLong0 : Float;
@@ -225,17 +221,23 @@ private
       Grid : out String)
      with
        Global => null,
-       Pre => ((Grid'First = 1 and Grid'Last = 6 and Grid'Length = 6)
-               or else raise String_Out_Of_Bounds)
-     and DLong0 >= -2000.0 and DLong0 <= 2000.0 and DLat >= -1000.0 and DLat <= 1000.0,
-     Post => ((Grid'First = 1 and Grid'Last = 6 and Grid'Length = 6)
-               or else raise String_Out_Of_Bounds);
-
+       Pre => Grid'First = 1 and Grid'Last = 6,
+       Post => Grid'First = 1 and Grid'Last = 6;
+      -- Pre => (Grid'First = 1 and Grid'Last = 6 and Grid'Length = 6)
+     --and DLong0 >= -2000.0 and DLong0 <= 2000.0 and DLat >= -1000.0 and DLat <= 1000.0,
+     --Post => (Grid'First = 1 and Grid'Last = 6 and Grid'Length = 6);
 
    procedure Collapse_Blanks_12
      (Word : in out String)
      with
-       Pre => ((Word'First = 1 and Word'Last = 12 and Word'Length = 12)
-               or else raise String_Out_Of_Bounds);
+       Pre => (Word'First = 1 and Word'Last = 12 and Word'Length = 12);
+
+   subtype Valid_Index is Integer range 0 .. 12;
+   function Get_Index
+     (JT65_String : in String;
+      Pattern : in String) return Valid_Index
+     with
+       Global => null,
+       Pre => Pattern'Length = 1;
 
 end Pack_JT;

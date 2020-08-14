@@ -3,6 +3,7 @@ pragma SPARK_Mode(On);
 with Ada.Characters.Handling; use Ada.Characters.Handling;
 with Ada.Strings;             use Ada.Strings;
 with Ada.Strings.Fixed;       use Ada.Strings.Fixed;
+--with Ada.Text_IO; use Ada.Text_IO;
 
 with Pfx;
 use  Pfx;
@@ -396,7 +397,7 @@ package body Pack_JT is
 
       procedure Twenty
         with
-          Pre => Grid'First = 1 and Grid'Last = 4 and Grid'Length = 4
+          Pre => Grid'First = 1 and Grid'Last = 4
       is
       begin
          for I in Grid(Grid'First + 1 .. Grid'First + 3)'range loop
@@ -485,12 +486,40 @@ package body Pack_JT is
      (Ng : Integer;
       Grid : out String)
    is
+      subtype Integer_Value is Integer range -50 .. 33000;
+
       NGBASE : constant Integer := 180 * 180;
-      Grid6 : String(1 .. 6) := (others => ' ');
+      Grid6 : String(1 .. 6);
       DLat, DLong : Float;
-      N : Integer;
+      N : Integer_Value := 0;
       Grid_Temp : String(1 .. 3) := (others => ' ');
       N_Temp : String(1 .. 2) := (others => ' ');
+
+      function Prove_Grid (Grid : in String) return Boolean
+      is
+         Flag : Boolean := True;
+      begin
+         for I in Grid'Range loop
+            if Flag then
+               if Grid(I) in Callsign_Type then
+                  Flag := True;
+               else
+                  return False;
+               end if;
+            end if;
+         end loop;
+         return True;
+      end Prove_Grid;
+
+      --  function Prove_Valid_Char (Char : in Character) return Boolean
+      --  is
+      --  begin
+      --     if Char in Callsign_Type then
+      --        return True;
+      --     else
+      --        return False;
+      --     end if;
+      --  end Prove_Valid_Char;
 
       procedure Ten is
       begin
@@ -527,6 +556,7 @@ package body Pack_JT is
 
    begin
       Grid := "    ";
+      --Grid6 := "      ";
       if Ng >= 32400 then
          Ten;
          return;
@@ -535,32 +565,40 @@ package body Pack_JT is
       DLong := Float((Ng / 180) * 2 - 180 + 2);
       Deg2Grid(DLong, DLat, Grid6);
       Grid := Grid6(Grid6'First .. Grid6'First + 3);
+      --Prove_Grid;
       -- Handling -31 through -49.
       if Grid(Grid'First .. Grid'First + 1) = "KA" then
-         N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
-         N := N - 50;
-         if N > 0 then
-            if N >= 31 and N <= 49 then
+         --Prove_Valid_Char(Grid(Grid'First + 2 .. Grid'First + 3));
+         if Prove_Grid(Grid(Grid'First + 2 .. Grid'First + 3)) = True then
+            --N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
+            N := (if Grid(Grid'First + 2 .. Grid'First + 3) in JT65_String then Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3)) else 0);
+         end if;
+         --Put_Line(Integer'Image(N));
+         if N >= 50 then
+            N := N - 50;
+            --Put_Line(Integer'Image(N));
+            if N > 0 and N <= 49 then
                Grid_Temp(Grid_Temp'First .. Grid_Temp'First + 2) := Integer'Image(N);
                Grid(Grid'First .. Grid'First + 1) := "  ";
                Grid(Grid'First + 1) := '-';
                Grid(Grid'First + 2 .. Grid'First + 3) := Grid_Temp(2 .. 3);
-            else
-               -- Need to work on results here
+               -- Now collapsing
+            elsif N <= 0 then
                Grid(Grid'First .. Grid'First + 3) := "    ";
-               Grid(Grid'First + 1 .. Grid'First + 2) := Integer'Image(N);
-               --Grid(Grid'First + 2 .. Grid'First + 2) := Integer'Image(N);
-            ---Grid := Trim(Integer'Image(N), Both); -- Use of Trim was constraint error
-               if Grid(Grid'First) = ' ' then Grid(Grid'First) := '+';
-               end if; -- Now collapsing
+               Grid(Grid'First + 1) := '-';
+               Grid(Grid'First + 2 .. Grid'First + 3) := "00";
             end if;
          end if;
       elsif Grid(Grid'First + 2 .. Grid'First + 3) = "LA" then
-         N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
-         N := N - 50;
-         if N > 0 then
-            Grid := "R" & Trim(Integer'Image(N), Both);
-            if Grid(Grid'First + 1) = ' ' then Grid(Grid'First + 1) := '+'; end if;
+         N := (if Grid(Grid'First + 2 .. Grid'First + 3) in JT65_String then Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3)) else 0);
+         --Put_Line(Integer'Image(N));
+         if N >= 50 then
+            N := N - 50;
+            --Put_Line(Integer'Image(N));
+            if N > 0 then
+               Grid := "R" & Trim(Integer'Image(N), Both);
+               if Grid(Grid'First + 1) = ' ' then Grid(Grid'First + 1) := '+'; end if;
+            end if;
          end if;
       end if;
    end Unpack_Grid;
@@ -755,6 +793,7 @@ package body Pack_JT is
       --JT_Nc1 := Nc1;
       --JT_Nc2 := Nc2;
       --JT_Ng := Ng;
+      --Put("ng = ");Put_Line(Unsigned_32'Image(Ng));
       Dat(0) := Unsigned_8(Shift_Right(Nc1, 22) and 63);
       Dat(1) := Unsigned_8(Shift_Right(Nc1, 16) and 63);
       Dat(2) := Unsigned_8(Shift_Right(Nc1, 10) and 63);
@@ -777,13 +816,30 @@ package body Pack_JT is
       NBASE : constant Integer := 37*36*10*27*27*27;
       --NGBASE : Integer := 180*180;
       c1, c2 : String(1 .. 12);
-      grid, psfx , junk2 : String(1..4);
+      grid, junk2 : String(1..4);
+      psfx : String(1 .. 4) := (others => ' ');
       grid6 : String(1..6);
       cqnnn : Boolean := False;
       nc1, nc2, ng : Unsigned_32;
       iv2, NFreq, junk1, n1, n2, K, J : Integer;
       Dat : Unsigned_32_Array (0 .. 11) := (others => 0);
       --Index_Val : Integer;
+
+      function Prove_Valid_String (JT65_String : in String) return Boolean
+      is
+         Flag : Boolean := True;
+      begin
+         for I in JT65_String'Range loop
+            if Flag then
+               if JT65_String(I) in JT65_Character then
+                  Flag := True;
+               else
+                  return False;
+               end if;
+            end if;
+         end loop;
+         return True;
+      end Prove_Valid_String;
 
       procedure One_Hundred is
       begin
@@ -802,7 +858,7 @@ package body Pack_JT is
 
       procedure Twenty
         with
-          Pre => Msg'First = 1 and Msg'Last = 22 and Msg'Length = 22 and J > 0
+          Pre => Msg'First = 1 and Msg'Last = 22 and Msg'Length = 22 and J > 0 and J <= 21
       is
          Flag : Boolean := False;
       begin
@@ -810,26 +866,26 @@ package body Pack_JT is
             for I in 1 .. 4 loop
                if J <= 21 then
                   J := J + 1;
-               end if;
-               if I = 1 and grid(I) = '-' then
-                  case (grid(I + 1)) is
-                  when '0' .. '9' =>
-                     case (grid(I + 2)) is
-                     when ' ' =>
-                        Flag := True;
+                  if I = 1 and grid(I) = '-' then
+                     case (grid(I + 1)) is
+                     when '0' .. '9' =>
+                        case (grid(I + 2)) is
+                        when ' ' =>
+                           Flag := True;
+                        when others =>
+                           Flag := False;
+                        end case;
                      when others =>
                         Flag := False;
                      end case;
-                  when others =>
-                     Flag := False;
-                  end case;
-                  if Flag then
-                     Msg(J) := grid(I);
-                     Msg(J + 2) := grid(I+1);
-                     exit;
+                     if Flag and J <= 20 then
+                        Msg(J) := grid(I);
+                        Msg(J + 2) := grid(I+1);
+                        exit;
+                     end if;
                   end if;
+                  Msg(J) := grid(I);
                end if;
-               Msg(J) := grid(I);
             end loop;
             if J <= 21 then
                J := J + 1;
@@ -844,7 +900,7 @@ package body Pack_JT is
 
       procedure Ten
         with
-          Pre => Msg'First = 1 and Msg'Last = 22 and Msg'Length = 22 and J > 0
+          Pre => Msg'First = 1 and Msg'Last = 22 and Msg'Length = 22 and J > 0 and J <= 21
       is
       begin
          for I in 1 .. 12 loop
@@ -877,7 +933,9 @@ package body Pack_JT is
          One_Hundred;
          return;
       end if;
-      Unpack_Call(nc1, c1, iv2, psfx);
+      if Prove_Valid_String(psfx) = True then
+         Unpack_Call(nc1, c1, iv2, psfx);
+
       if iv2 = 0 then
          if Integer(nc1) = NBASE + 1 then
             --c1 := "CQ    ";
@@ -959,7 +1017,8 @@ package body Pack_JT is
          end if;
          One_Hundred;
          return;
-      end if;
+         end if;
+
       grid6 := grid & "ma";
       Grid2k(grid6, K);
       if K >= 1 and K <= 450 then
@@ -999,7 +1058,8 @@ package body Pack_JT is
       end loop;
       J := J + 1;
       Msg(J) := ' ';
-      Ten;
+         Ten;
+      end if;
    end Unpack_Msg;
 
    -- I did some limited testing with this and ended up getting the same result as its fortran equivalent
@@ -1185,6 +1245,7 @@ package body Pack_JT is
                -- Predicate check might fail. Should think about moving to a "Callsign String"?
                if is_pfx then
                   t_pfx := lof(1 .. 4);
+                  --pragma Assert(for all I in t_pfx'Range => t_pfx(I) in Callsign_Type);
                   K := NChar(t_pfx(1));
                   K := 37 * K + NChar(t_pfx(2));
                   K := 37 * K + NChar(t_pfx(3));
@@ -1201,6 +1262,7 @@ package body Pack_JT is
                -- Same issue here. Predicate check might fail. Should think about moving to a "Callsign String"?
                if is_sfx then
                   t_sfx := rof(1 .. 3);
+                  --pragma Assert(for all I in t_sfx'Range => t_sfx(I) in Callsign_Type);
                   K := NChar(t_sfx(1));
                   K := 37 * K + NChar(t_sfx(2));
                   K := 37 * K + NChar(t_sfx(3));
@@ -1220,10 +1282,10 @@ package body Pack_JT is
       Init_Pfx(Prefixes, Suffixes);
       Callsign0 := Callsign;
       Nv2 := 1;
-      iz := Index(Callsign, " ") - 1;
-
+      iz := Get_Index(Callsign, " ") - 1;
       if iz < 0 then iz := 12; end if;
-      islash := Index(Callsign(Callsign'First .. iz), "/");
+      islash := Get_Index(Callsign(Callsign'First .. iz), "/");
+      --Put("Is;ash = ");Put_Line(Integer'Image(islash));
       K := 0;
       if islash > 0 and islash <= iz - 4 then
          --C := Callsign(1 .. islash - 1);
@@ -1273,26 +1335,35 @@ package body Pack_JT is
      (K0 : Integer;
       Callsign : in out String)
    is
+      subtype Prefix_Size is Integer range -1 .. 12;
       K : Integer := K0;
-      Iz : Integer;
+      --Iz : Integer;
       Suffix : sfx_array;
       Prefix : pfx_array;
+      Iz : Prefix_Size;
    begin
       Init_Pfx(Prefix, Suffix);
+      --Prefix_Temp(Prefix_Temp'First .. Prefix(K)'Length) := Prefix(K);
+      --Put_Line(Prefix_Temp);
       if K > 450 then K := K - 450; end if;
       if K >= 1 and K <= Prefix'Length then
-         Iz := Index(Prefix(K), " ") - 1;
-         --Callsign := Prefix(K)(1 .. Iz) & '/' & Callsign;
-         Move(Prefix(K)(1 .. Iz) & '/' & Callsign, Callsign, Right, Left, Space);
+         Iz := Get_Index(Prefix(K), " ") - 1;
+         --Put_Line(Integer'Image(Iz));
+         --Callsign := Prefix(K)(1 .. Iz) & '/' & Callsign
+         if Iz >= 1 then
+            Move(Prefix(K)(1 .. Iz) & '/' & Callsign, Callsign, Right, Left, Space); -- This needs rework cannot move first parameter into callsign
+         end if;
       elsif K >= 401 and K <= (400 + Suffix'Length) then
-         Iz := Index(Callsign, " ") - 1;
+         Iz := Get_Index(Callsign, " ") - 1;
          --Callsign := Callsign(1 .. Iz) & '/' & Suffix(K - 400);
          Move(Callsign(Callsign'First .. Iz) & '/' & Suffix(K - 400), Callsign, Right, Left, Space);
       elsif K = 449 then
-         Iz := Index(add_pfx, " ") - 1;
-         if Iz < 1 then Iz := 8; end if;
-         Callsign := add_pfx(1 .. Iz) & '/' & Callsign;
-         Move(add_pfx(1 .. Iz) & '/' & Callsign, Callsign, Right, Left, Space);
+         Iz := Get_Index(add_pfx, " ") - 1;
+         if Iz < 1 then
+            Iz := 8;
+         end if;
+         --Callsign := add_pfx(1 .. Iz) & '/' & Callsign;
+         Move(add_pfx(1 .. Iz) & '/' & Callsign, Callsign, Right, Left, Space); -- This needs rework cannot move first parameter into callsign
       end if;
    end Get_Pfx2;
 
@@ -1300,7 +1371,8 @@ package body Pack_JT is
      (Grid : String;
       K : out Integer)
    is
-      NLong, NLat : Integer;
+      subtype No_Overflow is Integer range Integer'First + 1 .. Integer'Last - 1;
+      NLong, NLat : No_Overflow;
       XLong, XLat : Float;
    begin
       Grid2Deg(Grid, XLong, XLat);
@@ -1355,7 +1427,7 @@ package body Pack_JT is
 
    --Converts ascii number, letter, or space to 0-36
    function NChar
-     (C : Callsign_Type) return Numeric_Callsign_Type
+     (C : Character) return Numeric_Callsign_Type
    is
      (case (C) is
          when '0' .. '9' =>
@@ -1507,27 +1579,37 @@ package body Pack_JT is
       DLat : Float;
       Grid : out String)
    is
+      subtype Add_To_Pos is Integer range 0 .. 22;
       DLong : Float := DLong0;
-      NLat, NLong, N1, N2, N3 : Integer;
+      NLat, NLong : Integer;
+      N1, N2, N3 : Add_To_Pos;
    begin
       Grid := (others => ' ');
-      if DLong < -180.0 then DLong := DLong + 360.0; end if;
-      if DLong >  180.0 then DLong := DLong - 360.0; end if;
+      if DLong < -180.0 then
+         DLong := DLong + 360.0;
+      end if;
+      if DLong > 180.0 then
+         DLong := DLong - 360.0;
+      end if;
       NLong := Integer(Float'Floor(60.0 * (180.0 - DLong) / 5.0));
-      -- Need to check how these are rounded.
-      N1 := NLong / 240;
-      N2 := (NLong - 240 * N1) / 24;
-      N3 := NLong - 240 * N1 - 24 * N2;
-      Grid(Grid'First + 0) := Character'Val(Character'Pos('A') + N1);
-      Grid(Grid'First + 2) := Character'Val(Character'Pos('0') + N2);
-      Grid(Grid'First + 4) := Character'Val(Character'Pos('a') + N3);
+      -- Need to check how these are rounded. Floating point numbers are always rounded down. Ex. 17.9 rounds down to 17.
+      if NLong >= 0 and NLong <= 5280 then
+         N1 := NLong / 240;
+         N2 := (NLong - 240 * N1) / 24;
+         N3 := NLong - 240 * N1 - 24 * N2;
+         Grid(Grid'First + 0) := Character'Val(Character'Pos('A') + N1);
+         Grid(Grid'First + 2) := Character'Val(Character'Pos('0') + N2);
+         Grid(Grid'First + 4) := Character'Val(Character'Pos('a') + N3);
+      end if;
       NLat := Integer(Float'Floor(60.0 * (DLat + 90.0) / 2.5));
-      N1 := NLat / 240;
-      N2 := (NLat - 240 * N1) / 24;
-      N3 := NLat - 240 * N1 - 24 * N2;
-      Grid(Grid'First + 1) := Character'Val(Character'Pos('A') + N1);
-      Grid(Grid'First + 3) := Character'Val(Character'Pos('0') + N2);
-      Grid(Grid'First + 5) := Character'Val(Character'Pos('a') + N3);
+      if NLat >= 0 and NLat <= 5280 then
+         N1 := NLat / 240;
+         N2 := (NLat - 240 * N1) / 24;
+         N3 := NLat - 240 * N1 - 24 * N2;
+         Grid(Grid'First + 1) := Character'Val(Character'Pos('A') + N1);
+         Grid(Grid'First + 3) := Character'Val(Character'Pos('0') + N2);
+         Grid(Grid'First + 5) := Character'Val(Character'Pos('a') + N3);
+      end if;
    end Deg2Grid;
 
    procedure Collapse_Blanks_12
@@ -1561,5 +1643,27 @@ package body Pack_JT is
          end if;
       end loop;
    end Collapse_Blanks_12;
+
+   function Get_Index
+     (JT65_String : in String;
+      Pattern : in String) return Valid_Index
+   is
+      Index : Valid_Index := 1;
+   begin
+      for I in JT65_String'Range loop
+         if JT65_String(I .. I) = Pattern then
+            return Index;
+         else
+            if Index = JT65_String'Length then
+               return 0;
+            else
+               if Index < Valid_Index'Last then
+                  Index := Index + 1;
+               end if;
+            end if;
+         end if;
+      end loop;
+      return 0;
+   end Get_Index;
 
 end Pack_JT;

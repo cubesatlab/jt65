@@ -489,7 +489,6 @@ package body Wrapkarn is
             Den := 0;
 
             -- Lamda(I + 1) for I even is the formal dericative lambda_pr of lambda(I)
-            -- Bitwise not operation in ada?
             -- Tmp := Integer(Unsigned_8((if Deg_Lambda < Nroots - 1 then Deg_Lambda else Nroots - 1)) and Unsigned_8((not 1)));
             Tmp := 1;
             for I in reverse 0 .. Tmp loop
