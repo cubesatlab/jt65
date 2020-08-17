@@ -3,7 +3,6 @@ pragma SPARK_Mode(On);
 with Ada.Characters.Handling; use Ada.Characters.Handling;
 with Ada.Strings;             use Ada.Strings;
 with Ada.Strings.Fixed;       use Ada.Strings.Fixed;
---with Ada.Text_IO; use Ada.Text_IO;
 
 with Pfx;
 use  Pfx;
@@ -26,6 +25,7 @@ package body Pack_JT is
       N : Unsigned_8;
       M : Unsigned_8;
    begin
+      Sym := (others => 0);
       for I in 0 .. NSymd-1 loop
          N := 0;
          for J in 0 .. M0-1 loop
@@ -48,6 +48,7 @@ package body Pack_JT is
       K : Integer := 0;
       Mask : Unsigned_8;
    begin
+      Dbits := (others => 0);
       for I in 0 .. NSymd - 1 loop
          Mask := Shift_Left(1, M0 - 1);
          for J in 0 .. M0 - 1 loop
@@ -492,8 +493,8 @@ package body Pack_JT is
       Grid6 : String(1 .. 6);
       DLat, DLong : Float;
       N : Integer_Value := 0;
-      Grid_Temp : String(1 .. 3) := (others => ' ');
-      N_Temp : String(1 .. 2) := (others => ' ');
+      Grid_Temp : String(1 .. 3);
+      N_Temp : String(1 .. 2);
 
       function Prove_Grid (Grid : in String) return Boolean
       is
@@ -528,10 +529,11 @@ package body Pack_JT is
          if N >= 1 and N <= 30 then
             --Grid := Integer'Image(-N);
             Move(Integer'Image(-N), Grid, Right, Left, Space);
-         elsif N >= 31 and N <= 60 then
-            if N >= 31 and N <= 39 then
+         elsif N > 31 and N <= 60 then
+            if N > 31 and N <= 39 then
                N := N - 30;
-               N_Temp(1 .. 2) := Integer'Image(N);
+               --N_Temp(1 .. 2) := Integer'Image(N);
+               Move(Integer'Image(N), N_Temp, Right, Left, Space);
                if N_Temp(1) = ' ' then
                   N_Temp(1) := '0';
                   Move("R-" & N_Temp, Grid, Right, Left, Space);
@@ -573,12 +575,16 @@ package body Pack_JT is
             --N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
             N := (if Grid(Grid'First + 2 .. Grid'First + 3) in JT65_String then Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3)) else 0);
          end if;
-         --Put_Line(Integer'Image(N));
          if N >= 50 then
             N := N - 50;
-            --Put_Line(Integer'Image(N));
             if N > 0 and N <= 49 then
-               Grid_Temp(Grid_Temp'First .. Grid_Temp'First + 2) := Integer'Image(N);
+               --if N <= 9 then
+                  --Grid_Temp(3 .. 3) := Trim(Integer'Image(N), Both);
+                  Move(Integer'Image(N), Grid_Temp, Right, Left, Space);
+               --else
+                  --
+                  --Grid_Temp(Grid_Temp'First .. Grid_Temp'First + 2) := Integer'Image(N);
+               --end if;
                Grid(Grid'First .. Grid'First + 1) := "  ";
                Grid(Grid'First + 1) := '-';
                Grid(Grid'First + 2 .. Grid'First + 3) := Grid_Temp(2 .. 3);
@@ -590,14 +596,19 @@ package body Pack_JT is
             end if;
          end if;
       elsif Grid(Grid'First + 2 .. Grid'First + 3) = "LA" then
-         N := (if Grid(Grid'First + 2 .. Grid'First + 3) in JT65_String then Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3)) else 0);
-         --Put_Line(Integer'Image(N));
+         N := (if Grid(3 .. 4) in JT65_String then Integer'Value(Grid(3 .. 4)) else 0);
          if N >= 50 then
             N := N - 50;
-            --Put_Line(Integer'Image(N));
             if N > 0 then
-               Grid := "R" & Trim(Integer'Image(N), Both);
-               if Grid(Grid'First + 1) = ' ' then Grid(Grid'First + 1) := '+'; end if;
+               Move("R" & Trim(Integer'Image(N), Both), Grid, Right, Left, Space);
+               --if N <= 9 then
+               --   Grid := "R   " & Trim(Integer'Image(N), Both);
+               --else
+               --   Grid := "R  " & Trim(Integer'Image(N), Both);
+               --end if;
+               if Grid(Grid'First + 1) = ' ' then
+                  Grid(Grid'First + 1) := '+';
+               end if;
             end if;
          end if;
       end if;
@@ -608,6 +619,7 @@ package body Pack_JT is
       Dat : out Unsigned_8_Array;
       IType : out Integer)
    is
+      subtype Msg_Indeces is Integer range 1 .. 22;
       Msg      : String(1 .. 22);
       C1       : String(1 .. 12);
       C2       : String(1 .. 12);
@@ -618,7 +630,7 @@ package body Pack_JT is
       Text3    : Boolean := True;
       I_Start  : Integer := 1;
       Ia       : Integer;
-      Ib       : Integer;
+      Ib       : Msg_Indeces;
       Ic       : Integer;
       Nv2a     : Integer := 0;
       Nv2b     : Integer := 0;
@@ -743,7 +755,7 @@ package body Pack_JT is
 
    begin
       IType := 1;
-      Dat(0 .. 11) := (others => 0);
+      Dat := (others => 0);
       --Msg := Msg0;
       Move(Msg0, Msg, Right, Left, Space);
       --Fmtmsg(Msg); --This Needs to be fixed for now I am just using To_Upper
@@ -793,7 +805,6 @@ package body Pack_JT is
       --JT_Nc1 := Nc1;
       --JT_Nc2 := Nc2;
       --JT_Ng := Ng;
-      --Put("ng = ");Put_Line(Unsigned_32'Image(Ng));
       Dat(0) := Unsigned_8(Shift_Right(Nc1, 22) and 63);
       Dat(1) := Unsigned_8(Shift_Right(Nc1, 16) and 63);
       Dat(2) := Unsigned_8(Shift_Right(Nc1, 10) and 63);
@@ -820,7 +831,8 @@ package body Pack_JT is
       psfx : String(1 .. 4) := (others => ' ');
       grid6 : String(1..6);
       cqnnn : Boolean := False;
-      nc1, nc2, ng : Unsigned_32;
+      subtype Constrained_Unsigned_32 is Unsigned_32 range 0 .. 270000000;
+      nc1, nc2, ng : Constrained_Unsigned_32;
       iv2, NFreq, junk1, n1, n2, K, J : Integer;
       Dat : Unsigned_32_Array (0 .. 11) := (others => 0);
       --Index_Val : Integer;
@@ -904,14 +916,18 @@ package body Pack_JT is
       is
       begin
          for I in 1 .. 12 loop
-            if J <= 21 then J := J + 1; end if;
+            if J < 21 then
+               J := J + 1;
+            end if;
             Msg(J) := c2(I);
             if c2(I) = ' ' then
                Twenty;
                return;
             end if;
          end loop;
-         if J <= 21 then J := J + 1; end if;
+         if J < 21 then
+            J := J + 1;
+         end if;
          Msg(J) := ' ';
          Twenty;
       end Ten;
@@ -919,15 +935,16 @@ package body Pack_JT is
    begin
       for M in Dat0'Range loop
          Dat(M) := Unsigned_32(Dat0(M));
+         pragma Loop_Invariant (Dat(M) <= 256);
       end loop;
       Msg := (others => ' ');
       nc1 := Shift_Left(Dat(0), 22) + Shift_Left(Dat(1), 16) + Shift_Left(Dat(2), 10) +
-        Shift_Left(Dat(3), 4) + (Shift_Right(Dat(4), 2) and 15);
+        Shift_Left(Dat(3), 4) + (Shift_Right(Dat(4), 2) and 15); -- Converted from Unsigned_8 to Unsigned_32. How is SPARK seeing a possible range check fail?
 
       nc2 := Shift_Left((Dat(4) and 3), 26) + Shift_Left(Dat(5), 20) + Shift_Left(Dat(6), 14) +
-        Shift_Left(Dat(7), 8) + Shift_Left(Dat(8), 2) + (Shift_Right(Dat(9), 4) and 3);
+        Shift_Left(Dat(7), 8) + Shift_Left(Dat(8), 2) + (Shift_Right(Dat(9), 4) and 3); -- Converted from Unsigned_8 to Unsigned_32. How is SPARK seeing a possible range check fail?
 
-      ng := Shift_Left((Dat(9) and 15), 12) + Shift_Left(Dat(10), 6) + Dat(11);
+      ng := Shift_Left((Dat(9) and 15), 12) + Shift_Left(Dat(10), 6) + Dat(11); -- Converted from Unsigned_8 to Unsigned_32. How is SPARK seeing a possible range check fail?
       if ng >= 32768 then
          Unpack_Text(nc1, nc2, ng, Msg);
          One_Hundred;
@@ -1019,7 +1036,8 @@ package body Pack_JT is
          return;
          end if;
 
-      grid6 := grid & "ma";
+         --grid6(Grid6'First .. Grid6'Last) := grid(1 .. 4) & "ma";
+         Move(Grid(1 .. 4) & "ma", Grid6, Right, Left, Space);
       Grid2k(grid6, K);
       if K >= 1 and K <= 450 then
          Get_Pfx2(K, c1);
@@ -1169,7 +1187,7 @@ package body Pack_JT is
          J := (Integer(Nc3) mod 42) + 1;
          Msg(I) := C(J);
          Nc3 := Nc3 / 42;
-      end loop;
+         end loop;
       Msg(Msg'First + 13 .. Msg'First + 21) := "         ";
    end Unpack_Text;
 
@@ -1285,7 +1303,6 @@ package body Pack_JT is
       iz := Get_Index(Callsign, " ") - 1;
       if iz < 0 then iz := 12; end if;
       islash := Get_Index(Callsign(Callsign'First .. iz), "/");
-      --Put("Is;ash = ");Put_Line(Integer'Image(islash));
       K := 0;
       if islash > 0 and islash <= iz - 4 then
          --C := Callsign(1 .. islash - 1);
@@ -1343,15 +1360,14 @@ package body Pack_JT is
       Iz : Prefix_Size;
    begin
       Init_Pfx(Prefix, Suffix);
-      --Prefix_Temp(Prefix_Temp'First .. Prefix(K)'Length) := Prefix(K);
-      --Put_Line(Prefix_Temp);
-      if K > 450 then K := K - 450; end if;
+      if K > 450 then
+         K := K - 450;
+      end if;
       if K >= 1 and K <= Prefix'Length then
          Iz := Get_Index(Prefix(K), " ") - 1;
-         --Put_Line(Integer'Image(Iz));
          --Callsign := Prefix(K)(1 .. Iz) & '/' & Callsign
          if Iz >= 1 then
-            Move(Prefix(K)(1 .. Iz) & '/' & Callsign, Callsign, Right, Left, Space); -- This needs rework cannot move first parameter into callsign
+            Move(Prefix(K)(1 .. Iz) & '/' & Callsign, Callsign, Right, Left, Space);
          end if;
       elsif K >= 401 and K <= (400 + Suffix'Length) then
          Iz := Get_Index(Callsign, " ") - 1;
@@ -1363,7 +1379,7 @@ package body Pack_JT is
             Iz := 8;
          end if;
          --Callsign := add_pfx(1 .. Iz) & '/' & Callsign;
-         Move(add_pfx(1 .. Iz) & '/' & Callsign, Callsign, Right, Left, Space); -- This needs rework cannot move first parameter into callsign
+         Move(add_pfx(1 .. Iz) & '/' & Callsign, Callsign, Right, Left, Space);
       end if;
    end Get_Pfx2;
 
@@ -1378,8 +1394,6 @@ package body Pack_JT is
       Grid2Deg(Grid, XLong, XLat);
       NLong := Integer(XLong);
       NLat := Integer(XLat);
-      --Put_Line(Float'Image(XLong));
-      --Put_Line(Float'Image(XLat));
       K := 0;
       if NLat >= 85 then
          K := 5 * (NLong + 179) / 2 + NLat - 84;
@@ -1438,7 +1452,9 @@ package body Pack_JT is
             Character'Pos(C) - Character'Pos('a') + 10,
          when ' ' =>
             36,
-         when others => raise Program_Error);  -- Why is this necessary? Compiler bug?
+         when others =>
+            0);
+            --when others => raise Program_Error);  -- Why is this necessary? Compiler bug?
 
    --  Pack50 is currently not used
    --  procedure Pack50(N1, N2 : Unsigned_32; Dat : out Unsigned_32_Array) is

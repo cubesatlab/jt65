@@ -157,15 +157,15 @@ private
      (K0 : Integer;
       Callsign : in out String)
      with
-       Global => (Input => add_pfx);
-    -- Pre => (Callsign'First = 1 and Callsign'Last = 12); --K0 >= 1 and
+       Global => (Input => add_pfx),
+    Pre =>  Callsign'Length = 12; --(Callsign'First = 1 and Callsign'Last = 12);
 
    procedure Grid2k
      (Grid : String;
       K : out Integer)
      with
        Global => null,
-       Pre => (Grid'First = 1 and Grid'Last = 6 and Grid'Length = 6);
+       Pre => (Grid'Length = 6);
 
    procedure K2Grid
      (K : Integer;
@@ -210,10 +210,10 @@ private
       DLat : out Float)
      with
        Global => null,
-       Pre => Grid0'First = 1 and Grid0'Last = 6;
+       Pre => Grid0'First = 1 and Grid0'Last = 6,
        --Pre => (Grid0'First = 1 and Grid0'Last = 6 and Grid0'Length = 6),
-     --Post => DLong >= -2000.0 and DLong <= 2000.0
-     --and DLat >= -1000.0 and DLat <= 1000.0;
+     Post => DLong >= -2000.0 and DLong <= 2000.0
+     and DLat >= -1000.0 and DLat <= 1000.0;
 
    procedure Deg2Grid
      (DLong0 : Float;
@@ -221,7 +221,7 @@ private
       Grid : out String)
      with
        Global => null,
-       Pre => Grid'First = 1 and Grid'Last = 6,
+       Pre => Grid'First = 1 and Grid'Last = 6 and DLong0 >= -2000.0 and DLong0 <= 2000.0 and DLat >= -1000.0 and DLat <= 1000.0,
        Post => Grid'First = 1 and Grid'Last = 6;
       -- Pre => (Grid'First = 1 and Grid'Last = 6 and Grid'Length = 6)
      --and DLong0 >= -2000.0 and DLong0 <= 2000.0 and DLat >= -1000.0 and DLat <= 1000.0,

@@ -119,7 +119,6 @@ package body General_JT is
            end loop;
          return Num_8;
       end IGray;
-
    begin
       for I in Sent'Range loop
          Temporary_Array(I) := IGray(Sent(I), Dir);
