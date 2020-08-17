@@ -130,11 +130,11 @@ package Pack_JT is
 
    -- Formats a message by converting all letters to upper case
    -- Fmtmsg can be removed
-   procedure Fmtmsg
-     (Msg : in out String)
-     with
-       Pre => (Msg'First >= 1 and Msg'Last <= 22 and Msg'Length = 22);
-
+   --  procedure Fmtmsg
+   --    (Msg : in out String)
+   --    with
+   --      Pre => (Msg'First >= 1 and Msg'Last <= 22 and Msg'Length = 22);
+   --
 private
 
    subtype Numeric_Callsign_Type is Natural range 0 .. 36;
@@ -158,14 +158,14 @@ private
       Callsign : in out String)
      with
        Global => (Input => add_pfx),
-    Pre =>  Callsign'Length = 12; --(Callsign'First = 1 and Callsign'Last = 12);
+    Pre => Callsign'First = 1 and Callsign'last = 12; -- Callsign'Length = 12; --(Callsign'First = 1 and Callsign'Last = 12);
 
    procedure Grid2k
      (Grid : String;
       K : out Integer)
      with
        Global => null,
-       Pre => (Grid'Length = 6);
+       Pre => (Grid'First = 1 and Grid'Last = 6);
 
    procedure K2Grid
      (K : Integer;
@@ -221,7 +221,7 @@ private
       Grid : out String)
      with
        Global => null,
-       Pre => Grid'First = 1 and Grid'Last = 6 and DLong0 >= -2000.0 and DLong0 <= 2000.0 and DLat >= -1000.0 and DLat <= 1000.0,
+       Pre => Grid'First = 1 and Grid'Last = 6 and DLong0 <= 2000.0 and DLat >= -1000.0 and DLat <= 1000.0,
        Post => Grid'First = 1 and Grid'Last = 6;
       -- Pre => (Grid'First = 1 and Grid'Last = 6 and Grid'Length = 6)
      --and DLong0 >= -2000.0 and DLong0 <= 2000.0 and DLat >= -1000.0 and DLat <= 1000.0,

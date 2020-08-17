@@ -3,7 +3,7 @@ pragma SPARK_Mode(On);
 with Ada.Characters.Handling; use Ada.Characters.Handling;
 with Ada.Strings;             use Ada.Strings;
 with Ada.Strings.Fixed;       use Ada.Strings.Fixed;
-
+--with Ada.Text_IO; use Ada.Text_IO;
 with Pfx;
 use  Pfx;
 
@@ -154,26 +154,22 @@ package body Pack_JT is
       C : constant String := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
       N : Integer := Integer(NCall);
       I : Integer := 0;
+   begin
 
-      procedure Nine_Nine_Nine is
-      begin
-         if Word(Word'First .. Word'First + 2) = "3D0" then
-            Word := "3DA0" & Word(Word'First + 3 .. Word'Last - 1);
-         end if;
-         if Word(Word'First) = 'Q' and Word(Word'First + 1) >= 'A' and Word(Word'First + 1) <= 'Z' then
-            Word := "3X" & Word(Word'First + 1 .. Word'Last - 1);
-         end if;
-      end Nine_Nine_Nine;
+      --Word := "......";
+      Move("......", Word, Right, Left, Space);
+      --Psfx := "    ";
+      Move("    ", Psfx, Right, Left, Space);
+      Iv2 := 0;
 
-      procedure Twenty
-        with
-          Pre => Word'First = 1 and Word'Last = 12 and Word'Length = 12
-        and Psfx'First = 1 and Psfx'Last = 4 and Psfx'Length = 4
-   is
-
-      begin
+      if N >= 262177560 then
          if N >= 267796946 then
-            Nine_Nine_Nine;
+            if Word(Word'First .. Word'First + 2) = "3D0" then
+               Word := "3DA0" & Word(Word'First + 3 .. Word'Last - 1);
+            end if;
+            if Word(Word'First) = 'Q' and Word(Word'First + 1) >= 'A' and Word(Word'First + 1) <= 'Z' then
+               Word := "3X" & Word(Word'First + 1 .. Word'Last - 1);
+            end if;
             return;
          end if;
 
@@ -284,18 +280,12 @@ package body Pack_JT is
             Psfx := "    ";
 
          end if;
-         Nine_Nine_Nine;
-      end Twenty;
-
-   begin
-      --Word := "......";
-      Move("......", Word, Right, Left, Space);
-      --Psfx := "    ";
-      Move("    ", Psfx, Right, Left, Space);
-      Iv2 := 0;
-
-      if N >= 262177560 then
-         Twenty;
+         if Word(Word'First .. Word'First + 2) = "3D0" then
+            Word := "3DA0" & Word(Word'First + 3 .. Word'Last - 1);
+         end if;
+         if Word(Word'First) = 'Q' and Word(Word'First + 1) >= 'A' and Word(Word'First + 1) <= 'Z' then
+            Word := "3X" & Word(Word'First + 1 .. Word'Last - 1);
+         end if;
          return;
       end if;
 
@@ -325,15 +315,216 @@ package body Pack_JT is
       for X in 1 .. 4 loop
          if Word(Word'First + X - 1) /= ' ' then
             --Word := Word(X .. Word'Last);
-            Collapse_Blanks_12(Word); --
+            Collapse_Blanks_12(Word);
             --Move(Word(X .. Word'Last), Word, Right, Left, Space);
             --Word(Word'First .. Word(X .. Word'Last)'Length) := Word(X .. Word'Last);
-            Nine_Nine_Nine;
+            if Word(Word'First .. Word'First + 2) = "3D0" then
+               Word := "3DA0" & Word(Word'First + 3 .. Word'Last - 1);
+            end if;
+            if Word(Word'First) = 'Q' and Word(Word'First + 1) >= 'A' and Word(Word'First + 1) <= 'Z' then
+               Word := "3X" & Word(Word'First + 1 .. Word'Last - 1);
+            end if;
             return;
          end if;
       end loop;
-      Nine_Nine_Nine;
+      if Word(Word'First .. Word'First + 2) = "3D0" then
+         Word := "3DA0" & Word(Word'First + 3 .. Word'Last - 1);
+      end if;
+      if Word(Word'First) = 'Q' and Word(Word'First + 1) >= 'A' and Word(Word'First + 1) <= 'Z' then
+         Word := "3X" & Word(Word'First + 1 .. Word'Last - 1);
+      end if;
    end Unpack_Call;
+
+   --  procedure Unpack_Call
+   --    (NCall : Unsigned_32;
+   --     Word : out String;
+   --     Iv2 : out Integer;
+   --     Psfx : out String)
+   --  is
+   --     --NBASE : constant Integer := 37 * 36 * 10 * 27 * 27 * 27;
+   --     C : constant String := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
+   --     N : Integer := Integer(NCall);
+   --     I : Integer := 0;
+   --
+   --     procedure Nine_Nine_Nine is
+   --     begin
+   --        if Word(Word'First .. Word'First + 2) = "3D0" then
+   --           Word := "3DA0" & Word(Word'First + 3 .. Word'Last - 1);
+   --        end if;
+   --        if Word(Word'First) = 'Q' and Word(Word'First + 1) >= 'A' and Word(Word'First + 1) <= 'Z' then
+   --           Word := "3X" & Word(Word'First + 1 .. Word'Last - 1);
+   --        end if;
+   --     end Nine_Nine_Nine;
+   --
+   --     procedure Twenty
+   --       with
+   --         Pre => Word'First = 1 and Word'Last = 12 and Word'Length = 12
+   --       and Psfx'First = 1 and Psfx'Last = 4 and Psfx'Length = 4
+   --  is
+   --
+   --     begin
+   --        if N >= 267796946 then
+   --           Nine_Nine_Nine;
+   --           return;
+   --        end if;
+   --
+   --        if N >= 262178563 and N <= 264002071 then
+   --           Iv2 := 1;
+   --           N := N - 262178563;
+   --
+   --           I := (N mod 37) + 1;
+   --           Psfx(Psfx'First + 3) := C(I);
+   --           N := N / 37;
+   --
+   --           I := (N mod 37) + 1;
+   --           Psfx(Psfx'First + 2) := C(I);
+   --           N := N / 37;
+   --
+   --           I := (N mod 37) + 1;
+   --           Psfx(Psfx'First + 1) := C(I);
+   --           N := N / 37;
+   --
+   --           I := N + 1;
+   --           Psfx(Psfx'First) := C(I);
+   --
+   --        elsif N >= 264002072 and N <= 265825580 then
+   --           Iv2 := 2;
+   --           N := N - 264002072;
+   --
+   --           I := (N mod 37) + 1;
+   --           Psfx(Psfx'First + 3) := C(I);
+   --           N := N / 37;
+   --
+   --           I := (N mod 37) + 1;
+   --           Psfx(Psfx'First + 2) := C(I);
+   --           N := N / 37;
+   --
+   --           I := (N mod 37) + 1;
+   --           Psfx(Psfx'First + 1) := C(I);
+   --           N := N / 37;
+   --
+   --           I := N + 1;
+   --           Psfx(Psfx'First) := C(I);
+   --
+   --        elsif N >= 265825581 and N <= 267649089 then
+   --           Iv2 := 3;
+   --           N := N - 265825581;
+   --
+   --           I := (N mod 37) + 1;
+   --           Psfx(Psfx'First + 3) := C(I);
+   --           N := N / 37;
+   --
+   --           I := (N mod 37) + 1;
+   --           Psfx(Psfx'First + 2) := C(I);
+   --           N := N / 37;
+   --
+   --           I := (N mod 37) + 1;
+   --           Psfx(Psfx'First + 1) := C(I);
+   --           N := N / 37;
+   --
+   --           I := N + 1;
+   --           Psfx(Psfx'First) := C(I);
+   --
+   --        elsif N >= 267649090 and N <= 267698374 then
+   --           Iv2 := 4;
+   --           N := N - 267649090;
+   --
+   --           I := (N mod 37) + 1;
+   --           Psfx(Psfx'First + 2) := C(I);
+   --           N := N / 37;
+   --
+   --           I := (N mod 37) + 1;
+   --           Psfx(Psfx'First + 1) := C(I);
+   --           N := N / 37;
+   --
+   --           I := N + 1;
+   --           Psfx(Psfx'First) := C(I);
+   --
+   --        elsif N >= 267698375 and N <= 267747659 then
+   --           Iv2 := 5;
+   --           N := N - 267698375;
+   --
+   --           I := (N mod 37) + 1;
+   --           Psfx(Psfx'First + 2) := C(I);
+   --           N := N / 37;
+   --
+   --           I := (N mod 37) + 1;
+   --           Psfx(Psfx'First + 1) := C(I);
+   --           N := N / 37;
+   --
+   --           I := N + 1;
+   --           Psfx(Psfx'First) := C(I);
+   --
+   --        elsif N >= 267747660 and N <= 267796944 then
+   --           Iv2 := 6;
+   --           N := N - 267747660;
+   --
+   --           I := (N mod 37) + 1;
+   --           Psfx(Psfx'First + 2) := C(I);
+   --           N := N / 37;
+   --
+   --           I := (N mod 37) + 1;
+   --           Psfx(Psfx'First + 1) := C(I);
+   --           N := N / 37;
+   --
+   --           I := N + 1;
+   --           Psfx(Psfx'First) := C(I);
+   --
+   --        elsif N = 267796945 then
+   --           Iv2 := 7;
+   --           Psfx := "    ";
+   --
+   --        end if;
+   --        Nine_Nine_Nine;
+   --     end Twenty;
+   --
+   --  begin
+   --     --Word := "......";
+   --     Move("......", Word, Right, Left, Space);
+   --     --Psfx := "    ";
+   --     Move("    ", Psfx, Right, Left, Space);
+   --     Iv2 := 0;
+   --
+   --     if N >= 262177560 then
+   --        Twenty;
+   --        return;
+   --     end if;
+   --
+   --     I := (N mod 27) + 11;
+   --     Word(Word'First + 5) := C(I);
+   --     N := N / 27;
+   --
+   --     I := (N mod 27) + 11;
+   --     Word(Word'First + 4) := C(I);
+   --     N := N / 27;
+   --
+   --     I := (N mod 27) + 11;
+   --     Word(Word'First + 3) := C(I);
+   --     N := n / 27;
+   --
+   --     I := (N mod 10) + 1;
+   --     Word(Word'First + 2) := C(I);
+   --     N := N / 10;
+   --
+   --     I := (N mod 36) + 1;
+   --     Word(Word'First + 1) := C(I);
+   --     N := N / 36;
+   --
+   --     I := N + 1;
+   --     Word(Word'First) := C(I);
+   --
+   --     for X in 1 .. 4 loop
+   --        if Word(Word'First + X - 1) /= ' ' then
+   --           --Word := Word(X .. Word'Last);
+   --           Collapse_Blanks_12(Word); --
+   --           --Move(Word(X .. Word'Last), Word, Right, Left, Space);
+   --           --Word(Word'First .. Word(X .. Word'Last)'Length) := Word(X .. Word'Last);
+   --           Nine_Nine_Nine;
+   --           return;
+   --        end if;
+   --     end loop;
+   --     Nine_Nine_Nine;
+   --  end Unpack_Call;
 
    procedure Pack_Grid
      (Grid : in out String;
@@ -341,38 +532,315 @@ package body Pack_JT is
       Text : out Boolean)
    is
       NGBASE : constant Unsigned_32 := 180 * 180;
-      C1 : Character := ' ';
-      N, Long, Lat : Integer := 0;
-      DLong, DLat : Float := 0.0;
-
-      procedure Eight_Hundred is
-      begin
-         Text := True;
-      end Eight_Hundred;
-
-      procedure Ninety is
-      begin
-         NG := NGBASE + 1;
-         return;
-      end Ninety;
-
-      procedure Forty
-        with
-          Pre => Grid'First = 1 and Grid'Last = 4 and Grid'Length = 4
-      is
-      begin
-         Grid2Deg(Grid & "mm", DLong, DLat);
-         Long := Integer(Float'Floor(DLong));
-         Lat := Integer(Float'Floor(DLat + 90.0));
-         NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
-         return;
-      end Forty;
-
-      procedure Thirty
-        with
-          Pre => Grid'First = 1 and Grid'Last = 4 and Grid'Length = 4
-      is
-      begin
+      C1 : Character;
+      N, Long, Lat : Integer;
+      DLong, DLat : Float;
+   begin
+      Text := False;
+      if Grid /= "    " then
+         if Grid(Grid'First) = '-' then
+            if Grid(Grid'First + 1 .. Grid'First + 2) = "  " then
+               Text := True;
+               return;
+            end if;
+            for I in Grid(Grid'First + 1 .. Grid'First + 2)'range loop
+               if ((Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ') then
+                  Text := True;
+                  return;
+               end if;
+            end loop;
+            N := Integer'Value(Grid(2 .. 3));
+            if N >= 1 and N <= 30 then
+               NG := NGBASE + 1 + Unsigned_32(N);
+               return;
+            end if;
+            -- USE THIS SECTION FOR GO TO 10
+            N := 99;
+            C1 := Grid(Grid'First);
+            for I in 1 .. 4 loop
+               if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
+                  for I in 2 .. 4 loop
+                     if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
+                        if N >= -50 and N <= 49 then
+                           if C1 = 'R' then
+                              --write(grid,1002) n+50
+                              --format('LA',i2.2)
+                              --Grid := "LA" & Integer'Image(N + 50);
+                              Move("LA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+                           else
+                              --write(grid,1003) n+50
+                              --format('KA',i2.2)
+                              --Grid := "KA" & Integer'Image(N + 50);
+                              Move("KA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+                           end if;
+                           Grid2Deg(Grid & "mm", DLong, DLat);
+                           Long := Integer(Float'Floor(DLong));
+                           Lat := Integer(Float'Floor(DLat + 90.0));
+                           NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+                           return;
+                        end if;
+                        if Grid(Grid'First) < 'A' or Grid(Grid'First) > 'R' then Text := True; end if;
+                        if Grid(Grid'First + 1) < 'A' or Grid(Grid'First + 1) > 'R' then Text := True; end if;
+                        if Grid(Grid'First + 2) < '0' or Grid(Grid'First + 2) > '9' then Text := True; end if;
+                        if Grid(Grid'First + 3) < '0' or Grid(Grid'First + 3) > '9' then Text := True; end if;
+                        if Text then return; end if;
+                        Grid2Deg(Grid & "mm", DLong, DLat);
+                        Long := Integer(Float'Floor(DLong));
+                        Lat := Integer(Float'Floor(DLat + 90.0));
+                        NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+                        return;
+                     end if;
+                  end loop;
+                  N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 3));
+                  if N >= -50 and N <= 49 then
+                     if C1 = 'R' then
+                        --write(grid,1002) n+50
+                        --format('LA',i2.2)
+                        --Grid := "LA" & Integer'Image(N + 50);
+                        Move("LA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+                     else
+                        --write(grid,1003) n+50
+                        --format('KA',i2.2)
+                        --Grid := "KA" & Integer'Image(N + 50);
+                        Move("KA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+                     end if;
+                     Grid2Deg(Grid & "mm", DLong, DLat);
+                     Long := Integer(Float'Floor(DLong));
+                     Lat := Integer(Float'Floor(DLat + 90.0));
+                     NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+                     return;
+                  end if;
+                  if Grid(Grid'First) < 'A' or Grid(Grid'First) > 'R' then Text := True; end if;
+                  if Grid(Grid'First + 1) < 'A' or Grid(Grid'First + 1) > 'R' then Text := True; end if;
+                  if Grid(Grid'First + 2) < '0' or Grid(Grid'First + 2) > '9' then Text := True; end if;
+                  if Grid(Grid'First + 3) < '0' or Grid(Grid'First + 3) > '9' then Text := True; end if;
+                  if Text then return; end if;
+                  Grid2Deg(Grid & "mm", DLong, DLat);
+                  Long := Integer(Float'Floor(DLong));
+                  Lat := Integer(Float'Floor(DLat + 90.0));
+                  NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+                  return;
+               end if;
+            end loop;
+            N := Integer'Value(Grid);
+            if N >= -50 and N <= 49 then
+               if C1 = 'R' then
+                  --write(grid,1002) n+50
+                  --format('LA',i2.2)
+                  --Grid := "LA" & Integer'Image(N + 50);
+                  Move("LA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+               else
+                  --write(grid,1003) n+50
+                  --format('KA',i2.2)
+                  --Grid := "KA" & Integer'Image(N + 50);
+                  Move("KA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+               end if;
+               Grid2Deg(Grid & "mm", DLong, DLat);
+               Long := Integer(Float'Floor(DLong));
+               Lat := Integer(Float'Floor(DLat + 90.0));
+               NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+               return;
+            end if;
+            if Grid(Grid'First) < 'A' or Grid(Grid'First) > 'R' then Text := True; end if;
+            if Grid(Grid'First + 1) < 'A' or Grid(Grid'First + 1) > 'R' then Text := True; end if;
+            if Grid(Grid'First + 2) < '0' or Grid(Grid'First + 2) > '9' then Text := True; end if;
+            if Grid(Grid'First + 3) < '0' or Grid(Grid'First + 3) > '9' then Text := True; end if;
+            if Text then return; end if;
+            Grid2Deg(Grid & "mm", DLong, DLat);
+            Long := Integer(Float'Floor(DLong));
+            Lat := Integer(Float'Floor(DLat + 90.0));
+            NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+            return;
+         elsif Grid(Grid'First .. Grid'First + 1) = "R-" then -- second else if
+            if Grid(Grid'First + 2 .. Grid'First + 3) = "  " then
+               Text := True;
+               return;
+            end if;
+            for I in Grid(Grid'First + 2 .. Grid'First + 3)'range loop
+               if ((Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ') then
+                  Text := True;
+                  return;
+               end if;
+            end loop;
+            N := Integer'Value(Grid(3 .. 4));
+            if N >= 1 and N <= 30 then
+            NG := NGBASE + 31 + Unsigned_32(N);
+               return;
+            end if;
+            N := 99;
+            C1 := Grid(Grid'First);
+            for I in 1 .. 4 loop
+               if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
+                  for I in 2 .. 4 loop
+                     if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
+                        if N >= -50 and N <= 49 then
+                           if C1 = 'R' then
+                              --write(grid,1002) n+50
+                           --format('LA',i2.2)
+                           --Grid := "LA" & Integer'Image(N + 50);
+                              Move("LA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+                           else
+                              --write(grid,1003) n+50
+                           --format('KA',i2.2)
+                           --Grid := "KA" & Integer'Image(N + 50);
+                              Move("KA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+                           end if;
+                           Grid2Deg(Grid & "mm", DLong, DLat);
+                           Long := Integer(Float'Floor(DLong));
+                           Lat := Integer(Float'Floor(DLat + 90.0));
+                           NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+                           return;
+                        end if;
+                        if Grid(Grid'First) < 'A' or Grid(Grid'First) > 'R' then Text := True; end if;
+                        if Grid(Grid'First + 1) < 'A' or Grid(Grid'First + 1) > 'R' then Text := True; end if;
+                        if Grid(Grid'First + 2) < '0' or Grid(Grid'First + 2) > '9' then Text := True; end if;
+                     if Grid(Grid'First + 3) < '0' or Grid(Grid'First + 3) > '9' then Text := True; end if;
+                        if Text then return; end if;
+                        Grid2Deg(Grid & "mm", DLong, DLat);
+                        Long := Integer(Float'Floor(DLong));
+                        Lat := Integer(Float'Floor(DLat + 90.0));
+                        NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+                        return;
+                  end if;
+                  end loop;
+                  N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 3));
+                  if N >= -50 and N <= 49 then
+                     if C1 = 'R' then
+                        --write(grid,1002) n+50
+                     --format('LA',i2.2)
+                     --Grid := "LA" & Integer'Image(N + 50);
+                        Move("LA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+                     else
+                     --write(grid,1003) n+50
+                     --format('KA',i2.2)
+                     --Grid := "KA" & Integer'Image(N + 50);
+                        Move("KA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+                     end if;
+                     Grid2Deg(Grid & "mm", DLong, DLat);
+                     Long := Integer(Float'Floor(DLong));
+                     Lat := Integer(Float'Floor(DLat + 90.0));
+                     NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+                     return;
+                  end if;
+                  if Grid(Grid'First) < 'A' or Grid(Grid'First) > 'R' then Text := True; end if;
+                  if Grid(Grid'First + 1) < 'A' or Grid(Grid'First + 1) > 'R' then Text := True; end if;
+                  if Grid(Grid'First + 2) < '0' or Grid(Grid'First + 2) > '9' then Text := True; end if;
+                  if Grid(Grid'First + 3) < '0' or Grid(Grid'First + 3) > '9' then Text := True; end if;
+                  if Text then return; end if;
+                  Grid2Deg(Grid & "mm", DLong, DLat);
+                  Long := Integer(Float'Floor(DLong));
+                  Lat := Integer(Float'Floor(DLat + 90.0));
+               NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+                  return;
+               end if;
+            end loop;
+            N := Integer'Value(Grid);
+            if N >= -50 and N <= 49 then
+               if C1 = 'R' then
+                  --write(grid,1002) n+50
+               --format('LA',i2.2)
+               --Grid := "LA" & Integer'Image(N + 50);
+                  Move("LA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+               else
+                  --write(grid,1003) n+50
+               --format('KA',i2.2)
+               --Grid := "KA" & Integer'Image(N + 50);
+                  Move("KA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+               end if;
+               Grid2Deg(Grid & "mm", DLong, DLat);
+               Long := Integer(Float'Floor(DLong));
+               Lat := Integer(Float'Floor(DLat + 90.0));
+               NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+               return;
+            end if;
+            if Grid(Grid'First) < 'A' or Grid(Grid'First) > 'R' then Text := True; end if;
+            if Grid(Grid'First + 1) < 'A' or Grid(Grid'First + 1) > 'R' then Text := True; end if;
+            if Grid(Grid'First + 2) < '0' or Grid(Grid'First + 2) > '9' then Text := True; end if;
+            if Grid(Grid'First + 3) < '0' or Grid(Grid'First + 3) > '9' then Text := True; end if;
+            if Text then return; end if;
+            Grid2Deg(Grid & "mm", DLong, DLat);
+            Long := Integer(Float'Floor(DLong));
+            Lat := Integer(Float'Floor(DLat + 90.0));
+            NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+            return;
+         elsif Grid(Grid'First .. Grid'First + 3) = "RO  " then
+            NG := NGBASE + 62;
+            return;
+         elsif Grid(Grid'First .. Grid'First + 3) = "RRR " then
+         NG := NGBASE + 63;
+            return;
+         elsif Grid(Grid'First .. Grid'First + 3) = "73  " then
+            NG := NGBASE + 64;
+            return;
+         end if;
+         N := 99;
+         C1 := Grid(Grid'First);
+         for I in 1 .. 4 loop
+            if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
+               for I in 2 .. 4 loop
+                  if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
+                     if N >= -50 and N <= 49 then
+                        if C1 = 'R' then
+                           --write(grid,1002) n+50
+                           --format('LA',i2.2)
+                           --Grid := "LA" & Integer'Image(N + 50);
+                              Move("LA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+                        else
+                           --write(grid,1003) n+50
+                           --format('KA',i2.2)
+                           --Grid := "KA" & Integer'Image(N + 50);
+                           Move("KA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+                        end if;
+                        Grid2Deg(Grid & "mm", DLong, DLat);
+                        Long := Integer(Float'Floor(DLong));
+                        Lat := Integer(Float'Floor(DLat + 90.0));
+                        NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+                        return;
+                     end if;
+                     if Grid(Grid'First) < 'A' or Grid(Grid'First) > 'R' then Text := True; end if;
+                     if Grid(Grid'First + 1) < 'A' or Grid(Grid'First + 1) > 'R' then Text := True; end if;
+                     if Grid(Grid'First + 2) < '0' or Grid(Grid'First + 2) > '9' then Text := True; end if;
+                     if Grid(Grid'First + 3) < '0' or Grid(Grid'First + 3) > '9' then Text := True; end if;
+                     if Text then return; end if;
+                     Grid2Deg(Grid & "mm", DLong, DLat);
+                     Long := Integer(Float'Floor(DLong));
+                     Lat := Integer(Float'Floor(DLat + 90.0));
+                     NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+                     return;
+                  end if;
+               end loop;
+               N := Integer'Value(Grid(2 .. 4));
+               if N >= -50 and N <= 49 then
+                  if C1 = 'R' then
+                     --write(grid,1002) n+50
+                     --format('LA',i2.2)
+                     --Grid := "LA" & Integer'Image(N + 50);
+                     Move("LA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+                  else
+                     --write(grid,1003) n+50
+                     --format('KA',i2.2)
+                     --Grid := "KA" & Integer'Image(N + 50);
+                     Move("KA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+                  end if;
+                  Grid2Deg(Grid & "mm", DLong, DLat);
+                  Long := Integer(Float'Floor(DLong));
+                  Lat := Integer(Float'Floor(DLat + 90.0));
+                  NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+                  return;
+               end if;
+               if Grid(Grid'First) < 'A' or Grid(Grid'First) > 'R' then Text := True; end if;
+               if Grid(Grid'First + 1) < 'A' or Grid(Grid'First + 1) > 'R' then Text := True; end if;
+               if Grid(Grid'First + 2) < '0' or Grid(Grid'First + 2) > '9' then Text := True; end if;
+               if Grid(Grid'First + 3) < '0' or Grid(Grid'First + 3) > '9' then Text := True; end if;
+               if Text then return; end if;
+               Grid2Deg(Grid & "mm", DLong, DLat);
+               Long := Integer(Float'Floor(DLong));
+               Lat := Integer(Float'Floor(DLat + 90.0));
+               NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+               return;
+            end if;
+         end loop;
+         N := Integer'Value(Grid);
          if N >= -50 and N <= 49 then
             if C1 = 'R' then
                --write(grid,1002) n+50
@@ -385,103 +853,174 @@ package body Pack_JT is
                --Grid := "KA" & Integer'Image(N + 50);
                Move("KA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
             end if;
-            Forty;
+            Grid2Deg(Grid & "mm", DLong, DLat);
+            Long := Integer(Float'Floor(DLong));
+            Lat := Integer(Float'Floor(DLat + 90.0));
+            NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
             return;
-         end if;
+      end if;
          if Grid(Grid'First) < 'A' or Grid(Grid'First) > 'R' then Text := True; end if;
          if Grid(Grid'First + 1) < 'A' or Grid(Grid'First + 1) > 'R' then Text := True; end if;
          if Grid(Grid'First + 2) < '0' or Grid(Grid'First + 2) > '9' then Text := True; end if;
          if Grid(Grid'First + 3) < '0' or Grid(Grid'First + 3) > '9' then Text := True; end if;
          if Text then return; end if;
-         Forty;
-      end Thirty;
-
-      procedure Twenty
-        with
-          Pre => Grid'First = 1 and Grid'Last = 4
-      is
-      begin
-         for I in Grid(Grid'First + 1 .. Grid'First + 3)'range loop
-            if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
-               Thirty;
-               return;
-            end if;
-         end loop;
-         N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 3));
-         Thirty;
-      end Twenty;
-
-      procedure Ten
-        with
-          Pre => Grid'First = 1 and Grid'Last = 4 and Grid'Length = 4
-      is
-      begin
-         N := 99;
-         C1 := Grid(Grid'First);
-         for I in Grid'range loop
-            if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
-               Twenty;
-               return;
-            end if;
-         end loop;
-         N := Integer'Value(Grid);
-      Thirty;
-      end Ten;
-
-   begin
-      Text := False;
-      if Grid = "    " then
-         Ninety;
+         Grid2Deg(Grid & "mm", DLong, DLat);
+         Long := Integer(Float'Floor(DLong));
+         Lat := Integer(Float'Floor(DLat + 90.0));
+         NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
          return;
       end if;
-      if Grid(Grid'First) = '-' then
-         if Grid(Grid'First + 1 .. Grid'First + 2) = "  " then
-            Eight_Hundred;
-            return;
-         end if;
-         for I in Grid(Grid'First + 1 .. Grid'First + 2)'range loop
-            if ((Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ') then
-               Eight_Hundred;
-               return;
-            end if;
-         end loop;
-         N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 2));
-         if N >= 1 and N <= 30 then
-            NG := NGBASE + 1 + Unsigned_32(N);
-            return;
-         end if;
-         Ten;
-         return;
-      elsif Grid(Grid'First .. Grid'First + 1) = "R-" then
-         if Grid(Grid'First + 2 .. Grid'First + 3) = "  " then
-            Eight_Hundred;
-            return;
-         end if;
-         for I in Grid(Grid'First + 2 .. Grid'First + 3)'range loop
-            if ((Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ') then
-               Eight_Hundred;
-               return;
-            end if;
-         end loop;
-         N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
-         if N >= 1 and N <= 30 then
-            NG := NGBASE + 31 + Unsigned_32(N);
-            return;
-         end if;
-         Ten;
-         return;
-      elsif Grid(Grid'First .. Grid'First + 3) = "RO  " then
-         NG := NGBASE + 62;
-         return;
-      elsif Grid(Grid'First .. Grid'First + 3) = "RRR " then
-         NG := NGBASE + 63;
-         return;
-      elsif Grid(Grid'First .. Grid'First + 3) = "73  " then
-         NG := NGBASE + 64;
-         return;
-      end if;
-      Ten;
-   end Pack_Grid;
+      Ng := NGBASE + 1;
+      return;
+end Pack_Grid;
+
+   --  procedure Pack_Grid
+   --    (Grid : in out String;
+   --     NG : in out Unsigned_32;
+   --     Text : out Boolean)
+   --  is
+   --     NGBASE : constant Unsigned_32 := 180 * 180;
+   --     C1 : Character := ' ';
+   --     N, Long, Lat : Integer := 0;
+   --     DLong, DLat : Float := 0.0;
+   --
+   --     procedure Eight_Hundred is
+   --     begin
+   --        Text := True;
+   --     end Eight_Hundred;
+   --
+   --     procedure Ninety is
+   --     begin
+   --        NG := NGBASE + 1;
+   --        return;
+   --     end Ninety;
+   --
+   --     procedure Forty
+   --       with
+   --         Pre => Grid'First = 1 and Grid'Last = 4 and Grid'Length = 4
+   --     is
+   --     begin
+   --        Grid2Deg(Grid & "mm", DLong, DLat);
+   --        Long := Integer(Float'Floor(DLong));
+   --        Lat := Integer(Float'Floor(DLat + 90.0));
+   --        NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+   --        return;
+   --     end Forty;
+   --
+   --     procedure Thirty
+   --       with
+   --         Pre => Grid'First = 1 and Grid'Last = 4 and Grid'Length = 4
+   --     is
+   --     begin
+   --        if N >= -50 and N <= 49 then
+   --           if C1 = 'R' then
+   --              --write(grid,1002) n+50
+   --              --format('LA',i2.2)
+   --              --Grid := "LA" & Integer'Image(N + 50);
+   --              Move("LA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+   --           else
+   --              --write(grid,1003) n+50
+   --              --format('KA',i2.2)
+   --              --Grid := "KA" & Integer'Image(N + 50);
+   --              Move("KA" & Trim(Integer'Image(N + 50), Both), Grid, Right, Left, Space);
+   --           end if;
+   --           Forty;
+   --           return;
+   --        end if;
+   --        if Grid(Grid'First) < 'A' or Grid(Grid'First) > 'R' then Text := True; end if;
+   --        if Grid(Grid'First + 1) < 'A' or Grid(Grid'First + 1) > 'R' then Text := True; end if;
+   --        if Grid(Grid'First + 2) < '0' or Grid(Grid'First + 2) > '9' then Text := True; end if;
+   --        if Grid(Grid'First + 3) < '0' or Grid(Grid'First + 3) > '9' then Text := True; end if;
+   --        if Text then return; end if;
+   --        Forty;
+   --     end Thirty;
+   --
+   --     procedure Twenty
+   --       with
+   --         Pre => Grid'First = 1 and Grid'Last = 4
+   --     is
+   --     begin
+   --        for I in Grid(Grid'First + 1 .. Grid'First + 3)'range loop
+   --           if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
+   --              Thirty;
+   --              return;
+   --           end if;
+   --        end loop;
+   --        N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 3));
+   --        Thirty;
+   --     end Twenty;
+   --
+   --     procedure Ten
+   --       with
+   --        Pre => Grid'First = 1 and Grid'Last = 4 and Grid'Length = 4
+   --     is
+   --     begin
+   --     N := 99;
+   --     C1 := Grid(Grid'First);
+   --     for I in Grid'range loop
+   --        if (Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ' then
+   --           Twenty;
+   --           return;
+   --        end if;
+   --     end loop;
+   --     N := Integer'Value(Grid);
+   --     Thirty;
+   --     end Ten;
+   --
+   --  begin
+   --     Text := False;
+   --     if Grid = "    " then
+   --        Ninety;
+   --        return;
+   --     end if;
+   --     if Grid(Grid'First) = '-' then
+   --        if Grid(Grid'First + 1 .. Grid'First + 2) = "  " then
+   --           Eight_Hundred;
+   --           return;
+   --        end if;
+   --        for I in Grid(Grid'First + 1 .. Grid'First + 2)'range loop
+   --           if ((Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ') then
+   --              Eight_Hundred;
+   --              return;
+   --           end if;
+   --        end loop;
+   --        N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 2));
+   --        if N >= 1 and N <= 30 then
+   --           NG := NGBASE + 1 + Unsigned_32(N);
+   --           return;
+   --        end if;
+   --        Ten;
+   --        return;
+   --     elsif Grid(Grid'First .. Grid'First + 1) = "R-" then
+   --        if Grid(Grid'First + 2 .. Grid'First + 3) = "  " then
+   --           Eight_Hundred;
+   --           return;
+   --        end if;
+   --        for I in Grid(Grid'First + 2 .. Grid'First + 3)'range loop
+   --           if ((Grid(I) < '0' or Grid(I) > '9') and Grid(I) /= ' ') then
+   --              Eight_Hundred;
+   --              return;
+   --           end if;
+   --        end loop;
+   --        N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
+   --        if N >= 1 and N <= 30 then
+   --           NG := NGBASE + 31 + Unsigned_32(N);
+   --           return;
+   --        end if;
+   --        Ten;
+   --        return;
+   --     elsif Grid(Grid'First .. Grid'First + 3) = "RO  " then
+   --        NG := NGBASE + 62;
+   --        return;
+   --     elsif Grid(Grid'First .. Grid'First + 3) = "RRR " then
+   --        NG := NGBASE + 63;
+   --        return;
+   --     elsif Grid(Grid'First .. Grid'First + 3) = "73  " then
+   --        NG := NGBASE + 64;
+   --        return;
+   --     end if;
+   --     Ten;
+   --  end Pack_Grid;
 
    procedure Unpack_Grid
      (Ng : Integer;
@@ -573,7 +1112,7 @@ package body Pack_JT is
          --Prove_Valid_Char(Grid(Grid'First + 2 .. Grid'First + 3));
          if Prove_Grid(Grid(Grid'First + 2 .. Grid'First + 3)) = True then
             --N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
-            N := (if Grid(Grid'First + 2 .. Grid'First + 3) in JT65_String then Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3)) else 0);
+            N := (if Grid(3 .. 4) in JT65_String then Integer'Value(Grid(3 .. 4)) else 0);
          end if;
          if N >= 50 then
             N := N - 50;
@@ -640,7 +1179,9 @@ package body Pack_JT is
       Skip_Ten : Boolean := False;
 
       procedure Three is
-         K, K1, K2 : Integer;
+         subtype Constrained_Integer is Integer range Integer'First .. 2000000;
+         K : Integer;
+         K1, K2 : Constrained_Integer;
       begin
          Ic := I_Start;
          C3 := "    ";
@@ -667,12 +1208,14 @@ package body Pack_JT is
             --Ten;
             return;
          end if;
+         --Put("K1 = ");Put_Line(Integer'Image(K1));
+        -- Put("K2 = ");Put_Line(Integer'Image(K2));
          if Nv2a = 2 or Nv2a = 3 or Nv2b = 2 or Nv2b = 3 then
             if K1 < 0 or K2 < 0 or K1*K2 /= 0 then
                --Ten;
                return;
             end if;
-            if K2 > 0 then
+            if K2 > 0 and K2 < 1999550 then
                K2 := K2 + 450;
             end if;
             K := Integer'Max(K1, K2);
@@ -760,7 +1303,7 @@ package body Pack_JT is
       Move(Msg0, Msg, Right, Left, Space);
       --Fmtmsg(Msg); --This Needs to be fixed for now I am just using To_Upper
       --Msg := To_Upper(Msg); --This was causing trouble
-      FmtMsg(Msg);
+      Msg := To_Upper(Msg);
       if Msg(1 .. 3) = "CQ " and Msg(4) >= '0' and Msg(4) <= '9' and Msg(5) = ' ' then
          Msg := "CQ 00" & Msg(4..Msg'Last - 2); --The Last character of the Msg is cut off, I dont think it matters but it might.
       end if;
@@ -831,8 +1374,8 @@ package body Pack_JT is
       psfx : String(1 .. 4) := (others => ' ');
       grid6 : String(1..6);
       cqnnn : Boolean := False;
-      subtype Constrained_Unsigned_32 is Unsigned_32 range 0 .. 270000000;
-      nc1, nc2, ng : Constrained_Unsigned_32;
+     -- subtype Constrained_Unsigned_32 is Unsigned_32 range 0 .. 270000000;
+      nc1, nc2, ng : Unsigned_32;-- Constrained_Unsigned_32;
       iv2, NFreq, junk1, n1, n2, K, J : Integer;
       Dat : Unsigned_32_Array (0 .. 11) := (others => 0);
       --Index_Val : Integer;
@@ -1174,16 +1717,19 @@ package body Pack_JT is
       if (Nc2 and 1) /= 0 then Nc3 := Nc3 + 65536; end if;
       Nc2 := Nc2 / 2;
       for I in reverse 1 .. 5 loop
+         pragma Loop_Invariant(Nc1 <= (2 **31 - 1));
          J := (Integer(Nc1) mod 42) + 1;
          Msg(I) := C(J);
          Nc1 := Nc1 / 42;
       end loop;
       for I in reverse 6 .. 10 loop
+         pragma Loop_Invariant(Nc2 <= (2 **31 - 1));
          J := (Integer(Nc2) mod 42) + 1;
          Msg(I) := C(J);
          Nc2 := Nc2 / 42;
       end loop;
       for I in reverse 11 .. 13 loop
+         pragma Loop_Invariant(Nc3 <= (2 **31 - 1));
          J := (Integer(Nc3) mod 42) + 1;
          Msg(I) := C(J);
          Nc3 := Nc3 / 42;
@@ -1191,12 +1737,12 @@ package body Pack_JT is
       Msg(Msg'First + 13 .. Msg'First + 21) := "         ";
    end Unpack_Text;
 
-   procedure Fmtmsg
-     (Msg : in out String)
-   is
-   begin
-      Msg := To_Upper(Msg);
-   end Fmtmsg;
+   --  procedure Fmtmsg
+   --    (Msg : in out String)
+   --  is
+   --  begin
+   --     Msg := To_Upper(Msg);
+   --  end Fmtmsg;
 
    ------------------------------------------
    -- Implementations of Internal Subprograms
@@ -1595,10 +2141,10 @@ package body Pack_JT is
       DLat : Float;
       Grid : out String)
    is
-      subtype Add_To_Pos is Integer range 0 .. 22;
+      --subtype Add_To_Pos is Integer range 0 .. 22;
       DLong : Float := DLong0;
       NLat, NLong : Integer;
-      N1, N2, N3 : Add_To_Pos;
+      N1, N2, N3 : Integer;
    begin
       Grid := (others => ' ');
       if DLong < -180.0 then
@@ -1612,19 +2158,34 @@ package body Pack_JT is
       if NLong >= 0 and NLong <= 5280 then
          N1 := NLong / 240;
          N2 := (NLong - 240 * N1) / 24;
-         N3 := NLong - 240 * N1 - 24 * N2;
-         Grid(Grid'First + 0) := Character'Val(Character'Pos('A') + N1);
-         Grid(Grid'First + 2) := Character'Val(Character'Pos('0') + N2);
-         Grid(Grid'First + 4) := Character'Val(Character'Pos('a') + N3);
+         --if N1 > 0 or N2 > 0 then
+            N3 := NLong - 240 * N1 - 24 * N2;
+            --Put("NLong = ");Put_Line(Integer'Image(NLong));
+            --  Put("N1 = "); Put_Line(Integer'Image(N1));
+           -- Put("N2 = "); Put_Line(Integer'Image(N2));
+        -- Put("N3 = "); Put_Line(Integer'Image(N3));
+         if (N1 >= 0 and N1 <= 22) and (N2 >= 0 and N2 <= 22) and (N1 >= 0 and N1 <= 22) then
+            Grid(Grid'First + 0) := Character'Val(Character'Pos('A') + N1);
+            Grid(Grid'First + 2) := Character'Val(Character'Pos('0') + N2);
+            Grid(Grid'First + 4) := Character'Val(Character'Pos('a') + N3);
+         end if;
       end if;
-      NLat := Integer(Float'Floor(60.0 * (DLat + 90.0) / 2.5));
-      if NLat >= 0 and NLat <= 5280 then
-         N1 := NLat / 240;
-         N2 := (NLat - 240 * N1) / 24;
-         N3 := NLat - 240 * N1 - 24 * N2;
-         Grid(Grid'First + 1) := Character'Val(Character'Pos('A') + N1);
-         Grid(Grid'First + 3) := Character'Val(Character'Pos('0') + N2);
-         Grid(Grid'First + 5) := Character'Val(Character'Pos('a') + N3);
+      if DLat > 0.0 then
+         NLat := Integer(Float'Floor(60.0 * (DLat + 90.0) / 2.5));
+         if NLat >= 0 and NLat <= 5280 then
+            N1 := NLat / 240;
+            N2 := (NLat - 240 * N1) / 24;
+            --if N1 /= 0 or N2 /= 0 then
+               N3 := NLat - 240 * N1 - 24 * N2;
+               --Put("N1 (2) = ");Put_Line(Integer'Image(N1));
+               -- Put("N2 (2) = ");Put_Line(Integer'Image(N2));
+               -- Put("N3 (2) = ");Put_Line(Integer'Image(N3));
+         if (N1 >= 0 and N1 <= 22) and (N2 >= 0 and N2 <= 22) and (N1 >= 0 and N1 <= 22) then
+               Grid(Grid'First + 1) := Character'Val(Character'Pos('A') + N1);
+               Grid(Grid'First + 3) := Character'Val(Character'Pos('0') + N2);
+               Grid(Grid'First + 5) := Character'Val(Character'Pos('a') + N3);
+            end if;
+         end if;
       end if;
    end Deg2Grid;
 

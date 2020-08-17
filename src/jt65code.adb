@@ -4,11 +4,11 @@
 -- AUTHOR : (C) Copyright 2020 by Vermont Technical College
 --
 --------------------------------------------------------------------------------
-with Ada.Command_Line;      use Ada.Command_Line;
-with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
-with Ada.Text_IO;           use Ada.Text_IO;
-with Interfaces;            use Interfaces;
-
+with Ada.Command_Line;        use Ada.Command_Line;
+with Ada.Strings.Unbounded;   use Ada.Strings.Unbounded;
+with Ada.Text_IO;             use Ada.Text_IO;
+with Interfaces;              use Interfaces;
+with Ada.Characters.Handling; use Ada.Characters.Handling;
 
 with General_JT;     use General_JT;
 with Pack_JT;
@@ -77,7 +77,8 @@ begin
          Era(I) := 0;
       end loop;
 
-      Pack_JT.Fmtmsg(Msg);
+      --Pack_JT.Fmtmsg(Msg);
+      Msg := To_Upper(Msg);
       Collapse_Blanks(Msg);
       Msg0 := Msg;
       Chkmsg(Msg, Cok, Nspecial);
@@ -140,7 +141,7 @@ begin
          Decoded ( 20 .. 22) := cok;
       end if;
 
-      Pack_JT.Fmtmsg(Decoded);
+      Decoded := To_Upper(Decoded);
       Collapse_Blanks(Decoded);
 
       Bad := " ";
