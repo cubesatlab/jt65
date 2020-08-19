@@ -67,7 +67,8 @@ package Pack_JT is
        Pre => NCall <= 2147483647 and
        (Word'First = 1 and Word'Last = 12 and Word'Length = 12 and
           Psfx'First = 1 and Psfx'Last = 4 and Psfx'Length = 4),
-   Post => Psfx'First = 1 and Psfx'Last = 4;
+     Post => Psfx'First = 1 and Psfx'Last = 4 and Word'First = 1
+   and Word'Last = 12;
 
    procedure Pack_Grid
      (Grid : in out String;
@@ -75,9 +76,9 @@ package Pack_JT is
       Text : out Boolean)
      with
        Global => null,
-       Pre => (Grid'Length = 4 and Grid'First = 1 and Grid'Last = 4) and
-     (for all I in Grid'Range =>
-        Grid(I) in '0' .. '9' | 'A' .. 'Z' | 'a' .. 'z' | ' ' | '+' | '-' | '.' | '/' | '?');
+       Pre => (Grid'First = 1 and Grid'Last = 4);--and
+     --(for all I in Grid'Range =>
+        --Grid(I) in '0' .. '9' | 'A' .. 'Z' | 'a' .. 'z' | ' ' | '+' | '-' | '.' | '/' | '?');
 
    procedure Unpack_Grid
      (Ng : Integer;

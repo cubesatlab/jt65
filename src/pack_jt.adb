@@ -153,7 +153,7 @@ package body Pack_JT is
       --NBASE : constant Integer := 37 * 36 * 10 * 27 * 27 * 27;
       C : constant String := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
       N : Integer := Integer(NCall);
-      I : Integer := 0;
+      I : Integer;
    begin
 
       --Word := "......";
@@ -277,7 +277,7 @@ package body Pack_JT is
 
          elsif N = 267796945 then
             Iv2 := 7;
-            Psfx := "    ";
+            Psfx(1 .. 4) := "    ";
 
          end if;
          if Word(Word'First .. Word'First + 2) = "3D0" then
@@ -549,7 +549,7 @@ package body Pack_JT is
                   return;
                end if;
             end loop;
-            N := Integer'Value(Grid(2 .. 3));
+            N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 2));
             if N >= 1 and N <= 30 then
                NG := NGBASE + 1 + Unsigned_32(N);
                return;
@@ -662,7 +662,7 @@ package body Pack_JT is
                   return;
                end if;
             end loop;
-            N := Integer'Value(Grid(3 .. 4));
+            N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
             if N >= 1 and N <= 30 then
             NG := NGBASE + 31 + Unsigned_32(N);
                return;
@@ -730,7 +730,7 @@ package body Pack_JT is
                   Grid2Deg(Grid & "mm", DLong, DLat);
                   Long := Integer(Float'Floor(DLong));
                   Lat := Integer(Float'Floor(DLat + 90.0));
-               NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
+                  NG := Unsigned_32(((Long + 180) / 2) * 180 + Lat); --This might need to be signed
                   return;
                end if;
             end loop;
@@ -809,7 +809,7 @@ package body Pack_JT is
                      return;
                   end if;
                end loop;
-               N := Integer'Value(Grid(2 .. 4));
+               N := Integer'Value(Grid(Grid'First + 1 .. Grid'First + 3));
                if N >= -50 and N <= 49 then
                   if C1 = 'R' then
                      --write(grid,1002) n+50
@@ -840,7 +840,7 @@ package body Pack_JT is
                return;
             end if;
          end loop;
-         N := Integer'Value(Grid);
+         N := Integer'Value(Grid(1 .. 4));
          if N >= -50 and N <= 49 then
             if C1 = 'R' then
                --write(grid,1002) n+50
@@ -1178,7 +1178,11 @@ end Pack_Grid;
       Ng       : Unsigned_32 := 0;
       Skip_Ten : Boolean := False;
 
-      procedure Three is
+      procedure Three
+        with
+          Pre =>
+            Msg'First = 1 and Msg'Last = 22 and C1'First = 1 and C1'Last = 12 and C2'First = 1 and C2'Last = 12
+      is
          subtype Constrained_Integer is Integer range Integer'First .. 2000000;
          K : Integer;
          K1, K2 : Constrained_Integer;
@@ -1372,7 +1376,7 @@ end Pack_Grid;
       c1, c2 : String(1 .. 12);
       grid, junk2 : String(1..4);
       psfx : String(1 .. 4) := (others => ' ');
-      grid6 : String(1..6);
+      grid6 : String(1 .. 6);
       cqnnn : Boolean := False;
      -- subtype Constrained_Unsigned_32 is Unsigned_32 range 0 .. 270000000;
       nc1, nc2, ng : Unsigned_32;-- Constrained_Unsigned_32;
@@ -1493,7 +1497,7 @@ end Pack_Grid;
          One_Hundred;
          return;
       end if;
-      if Prove_Valid_String(psfx) = True then
+      if Prove_Valid_String(psfx) = True and Nc1 <= 2147483647 and Nc2 <= 2147483647 then
          Unpack_Call(nc1, c1, iv2, psfx);
 
       if iv2 = 0 then
@@ -1581,14 +1585,15 @@ end Pack_Grid;
 
          --grid6(Grid6'First .. Grid6'Last) := grid(1 .. 4) & "ma";
          Move(Grid(1 .. 4) & "ma", Grid6, Right, Left, Space);
-      Grid2k(grid6, K);
-      if K >= 1 and K <= 450 then
-         Get_Pfx2(K, c1);
-      end if;
-      if K >= 451 and K <= 900 then
-         Get_Pfx2(K, c2);
-      end if;
-      --  Index_Val := Index(c1, Character'Val(0)); -- Should be looking for null characters not blank Space
+
+         Grid2k(grid6, K);
+         if K >= 1 and K <= 450 then
+            Get_Pfx2(K, c1);
+         end if;
+         if K >= 451 and K <= 900 then
+            Get_Pfx2(K, c2);
+         end if;
+         --  Index_Val := Index(c1, Character'Val(0)); -- Should be looking for null characters not blank Space
       --
 --        if Index_Val >= 3 then
 --           --c1 := c1(1 .. Index_Val - 1) & "            ";
@@ -2153,6 +2158,7 @@ end Pack_Grid;
       if DLong > 180.0 then
          DLong := DLong - 360.0;
       end if;
+      if DLong >= -2000.0 and DLong <= 2000.0 and DLat >= -1000.0 and DLat <= 1000.0 then
       NLong := Integer(Float'Floor(60.0 * (180.0 - DLong) / 5.0));
       -- Need to check how these are rounded. Floating point numbers are always rounded down. Ex. 17.9 rounds down to 17.
       if NLong >= 0 and NLong <= 5280 then
@@ -2185,6 +2191,7 @@ end Pack_Grid;
                Grid(Grid'First + 3) := Character'Val(Character'Pos('0') + N2);
                Grid(Grid'First + 5) := Character'Val(Character'Pos('a') + N3);
             end if;
+         end if;
          end if;
       end if;
    end Deg2Grid;
