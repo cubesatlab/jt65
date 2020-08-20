@@ -1031,25 +1031,25 @@ end Pack_Grid;
       NGBASE : constant Integer := 180 * 180;
       Grid6 : String(1 .. 6);
       DLat, DLong : Float;
-      N : Integer_Value := 0;
+      N : Integer_Value;
       Grid_Temp : String(1 .. 3);
       N_Temp : String(1 .. 2);
 
-      function Prove_Grid (Grid : in String) return Boolean
-      is
-         Flag : Boolean := True;
-      begin
-         for I in Grid'Range loop
-            if Flag then
-               if Grid(I) in Callsign_Type then
-                  Flag := True;
-               else
-                  return False;
-               end if;
-            end if;
-         end loop;
-         return True;
-      end Prove_Grid;
+      --  function Prove_Grid (Grid : in String) return Boolean
+      --  is
+      --     Flag : Boolean := True;
+      --  begin
+      --     for I in Grid'Range loop
+      --        if Flag then
+      --           if Grid(I) in Callsign_Type then
+      --              Flag := True;
+      --           else
+      --              return False;
+      --           end if;
+      --        end if;
+      --     end loop;
+      --     return True;
+      --  end Prove_Grid;
 
       --  function Prove_Valid_Char (Char : in Character) return Boolean
       --  is
@@ -1108,21 +1108,22 @@ end Pack_Grid;
       Grid := Grid6(Grid6'First .. Grid6'First + 3);
       --Prove_Grid;
       -- Handling -31 through -49.
+      --N := (if Grid(Grid'First + 2) in JT65_Callsign_Character then Integer'Value(Grid(Grid'First + 2 .. Grid'Last)) else 999);
+
+
+      -- First two checks ("KA" and "LA") never being accessed
       if Grid(Grid'First .. Grid'First + 1) = "KA" then
-         --Prove_Valid_Char(Grid(Grid'First + 2 .. Grid'First + 3));
-         if Prove_Grid(Grid(Grid'First + 2 .. Grid'First + 3)) = True then
-            --N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
-            N := (if Grid(3 .. 4) in JT65_String then Integer'Value(Grid(3 .. 4)) else 0);
-         end if;
+         --N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
+         N := (if Grid(Grid'First + 2) in JT65_Callsign_Character and Grid(Grid'Last) in JT65_Callsign_Character then Integer'Value(Grid(Grid'First + 2 .. Grid'Last)) else 0);
          if N >= 50 then
             N := N - 50;
             if N > 0 and N <= 49 then
                --if N <= 9 then
-                  --Grid_Temp(3 .. 3) := Trim(Integer'Image(N), Both);
-                  Move(Integer'Image(N), Grid_Temp, Right, Left, Space);
+               --Grid_Temp(3 .. 3) := Trim(Integer'Image(N), Both);
+               Move(Integer'Image(N), Grid_Temp, Right, Left, Space);
                --else
-                  --
-                  --Grid_Temp(Grid_Temp'First .. Grid_Temp'First + 2) := Integer'Image(N);
+               --
+               --Grid_Temp(Grid_Temp'First .. Grid_Temp'First + 2) := Integer'Image(N);
                --end if;
                Grid(Grid'First .. Grid'First + 1) := "  ";
                Grid(Grid'First + 1) := '-';
@@ -1150,7 +1151,31 @@ end Pack_Grid;
                end if;
             end if;
          end if;
+      elsif Grid(Grid'First .. Grid'First + 1) = "K " then
+         if Ng >= 13320 and Ng <= 13329 then -- 0 - 9
+            N := Ng - 13320;
+            --Grid(Grid'First + 2 .. Grid'Last) := Integer'Image(N);
+            --Grid(Grid'First + 2) := '0';
+            Move("0" & Trim(Integer'Image(N), Both), Grid, Right, Left, Space);
+         elsif Ng >= 13140 and Ng <= 13149 then -- 10 - 19
+            N := Ng - 13130;
+            --Grid(Grid'First + 1 .. Grid'Last) := Integer'Image(N);
+            Move(Trim(Integer'Image(N), Both), Grid, Right, Left, Space);
+         elsif Ng >= 12960 and Ng <= 12969 then -- 20 - 29
+            N := Ng - 12940;
+            --Grid(Grid'First + 1 .. Grid'Last) := Integer'Image(N);
+            Move(Trim(Integer'Image(N), Both), Grid, Right, Left, Space);
+         elsif Ng >= 12780 and Ng <= 12789 then -- 30 - 39
+            N := Ng - 12750;
+            --Grid(Grid'First + 1 .. Grid'Last) := Integer'Image(N);
+            Move(Trim(Integer'Image(N), Both), Grid, Right, Left, Space);
+         elsif Ng >= 12600 and Ng <= 12609 then -- 40 - 49
+            N:= Ng - 12560;
+            --Grid(Grid'First + 1 .. Grid'Last) := Integer'Image(N);
+            Move(Trim(Integer'Image(N), Both), Grid, Right, Left, Space);
+         end if;
       end if;
+
    end Unpack_Grid;
 
    procedure Pack_Msg

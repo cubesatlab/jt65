@@ -13,6 +13,11 @@ package Pack_JT is
      with Static_Predicate =>
        (JT65_Character in '0' .. '9' | 'A' .. 'Z' | 'a' .. 'z' | ' ' | '+' | '-' | '.' | '/' | '?');
 
+    subtype JT65_Callsign_Character is Character
+     with Static_Predicate =>
+       (JT65_Callsign_Character in '0' .. '9' | 'A' .. 'Z' | 'a' .. 'z' );
+
+
    subtype JT65_String is String
      with Dynamic_Predicate =>
        (for all I in JT65_String'Range =>
