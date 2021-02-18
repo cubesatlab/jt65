@@ -1272,6 +1272,14 @@ package body Pack_JT is
       Dat   : Unsigned_32_Array (0 .. 11) := (others => 0);
       --Index_Val : Integer;
 
+      -- Forward declarations allow the subprograms below to be defined in a natural order.
+      -- These names refer to line numbers in the original Fortran source.
+      procedure Ten
+        with Pre => Msg'First = 1 and Msg'Last = 22 and J > 0 and J <= 21;
+      procedure Twenty
+        with Pre => Msg'First = 1 and Msg'Last = 22 and J > 0 and J <= 21;
+      procedure One_Hundred;
+
       function Prove_Valid_String (JT65_String : in String) return Boolean is
          Flag : Boolean := True;
       begin
@@ -1287,6 +1295,63 @@ package body Pack_JT is
          return True;
       end Prove_Valid_String;
 
+      procedure Ten is
+      begin
+         for I in 1 .. 12 loop
+            if J <= 21 then
+               J := J + 1;
+            end if;
+            Msg(J) := c2(I);
+            if c2(I) = ' ' then
+               Twenty;
+               return;
+            end if;
+         end loop;
+         if J <= 21 then
+            J := J + 1;
+         end if;
+         Msg(J) := ' ';
+         Twenty;
+      end Ten;
+
+      procedure Twenty is
+         -- Flag : Boolean := False;
+      begin
+         if K = 0 then
+            for I in 1 .. 4 loop
+               if J <= 21 then
+                  J := J + 1;
+                  --if I = 1 and grid(I) = '-' then
+                  --   case (grid(I + 1)) is
+                  --   when '0' .. '9' =>
+                  --      case (grid(I + 2)) is
+                  --      when ' ' =>
+                  --         Flag := True;
+                  --      when others =>
+                  --         Flag := False;
+                  --      end case;
+                  --   when others =>
+                  --      Flag := False;
+                  --   end case;
+                  --   if Flag and J <= 20 then
+                  --      Msg(J) := grid(I);
+                  --      Msg(J + 2) := grid(I+1);
+                  --      exit;
+                  --   end if;
+               end if;
+               Msg(J) := grid(I);
+            end loop;
+            if J <= 21 then
+               J := J + 1;
+            end if;
+            Msg(J) := ' ';
+            --if Flag then
+            --   Msg(J) := '0';
+            --end if;
+         end if;
+         One_Hundred;
+      end Twenty;
+
       procedure One_Hundred is
       begin
          if Msg(Msg'First .. Msg'First + 5) = "CQ9DX " then
@@ -1301,70 +1366,6 @@ package body Pack_JT is
             Move("CQ " & Msg(Msg'First + 5 .. Msg'Last), Msg, Right, Left, Space);
          end if;
       end One_Hundred;
-
-      procedure Twenty
-        with
-          Pre => Msg'First = 1 and Msg'Last = 22 and J > 0 and J <= 21
-      is
-         Flag : Boolean := False;
-      begin
-         if K = 0 then
-            for I in 1 .. 4 loop
-               if J <= 21 then
-                  J := J + 1;
-                  if I = 1 and grid(I) = '-' then
-                     case (grid(I + 1)) is
-                     when '0' .. '9' =>
-                        case (grid(I + 2)) is
-                        when ' ' =>
-                           Flag := True;
-                        when others =>
-                           Flag := False;
-                        end case;
-                     when others =>
-                        Flag := False;
-                     end case;
-                     if Flag and J <= 20 then
-                        Msg(J) := grid(I);
-                        Msg(J + 2) := grid(I+1);
-                        exit;
-                     end if;
-                  end if;
-                  Msg(J) := grid(I);
-               end if;
-            end loop;
-            if J <= 21 then
-               J := J + 1;
-            end if;
-            Msg(J) := ' ';
-            if Flag then
-               Msg(J) := '0';
-            end if;
-         end if;
-         One_Hundred;
-      end Twenty;
-
-      procedure Ten
-        with
-          Pre => Msg'First = 1 and Msg'Last = 22 and J > 0 and J <= 21
-      is
-      begin
-         for I in 1 .. 12 loop
-            if J < 21 then
-               J := J + 1;
-            end if;
-            Msg(J) := c2(I);
-            if c2(I) = ' ' then
-               Twenty;
-               return;
-            end if;
-         end loop;
-         if J < 21 then
-            J := J + 1;
-         end if;
-         Msg(J) := ' ';
-         Twenty;
-      end Ten;
 
    begin -- Unpack_Msg
       for M in Dat0'Range loop
