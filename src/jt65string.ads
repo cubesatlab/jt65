@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 -- FILE   : jt65string.ads
--- SUBJECT: pecification
--- AUTHOR : (C) Copyright 2020 by Vermont Technical College
+-- SUBJECT: [DESCRIBE ME!]
+-- AUTHOR : (C) Copyright 2021 by Vermont Technical College
 --
 --------------------------------------------------------------------------------
 pragma SPARK_Mode(On);
@@ -24,3 +24,4 @@ package JT65String is
           JT65_String_Unconstrained(I) in JT65_Character);
 
 end JT65String;
+

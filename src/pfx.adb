@@ -1,11 +1,14 @@
+--------------------------------------------------------------------------------
+-- FILE   : pfx.adb
+-- SUBJECT: [DESCRIBE ME!]
+-- AUTHOR : (C) Copyright 2021 by Vermont Technical College
+--
+--------------------------------------------------------------------------------
 pragma SPARK_Mode(On);
 
 package body Pfx is
 
-   procedure Init_Pfx
-     (Prefixes : out Pfx_Array;
-      Suffixes : out Sfx_Array)
-   is
+   procedure Init_Pfx(Prefixes : out Pfx_Array; Suffixes : out Sfx_Array) is
    begin
       Prefixes := ("1A   ","1S   ","3A   ","3B6  ","3B8  ","3B9  ","3C   ","3C0  ",
                    "3D2  ","3D2C ","3D2R ","3DA  ","3V   ","3W   ","3X   ","3Y   ",
@@ -52,7 +55,7 @@ package body Pfx is
                    "ZL8  ","ZL9  ","ZP   ","ZS   ","ZS8  ","KC4  ","E5   ");
 
       Suffixes := ('P','0','1','2','3','4','5','6','7','8','9','A');
-
    end Init_Pfx;
 
 end Pfx;
+

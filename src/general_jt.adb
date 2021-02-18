@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 -- FILE   : general_jt.adb
--- SUBJECT: Specification of a package for ...
--- AUTHOR : (C) Copyright 2020 by Vermont Technical College
+-- SUBJECT: Specification of a package for [DESCRIBE ME!]
+-- AUTHOR : (C) Copyright 2021 by Vermont Technical College
 --
 --------------------------------------------------------------------------------
 pragma SPARK_Mode(On);
@@ -10,10 +10,7 @@ with Interfaces; use Interfaces;
 
 package body General_JT is
 
-   procedure Chkmsg
-     (Msg : in out String;
-      Cok : out String;
-      NSpecial : out Integer) is
+   procedure Chkmsg(Msg : in out String; Cok : out String; NSpecial : out Integer) is
    begin
       NSpecial := 0;
       Cok := "   ";
@@ -38,16 +35,13 @@ package body General_JT is
       end loop;
    end ChkMsg;
 
-   procedure Interleave63
-     (Sent : in out Unsigned_8_array;
-      Num : in Integer ) is
 
+   procedure Interleave63(Sent : in out Unsigned_8_array; Num : in Integer ) is
       type Interleave_Array_7by9 is array(0 .. 6, 0 .. 8) of Unsigned_8;
       type Interleave_Array_9by7 is array(0 .. 8, 0 .. 6) of Unsigned_8;
 
       D1 : Interleave_Array_7by9;
       D2 : Interleave_Array_9by7;
-
    begin
       if Num > 0 then
          -- Copy Sent into D1 (column major order).
@@ -94,16 +88,11 @@ package body General_JT is
       end if;
    end Interleave63;
 
-   procedure Graycode
-     (Sent : in out Unsigned_8_array;
-      Dir : in Integer)
-   is
+
+   procedure Graycode(Sent : in out Unsigned_8_array; Dir : in Integer) is
       Temporary_Array : Unsigned_8_array(Sent'Range);
 
-      function IGray
-        (Num : in Unsigned_8;
-         Dir : in Integer) return Unsigned_8
-      is
+      function IGray(Num : in Unsigned_8; Dir : in Integer) return Unsigned_8 is
          Num_8: Unsigned_8;
          Sh   : Unsigned_8;
          Nn   : Unsigned_8;
@@ -119,18 +108,18 @@ package body General_JT is
            end loop;
          return Num_8;
       end IGray;
-   begin
+
+   begin -- Graycode
       for I in Sent'Range loop
          Temporary_Array(I) := IGray(Sent(I), Dir);
       end loop;
       Sent := Temporary_Array;
    end Graycode;
 
-   procedure Collapse_Blanks
-     (Msg : in out String)
-   is
-      I : Integer := 1;
-      Flag : Boolean := False;
+
+   procedure Collapse_Blanks (Msg : in out String) is
+      I       : Integer := 1;
+      Flag    : Boolean := False;
       Counter : Integer;
    begin
       while I <= 21 and I + 1 /= Msg'Length loop
@@ -159,3 +148,4 @@ package body General_JT is
    end Collapse_Blanks;
 
 end General_JT;
+

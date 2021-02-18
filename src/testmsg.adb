@@ -1,26 +1,22 @@
 --------------------------------------------------------------------------------
 -- FILE   : testmsg.adb
--- SUBJECT: Specification of a package for ...
--- AUTHOR : (C) Copyright 2020 by Vermont Technical College
+-- SUBJECT: Specification of a package for [DESCRIBE ME!]
+-- AUTHOR : (C) Copyright 2021 by Vermont Technical College
 --
 --------------------------------------------------------------------------------
 package body Testmsg is
 
-   procedure Init_Testmsg
-     (Msg : in out Testmsgarray;
-      Msgchk : in out Testmsgarray)
-   is
+   procedure Init_Testmsg(Msg : in out Testmsgarray; Msgchk : in out Testmsgarray) is
    begin
-
-      Msg(1) := To_Unbounded_String("CQ WB9XYZ EN34");
-      Msg(2) := To_Unbounded_String("CQ DX WB9XYZ EN34");
-      Msg(3) := To_Unbounded_String("QRZ WB9XYZ EN34");
-      Msg(4) := To_Unbounded_String("KA1ABC WB9XYZ EN34");
-      Msg(5) := To_Unbounded_String("KA1ABC WB9XYZ RO");
-      Msg(6) := To_Unbounded_String("KA1ABC WB9XYZ -21");
-      Msg(7) := To_Unbounded_String("KA1ABC WB9XYZ R-19");
-      Msg(8) := To_Unbounded_String("KA1ABC WB9XYZ RRR");
-      Msg(9) := To_Unbounded_String("KA1ABC WB9XYZ 73");
+      Msg( 1) := To_Unbounded_String("CQ WB9XYZ EN34");
+      Msg( 2) := To_Unbounded_String("CQ DX WB9XYZ EN34");
+      Msg( 3) := To_Unbounded_String("QRZ WB9XYZ EN34");
+      Msg( 4) := To_Unbounded_String("KA1ABC WB9XYZ EN34");
+      Msg( 5) := To_Unbounded_String("KA1ABC WB9XYZ RO");
+      Msg( 6) := To_Unbounded_String("KA1ABC WB9XYZ -21");
+      Msg( 7) := To_Unbounded_String("KA1ABC WB9XYZ R-19");
+      Msg( 8) := To_Unbounded_String("KA1ABC WB9XYZ RRR");
+      Msg( 9) := To_Unbounded_String("KA1ABC WB9XYZ 73");
       Msg(10) := To_Unbounded_String("KA1ABC WB9XYZ");
       Msg(11) := To_Unbounded_String("CQ 010 WB9XYZ EN34");
       Msg(12) := To_Unbounded_String("CQ 999 WB9XYZ EN34");
@@ -87,15 +83,15 @@ package body Testmsg is
       Msg(73) := To_Unbounded_String("73");
 
 
-      Msgchk(1) := To_Unbounded_String("CQ WB9XYZ EN34");
-      Msgchk(2) := To_Unbounded_String("CQ DX WB9XYZ EN34");
-      Msgchk(3) := To_Unbounded_String("QRZ WB9XYZ EN34");
-      Msgchk(4) := To_Unbounded_String("KA1ABC WB9XYZ EN34");
-      Msgchk(5) := To_Unbounded_String("KA1ABC WB9XYZ RO");
-      Msgchk(6) := To_Unbounded_String("KA1ABC WB9XYZ -21");
-      Msgchk(7) := To_Unbounded_String("KA1ABC WB9XYZ R-19");
-      Msgchk(8) := To_Unbounded_String("KA1ABC WB9XYZ RRR");
-      Msgchk(9) := To_Unbounded_String("KA1ABC WB9XYZ 73");
+      Msgchk( 1) := To_Unbounded_String("CQ WB9XYZ EN34");
+      Msgchk( 2) := To_Unbounded_String("CQ DX WB9XYZ EN34");
+      Msgchk( 3) := To_Unbounded_String("QRZ WB9XYZ EN34");
+      Msgchk( 4) := To_Unbounded_String("KA1ABC WB9XYZ EN34");
+      Msgchk( 5) := To_Unbounded_String("KA1ABC WB9XYZ RO");
+      Msgchk( 6) := To_Unbounded_String("KA1ABC WB9XYZ -21");
+      Msgchk( 7) := To_Unbounded_String("KA1ABC WB9XYZ R-19");
+      Msgchk( 8) := To_Unbounded_String("KA1ABC WB9XYZ RRR");
+      Msgchk( 9) := To_Unbounded_String("KA1ABC WB9XYZ 73");
       Msgchk(10) := To_Unbounded_String("KA1ABC WB9XYZ");
       Msgchk(11) := To_Unbounded_String("CQ 000 WB9XYZ EN34");
       Msgchk(12) := To_Unbounded_String("CQ 999 WB9XYZ EN34");
@@ -160,8 +156,7 @@ package body Testmsg is
       Msgchk(71) := To_Unbounded_String("RO");
       Msgchk(72) := To_Unbounded_String("RRR");
       Msgchk(73) := To_Unbounded_String("73");
-
    end Init_Testmsg;
 
-
 end Testmsg;
+
