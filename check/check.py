@@ -12,9 +12,9 @@ class TestCase:
         self.result_file = case_result_file
 
 
-test_cases = [TestCase("../../build/jt65code", "Hello", "../expected-hello.txt"),
-              TestCase("../../build/jt65code", "-t", "../expected-test.txt"),
-              TestCase("../../build/check_pack", "", "../expected-check-pack.txt")]
+test_cases = [TestCase("../build/jt65code", "Hello", "expected-hello.txt"),
+              TestCase("../build/jt65code", "-t", "expected-test.txt"),
+              TestCase("../build/check_pack", "", "expected-check-pack.txt")]
 overall_success = True
 
 for test_case in test_cases:
@@ -25,7 +25,7 @@ for test_case in test_cases:
 
     with open(test_case.result_file) as input_file:
         expected_result = input_file.read()
-    #expected_result.replace('\r', '')   # Not really needed?
+    # expected_result.replace('\r', '')   # Not really needed?
 
     # It might be nice to have an option to suppress this output.
     print("\nACTUAL OUTPUT:")
