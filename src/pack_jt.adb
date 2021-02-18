@@ -1272,102 +1272,7 @@ package body Pack_JT is
       Dat   : Unsigned_32_Array (0 .. 11) := (others => 0);
       --Index_Val : Integer;
 
-      -- Forward declarations allow the subprograms below to be defined in a natural order.
-      -- These names refer to line numbers in the original Fortran source.
-      procedure Ten
-        with Pre => Msg'First = 1 and Msg'Last = 22 and J > 0 and J <= 21;
-      procedure Twenty
-        with Pre => Msg'First = 1 and Msg'Last = 22 and J > 0 and J <= 21;
-      procedure One_Hundred;
-
-      function Prove_Valid_String (JT65_String : in String) return Boolean is
-         Flag : Boolean := True;
-      begin
-         for I in JT65_String'Range loop
-            if Flag then
-               if JT65_String(I) in JT65_Character then
-                  Flag := True;
-               else
-                  return False;
-               end if;
-            end if;
-         end loop;
-         return True;
-      end Prove_Valid_String;
-
-      procedure Ten is
-      begin
-         for I in 1 .. 12 loop
-            if J <= 21 then
-               J := J + 1;
-            end if;
-            Msg(J) := c2(I);
-            if c2(I) = ' ' then
-               Twenty;
-               return;
-            end if;
-         end loop;
-         if J <= 21 then
-            J := J + 1;
-         end if;
-         Msg(J) := ' ';
-         Twenty;
-      end Ten;
-
-      procedure Twenty is
-         -- Flag : Boolean := False;
-      begin
-         if K = 0 then
-            for I in 1 .. 4 loop
-               if J <= 21 then
-                  J := J + 1;
-                  --if I = 1 and grid(I) = '-' then
-                  --   case (grid(I + 1)) is
-                  --   when '0' .. '9' =>
-                  --      case (grid(I + 2)) is
-                  --      when ' ' =>
-                  --         Flag := True;
-                  --      when others =>
-                  --         Flag := False;
-                  --      end case;
-                  --   when others =>
-                  --      Flag := False;
-                  --   end case;
-                  --   if Flag and J <= 20 then
-                  --      Msg(J) := grid(I);
-                  --      Msg(J + 2) := grid(I+1);
-                  --      exit;
-                  --   end if;
-               end if;
-               Msg(J) := grid(I);
-            end loop;
-            if J <= 21 then
-               J := J + 1;
-            end if;
-            Msg(J) := ' ';
-            --if Flag then
-            --   Msg(J) := '0';
-            --end if;
-         end if;
-         One_Hundred;
-      end Twenty;
-
-      procedure One_Hundred is
-      begin
-         if Msg(Msg'First .. Msg'First + 5) = "CQ9DX " then
-            Msg(Msg'First + 2) := ' ';
-         end if;
-         if Msg(Msg'First .. Msg'First + 1) = "E9" and Msg(Msg'First + 2) >= 'A' and Msg(Msg'First + 2) <= 'Z' and Msg(Msg'First + 3) >= 'A' and Msg(Msg'First + 3) <= 'Z' and Msg(Msg'First + 4) = ' ' then
-            --Msg := "CQ " & Msg(Msg'First + 2 .. Msg'Last);
-            Move("CQ " & Msg(Msg'First + 2 .. Msg'Last), Msg, Right, Left, Space);
-         end if;
-         if Msg(Msg'First .. Msg'First + 4) = "CQ 00" and Msg(Msg'First + 5) >= '0' and Msg(Msg'First + 5) <= '9' then
-            --Msg := "CQ " & Msg(Msg'First + 5 .. Msg'Last);
-            Move("CQ " & Msg(Msg'First + 5 .. Msg'Last), Msg, Right, Left, Space);
-         end if;
-      end One_Hundred;
-
-   begin -- Unpack_Msg
+   begin
       for M in Dat0'Range loop
          Dat(M) := Unsigned_32(Dat0(M));
          pragma Loop_Invariant (Dat(M) <= 256);
@@ -1382,12 +1287,10 @@ package body Pack_JT is
       ng := Shift_Left((Dat(9) and 15), 12) + Shift_Left(Dat(10), 6) + Dat(11); -- Converted from Unsigned_8 to Unsigned_32. How is SPARK seeing a possible range check fail?
       if ng >= 32768 then
          Unpack_Text(nc1, nc2, ng, Msg);
-         One_Hundred;
-         return;
+         goto One_Hundred;
       end if;
-      if Prove_Valid_String(psfx) = True and Nc1 <= 2147483647 and Nc2 <= 2147483647 then
-         Unpack_Call(nc1, c1, iv2, psfx);
 
+      Unpack_Call(nc1, c1, iv2, psfx);
       if iv2 = 0 then
          if Integer(nc1) = NBASE + 1 then
             --c1 := "CQ    ";
@@ -1453,7 +1356,7 @@ package body Pack_JT is
          end if;
          if iv2 = 7 then
             grid6 := grid & "ma";
-            Grid2k(grid6, K);
+            Grid2K(grid6, K);
             if K >= 451 and K <= 900 then
                Get_Pfx2(K, c2);
                n2 := Trim(c2, Right)'Length;
@@ -1467,40 +1370,107 @@ package body Pack_JT is
          if iv2 = 8 then
             Msg := "                      ";
          end if;
-         One_Hundred;
-         return;
-         end if;
+         goto One_Hundred;
+      end if;
 
-         --grid6(Grid6'First .. Grid6'Last) := grid(1 .. 4) & "ma";
-         Move(Grid(1 .. 4) & "ma", Grid6, Right, Left, Space);
+      --grid6(Grid6'First .. Grid6'Last) := grid(1 .. 4) & "ma";
+      Move(Grid(1 .. 4) & "ma", Grid6, Right, Left, Space);
 
-         Grid2k(grid6, K);
-         if K >= 1 and K <= 450 then
-            Get_Pfx2(K, c1);
+      Grid2K(grid6, K);
+      if K >= 1 and K <= 450 then
+         Get_Pfx2(K, c1);
+      end if;
+      if K >= 451 and K <= 900 then
+         Get_Pfx2(K, c2);
+      end if;
+
+      -- THERE SEEMS TO BE SOMETHING MISSING HERE.
+      -- See packjt.f90, line 612.
+
+      Msg := "                      ";
+      J := 0;
+      if cqnnn then
+         Msg := c1 & "          ";
+         J := 7;
+         goto Ten;
+      end if;
+      for I in 1 .. 12 loop
+         J := J + 1;
+         Msg(J) := c1(I);
+         if c1(I) = ' ' then
+            goto Ten;
          end if;
-         if K >= 451 and K <= 900 then
-            Get_Pfx2(K, c2);
-         end if;
-         Msg := "                      ";
-         J := 0;
-         if cqnnn then
-            Msg := c1 & "          ";
-            J := 7;
-            Ten;
-            return;
-         end if;
+      end loop;
+      J := J + 1;
+      Msg(J) := ' ';
+
+      <<Ten>>
+      begin
          for I in 1 .. 12 loop
-            J := J + 1;
-            Msg(J) := c1(I);
-            if c1(I) = ' ' then
-               Ten;
-               return;
+            if J <= 21 then
+               J := J + 1;
+            end if;
+            Msg(J) := c2(I);
+            if c2(I) = ' ' then
+               goto Twenty;
             end if;
          end loop;
-         J := J + 1;
+         if J <= 21 then
+            J := J + 1;
+         end if;
          Msg(J) := ' ';
-         Ten;
-      end if;
+      end;
+
+      <<Twenty>>
+      begin
+         if K = 0 then
+            for I in 1 .. 4 loop
+               if J <= 21 then
+                  J := J + 1;
+                  --if I = 1 and grid(I) = '-' then
+                  --   case (grid(I + 1)) is
+                  --   when '0' .. '9' =>
+                  --      case (grid(I + 2)) is
+                  --      when ' ' =>
+                  --         Flag := True;
+                  --      when others =>
+                  --         Flag := False;
+                  --      end case;
+                  --   when others =>
+                  --      Flag := False;
+                  --   end case;
+                  --   if Flag and J <= 20 then
+                  --      Msg(J) := grid(I);
+                  --      Msg(J + 2) := grid(I+1);
+                  --      exit;
+                  --   end if;
+               end if;
+               Msg(J) := grid(I);
+            end loop;
+            if J <= 21 then
+               J := J + 1;
+            end if;
+            Msg(J) := ' ';
+            --if Flag then
+            --   Msg(J) := '0';
+            --end if;
+         end if;
+      end;
+
+      <<One_Hundred>>
+      begin
+         if Msg(Msg'First .. Msg'First + 5) = "CQ9DX " then
+            Msg(Msg'First + 2) := ' ';
+         end if;
+         if Msg(Msg'First .. Msg'First + 1) = "E9" and Msg(Msg'First + 2) >= 'A' and Msg(Msg'First + 2) <= 'Z' and Msg(Msg'First + 3) >= 'A' and Msg(Msg'First + 3) <= 'Z' and Msg(Msg'First + 4) = ' ' then
+            --Msg := "CQ " & Msg(Msg'First + 2 .. Msg'Last);
+            Move("CQ " & Msg(Msg'First + 2 .. Msg'Last), Msg, Right, Left, Space);
+         end if;
+         if Msg(Msg'First .. Msg'First + 4) = "CQ 00" and Msg(Msg'First + 5) >= '0' and Msg(Msg'First + 5) <= '9' then
+            --Msg := "CQ " & Msg(Msg'First + 5 .. Msg'Last);
+            Move("CQ " & Msg(Msg'First + 5 .. Msg'Last), Msg, Right, Left, Space);
+         end if;
+      end;
    end Unpack_Msg;
 
 
