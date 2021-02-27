@@ -10,8 +10,8 @@ with Ada.Characters.Handling; use Ada.Characters.Handling;
 with Ada.Strings;             use Ada.Strings;
 with Ada.Strings.Fixed;       use Ada.Strings.Fixed;
 
-with Pfx;
-use  Pfx;
+with JT65String; use JT65String;
+with Pfx;        use  Pfx;
 
 package body Pack_JT is
 

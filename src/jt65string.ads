@@ -12,11 +12,15 @@ package JT65String is
      with Static_Predicate =>
        (JT65_Character in '0' .. '9' | 'A' .. 'Z' | 'a' .. 'z' | ' ' | '+' | '-' | '.' | '/' | '?');
 
+   subtype JT65_Callsign_Character is Character
+     with Static_Predicate =>
+       (JT65_Callsign_Character in '0' .. '9' | 'A' .. 'Z' | 'a' .. 'z' );
+
    subtype JT65_String is String
      with Dynamic_Predicate =>
        (for all I in JT65_String'Range =>
-            JT65_String(I) in JT65_Character) and then
-       (JT65_String'First = 1 and JT65_String'Last >= 2 and JT65_String'Last <= 22);
+            JT65_String(I) in JT65_Character) and
+           (JT65_String'First = 1 and JT65_String'Last >= 2 and JT65_String'Last <= 22);
 
    subtype JT65_String_Unconstrained is String
      with Dynamic_Predicate =>

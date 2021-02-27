@@ -14,18 +14,6 @@ package Pack_JT is
    type Octet is new Unsigned_8;
    type Octet_Array is array(Positive range <>) of Octet;
 
-   subtype JT65_Character is Character
-     with Static_Predicate =>
-       (JT65_Character in '0' .. '9' | 'A' .. 'Z' | 'a' .. 'z' | ' ' | '+' | '-' | '.' | '/' | '?');
-
-   subtype JT65_Callsign_Character is Character
-     with Static_Predicate =>
-       (JT65_Callsign_Character in '0' .. '9' | 'A' .. 'Z' | 'a' .. 'z' );
-
-   subtype JT65_String is String
-     with Dynamic_Predicate =>
-       (for all I in JT65_String'Range => JT65_String(I) in JT65_Character);
-
    add_pfx : String(1 .. 8);
 
    -- Pack 0s and 1s from DBits into Sym with M0 bits per word.
