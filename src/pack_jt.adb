@@ -19,28 +19,29 @@ package body Pack_JT is
    -- Implementations of Visible Subprograms
    -----------------------------------------
 
-   -- Might need to fix the index for the arrays.
    procedure Pack_Bits
-     (DBits : in     Unsigned_8_Array;
-      NSymd : in     Integer;
-      M0    : in     Integer;
-      Sym   :    out Unsigned_8_Array)
+     (Bit_Array     : in     Unsigned_8_Array;
+      Word_Count    : in     Positive;
+      Bits_Per_Word : in     Bit_Count_Type;
+      Word_Array    :    out Unsigned_32_Array)
    is
-      -- Might need to change the types for n and m.
-      K : Integer := 0;
-      N : Unsigned_8;
-      M : Unsigned_8;
+      Total_Bit_Count : Natural;
+      Current_Word    : Unsigned_32;
+      Current_Bit     : Unsigned_8;
    begin
-      Sym := (others => 0);
-      for I in 0 .. NSymd-1 loop
-         N := 0;
-         for J in 0 .. M0-1 loop
-            M := DBits(K);
-            K := K + 1;
-            N := Shift_Left(N,1) or M;
-            pragma Loop_Invariant(K in Dbits'Range);
+      Word_Array := (others => 0);
+      Total_Bit_Count := 0;
+
+      for I in 1 .. Word_Count loop
+         Current_Word := 0;
+         for J in 1 .. Bits_Per_Word loop
+            Total_Bit_Count := Total_Bit_Count + 1;
+            Current_Bit := Bit_Array(Bit_Array'First + Total_Bit_Count - 1);
+            Current_Word := Shift_Left(Current_Word, 1) or Unsigned_32(Current_Bit);
+            pragma Loop_Invariant(Total_Bit_Count = Total_Bit_Count'Loop_Entry + J);
          end loop;
-         Sym(I) := N;
+         Word_Array(I) := Current_Word;
+         pragma Loop_Invariant(Total_Bit_Count = I * Bits_Per_Word);
       end loop;
    end Pack_Bits;
 

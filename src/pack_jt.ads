@@ -9,26 +9,37 @@ pragma SPARK_Mode(On);
 with Interfaces;     use Interfaces;
 with Unsigned_Array; use Unsigned_Array;
 
+-- @summary
+-- Code translated from packjt.f90.
+--
 package Pack_JT is
 
-   type Octet is new Unsigned_8;
-   type Octet_Array is array(Positive range <>) of Octet;
+   -- A type used to represent bit counts of up to 32 bits.
+   subtype Bit_Count_Type is Natural range 0 .. 32;
 
    add_pfx : String(1 .. 8);
 
-   -- Pack 0s and 1s from DBits into Sym with M0 bits per word.
-   -- NB: NSymd is the number of packed output words.
-   -- No use of Pack_Bits, unknown expected output.
+   -- Packs an array of single bit values into an array of words. The first element of the input
+   -- array is the most significant bit. It is currently believed that there are no useages of
+   -- this procedure in the codebase.
+   --
+   -- @param Bit_Array An array where each element contains a single bit of information.
+   -- @param Word_Count The number of words generated into the output array.
+   -- @param Bits_Per_Word The number of bits in each output word.
+   -- @param Sym The output array.
+   --
    procedure Pack_Bits
-     (DBits : in     Unsigned_8_Array;
-      NSymd : in     Integer;
-      M0    : in     Integer;
-      Sym   :    out Unsigned_8_Array)
+     (Bit_Array     : in     Unsigned_8_Array;
+      Word_Count    : in     Positive;
+      Bits_Per_Word : in     Bit_Count_Type;
+      Word_Array    :    out Unsigned_32_Array)
      with
        Global => null,
        Pre =>
-         NSymd >= 1 and NSymd <= 255 and
-         M0    >= 1 and M0    <= 255 and DBits'Length >= 1 and Sym'Length >= 1;
+         (Word_Array'First = 1 and then Word_Array'Length >= Word_Count) and
+         (Word_Count <= Positive'Last/Bit_Count_Type'Last and then
+            (Bit_Array'First = 1 and then Bit_Array'Length >= Word_Count * Bits_Per_Word)) and
+         (for all I in Bit_Array'Range => Bit_Array(I) in 0 .. 1);
 
    -- Unpack bits from Sym into DBits, one bit per byte.
    -- NB: NSymd is the number of input words, and M0 their length.

@@ -10,7 +10,12 @@ with Interfaces; use Interfaces;
 
 package Unsigned_Array is
 
-   type Unsigned_32_Array is array (Natural range <>) of Unsigned_32;
-   type Unsigned_8_Array  is array (Natural range <>) of Unsigned_8;
+   -- A packed array of eight bit values.
+   type Unsigned_8_Array is array(Natural range <>) of Unsigned_8
+     with Component_Size => 8;
+
+   -- A packed array of 32 bit values.
+   type Unsigned_32_Array is array(Natural range <>) of Unsigned_32
+     with Component_Size => 32;
 
 end Unsigned_Array;
