@@ -10,8 +10,8 @@ with Ada.Characters.Handling; use Ada.Characters.Handling;
 with Ada.Strings;             use Ada.Strings;
 with Ada.Strings.Fixed;       use Ada.Strings.Fixed;
 
-with JT65String; use JT65String;
-with Pfx;        use  Pfx;
+with JT65String;    use JT65String;
+with Prefix_Suffix; use Prefix_Suffix;
 
 package body Pack_JT is
 
@@ -1407,8 +1407,6 @@ package body Pack_JT is
 
    -- Something is broken in this.
    procedure Get_Pfx1(Callsign : in out String; K : out Integer; Nv2 : out Integer) is
-      Suffixes   : sfx_array;
-      Prefixes   : pfx_array;
       Callsign0  : String(1 .. 12);
       Temp       : String(1 .. 12) := (others => ' ');
       C          : String(1 ..  8);
@@ -1496,7 +1494,6 @@ package body Pack_JT is
 
       --Need to find a way to implement common/pfxcom/addpfx im not sure how it effects the behavior of the procedure.
    begin -- Get_Pfx1
-      Init_Pfx(Prefixes, Suffixes);
       Callsign0 := Callsign;
       Nv2 := 1;
       iz := Get_Index(Callsign, " ") - 1;
@@ -1552,24 +1549,21 @@ package body Pack_JT is
       subtype Prefix_Size is Integer range -1 .. 12;
       K : Integer := K0;
       --Iz : Integer;
-      Suffix : sfx_array;
-      Prefix : pfx_array;
       Iz : Prefix_Size;
    begin
-      Init_Pfx(Prefix, Suffix);
       if K > 450 then
          K := K - 450;
       end if;
-      if K >= 1 and K <= Prefix'Length then
-         Iz := Get_Index(Prefix(K), " ") - 1;
-         --Callsign := Prefix(K)(1 .. Iz) & '/' & Callsign
+      if K >= 1 and K <= Prefixes'Length then
+         Iz := Get_Index(Prefixes(K), " ") - 1;
+         --Callsign := Prefixes(K)(1 .. Iz) & '/' & Callsign
          if Iz >= 1 then
-            Move(Prefix(K)(1 .. Iz) & '/' & Callsign, Callsign, Right, Left, Space);
+            Move(Prefixes(K)(1 .. Iz) & '/' & Callsign, Callsign, Right, Left, Space);
          end if;
-      elsif K >= 401 and K <= (400 + Suffix'Length) then
+      elsif K >= 401 and K <= (400 + Suffixes'Length) then
          Iz := Get_Index(Callsign, " ") - 1;
-         --Callsign := Callsign(1 .. Iz) & '/' & Suffix(K - 400);
-         Move(Callsign(Callsign'First .. Iz) & '/' & Suffix(K - 400), Callsign, Right, Left, Space);
+         --Callsign := Callsign(1 .. Iz) & '/' & Suffixes(K - 400);
+         Move(Callsign(Callsign'First .. Iz) & '/' & Suffixes(K - 400), Callsign, Right, Left, Space);
       elsif K = 449 then
          Iz := Get_Index(add_pfx, " ") - 1;
          if Iz < 1 then
