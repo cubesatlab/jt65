@@ -20,6 +20,14 @@ package Pack_JT is
    add_pfx : String(1 .. 8);
    -- [DESCRIBE ME!]
 
+   -- Packs an array of single bit values into an array of words. The first element of the input
+   -- array is the most significant bit. It is currently believed that there are no usages of
+   -- this procedure in the codebase.
+   --
+   -- @param Bit_Array An array where each element contains a single bit of information.
+   -- @param Word_Count The number of words generated into the output array.
+   -- @param Bits_Per_Word The number of bits in each output word.
+   -- @param Word_Array The output array.
    procedure Pack_Bits
      (Bit_Array     : in     Unsigned_8_Array;
       Word_Count    : in     Positive;
@@ -32,15 +40,16 @@ package Pack_JT is
          (Word_Count <= Positive'Last/Bit_Count_Type'Last and then
             (Bit_Array'First = 1 and then Bit_Array'Length >= Word_Count * Bits_Per_Word)) and
          (for all I in Bit_Array'Range => Bit_Array(I) in 0 .. 1);
-   -- Packs an array of single bit values into an array of words. The first element of the input
-   -- array is the most significant bit. It is currently believed that there are no usages of
-   -- this procedure in the codebase.
-   --
-   -- @param Bit_Array An array where each element contains a single bit of information.
-   -- @param Word_Count The number of words generated into the output array.
-   -- @param Bits_Per_Word The number of bits in each output word.
-   -- @param Word_Array The output array.
 
+   -- Unpacks an array of Unsigned_32 values, taking Bits_Per_Word bits from each value, and
+   -- writes those bits into the elements of Bit_Array with one bit in each output element. The
+   -- most significant bit of interest in each input word is written to the first output element.
+   -- It is currently believed that there are no usages of this procedure in the codebase.
+   --
+   -- @param Word_Array An array containing the bits to unpack.
+   -- @param Word_Count The number of elements in Word_Array to process.
+   -- @param Bits_Per_Word The number of bits to take out of each element of Word_Array.
+   -- @param Bit_Array The array to be filled with the bits (one bit in each element).
    procedure Unpack_Bits
      (Word_Array    : in     Unsigned_32_Array;
       Word_Count    : in     Positive;
@@ -56,15 +65,6 @@ package Pack_JT is
        Post =>
          (for all I in 1 .. Word_Count * Bits_Per_Word => Bit_Array(I) in 0 .. 1) and
          (for all I in Word_Count * Bits_Per_Word + 1 .. Bit_Array'Last => Bit_Array(I) = 0);
-   -- Unpacks an array of Unsigned_32 values, taking Bits_Per_Word bits from each value, and
-   -- writes those bits into the elements of Bit_Array with one bit in each output element. The
-   -- most significant bit of interest in each input word is written to the first output element.
-   -- It is currently believed that there are no usages of this procedure in the codebase.
-   --
-   -- @param Word_Array An array containing the bits to unpack.
-   -- @param Word_Count The number of elements in Word_Array to process.
-   -- @param Bits_Per_Word The number of bits to take out of each element of Word_Array.
-   -- @param Bit_Array The array to be filled with the bits (one bit in each element).
 
    -- Pack a valid callsign into a 28-bit integer.
    procedure Pack_Call
