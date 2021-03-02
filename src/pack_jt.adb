@@ -36,7 +36,7 @@ package body Pack_JT is
          Current_Word := 0;
          for J in 1 .. Bits_Per_Word loop
             Total_Bit_Count := Total_Bit_Count + 1;
-            Current_Bit := Bit_Array(Bit_Array'First + Total_Bit_Count - 1);
+            Current_Bit := Bit_Array(Total_Bit_Count);
             Current_Word := Shift_Left(Current_Word, 1) or Unsigned_32(Current_Bit);
             pragma Loop_Invariant(Total_Bit_Count = Total_Bit_Count'Loop_Entry + J);
          end loop;
@@ -46,27 +46,36 @@ package body Pack_JT is
    end Pack_Bits;
 
 
-   -- Might need to fix the index for the arrays.
    procedure Unpack_Bits
-     (Sym   : in     Unsigned_8_Array;
-      NSymd : in     Integer;
-      M0    : in     Integer;
-      DBits :    out Unsigned_8_Array)
+     (Word_Array    : in     Unsigned_32_Array;
+      Word_Count    : in     Positive;
+      Bits_Per_Word : in     Bit_Count_Type;
+      Bit_Array     :    out Unsigned_8_Array)
    is
-      K : Integer := 0;
-      Mask : Unsigned_8;
+      Total_Bit_Count : Natural;
+      Mask            : Unsigned_32;
    begin
-      Dbits := (others => 0);
-      for I in 0 .. NSymd - 1 loop
-         Mask := Shift_Left(1, M0 - 1);
-         for J in 0 .. M0 - 1 loop
-            K := K + 1;
-            DBits(K) := 0;
-            if (Mask and Sym(I)) /= 0 then
-               DBits(K) := 1;
+      Bit_Array := (others => 0);
+      Total_Bit_Count := 0;
+
+      for I in 1 .. Word_Count loop
+         Mask := Shift_Left(1, Bits_Per_Word - 1);
+         for J in 1 .. Bits_Per_Word loop
+            Total_Bit_Count := Total_Bit_Count + 1;
+            if (Mask and Word_Array(I)) /= 0 then
+               -- Bit_Array is initialized to zero, so we only need to store ones.
+               Bit_Array(Total_Bit_Count) := 1;
             end if;
             Mask := Shift_Right(Mask, 1);
+            pragma Loop_Invariant
+              (Total_Bit_Count = Total_Bit_Count'Loop_Entry + J and
+                 (for all I in 1 .. Total_Bit_Count => Bit_Array(I) in 0 .. 1) and
+                 (for all I in Total_Bit_Count + 1 .. Bit_Array'Last => Bit_Array(I) = 0));
          end loop;
+         pragma Loop_Invariant
+           (Total_Bit_Count = I * Bits_Per_Word and
+              (for all I in 1 .. Total_Bit_Count => Bit_Array(I) in 0 .. 1) and
+              (for all I in Total_Bit_Count + 1 .. Bit_Array'Last => Bit_Array(I) = 0));
       end loop;
    end Unpack_Bits;
 
