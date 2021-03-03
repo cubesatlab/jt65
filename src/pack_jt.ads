@@ -7,6 +7,8 @@
 pragma SPARK_Mode(On);
 
 with Interfaces;     use Interfaces;
+
+with JT65Strings;    use JT65Strings;
 with Unsigned_Array; use Unsigned_Array;
 
 -- @summary
@@ -68,12 +70,11 @@ package Pack_JT is
 
    -- Pack a valid callsign into a 28-bit integer.
    procedure Pack_Call
-     (Call  : in out String;
-      NCall : in out Unsigned_32;
-      Text  :    out Boolean)
+     (Callsign  : in out Callsign_Type;
+      NCall     : in out Unsigned_32;
+      Text      :    out Boolean)
      with
-       Global => null,
-       Pre  => (Call'First = 1 and Call'Last = 6);
+       Global => null;
 
    procedure Unpack_Call
      (NCall : in     Unsigned_32;
@@ -136,12 +137,6 @@ package Pack_JT is
    --
 private
 
-   subtype Numeric_Callsign_Type is Natural range 0 .. 36;
-   subtype Callsign_Type is Character
-     with Static_Predicate => (Callsign_Type in '0' .. '9' | 'A' .. 'Z' | 'a' .. 'z' | ' ');
-
-   type Callsign_String is array (Integer range <>) of Callsign_Type;
-
    procedure Get_Pfx1(Callsign : in out String; K : out Integer; Nv2 : out Integer)
      with
        Global => (Input => add_pfx),
@@ -175,8 +170,14 @@ private
    --      Global => null,
    --      Pre => Grid'Length = 4 and N in -70 .. -31;
 
-   -- Convert ASCII number, letter, or space to 0-36 for callsign packing.
-   function NChar(C : Character) return Numeric_Callsign_Type
+   -- Used as the return type from NChar.
+   subtype Numeric_Callsign_Type is Natural range 0 .. 36;
+
+   -- Convert ASCII number, letter, or space to 0 .. 36 for callsign packing.
+   --
+   -- @param C A character from some callsign string.
+   -- @return A numeric code in the range 0 .. 36 representing that character in packed callsigns.
+   function NChar(C : Callsign_Character) return Numeric_Callsign_Type
      with Global => null;
 
    --  Pack50 - unused

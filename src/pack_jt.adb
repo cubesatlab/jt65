@@ -10,7 +10,7 @@ with Ada.Characters.Handling; use Ada.Characters.Handling;
 with Ada.Strings;             use Ada.Strings;
 with Ada.Strings.Fixed;       use Ada.Strings.Fixed;
 
-with JT65String;    use JT65String;
+-- TODO: Should the contents of Prefix_String be moved into the body of Pack_JT?
 with Prefix_Suffix; use Prefix_Suffix;
 
 package body Pack_JT is
@@ -81,10 +81,13 @@ package body Pack_JT is
 
 
    --Packs a valid callsign into a 28-bit integer
-   procedure Pack_Call(Call : in out String; NCall : in out Unsigned_32; Text : out Boolean) is
+   procedure Pack_Call
+     (Callsign  : in out Callsign_Type;
+      NCall     : in out Unsigned_32;
+      Text      :    out Boolean)
+   is
       NBASE : constant Unsigned_32 := 37*36*10*27*27*27;
-      C     : Character;
-      TMP   : String(1 .. 6);
+      Tmp   : Callsign_Type;
       N1    : Integer;
       N2    : Integer;
       N3    : Integer;
@@ -94,73 +97,69 @@ package body Pack_JT is
       NFreq : Unsigned_32;
    begin
       Text := False;
-      if Call(Call'First .. Call'First + 3) = "3DA0" then
-         Call := "3D0" & Call(Call'First + 4 .. Call'First + 5) & ' ';
+      if Callsign(1 .. 4) = "3DA0" then
+         Callsign := "3D0" & Callsign(5 .. 6) & ' ';
       end if;
-      if Call(Call'First .. Call'First + 1) = "3X" and Call(Call'First + 2) >= 'A' and Call(Call'First + 2) <= 'Z' then
-         Call := 'Q' & Call(Call'First + 2 .. Call'First + 5) & ' ';
+      if Callsign(1 .. 2) = "3X" and Is_Upper(Callsign(3)) then
+         Callsign := 'Q' & Callsign(3 .. 6) & ' ';
       end if;
-      if Call(Call'First .. Call'First + 2) = "CQ " then
+      if Callsign(1 .. 3) = "CQ " then
          NCall := NBASE + 1;
-         if Call(Call'First + 3) >= '0' and Call(Call'First + 3) <= '9' and Call(Call'First + 4) >= '0' and Call(Call'First + 4) <= '9' and Call(Call'First + 5) >= '0' and Call(Call'First + 5) <= '9' then
-            NFreq := Unsigned_32'Value(Call(Call'First + 3 .. Call'First + 5));
+         if Is_Digit(Callsign(4)) and Is_Digit(Callsign(5)) and Is_Digit(Callsign(6)) then
+            NFreq := Unsigned_32'Value(Callsign(4 .. 6));
             NCall := NBASE + 3 + NFreq;
          end if;
          return;
-      elsif Call(Call'First .. Call'First + 3) = "QRZ " then
+      elsif Callsign(1 .. 4) = "QRZ " then
          NCall := NBASE + 2;
          return;
-      elsif Call(Call'First .. Call'First + 2) = "DE " then
+      elsif Callsign(1 .. 3) = "DE " then
          NCall := 267796945;
          return;
       end if;
-      if Call(Call'First + 2) >= '0' and Call(Call'First + 2) <= '9' then
-         --TMP := Call;
-         Move(Call,TMP, Right, Left, Space);
-      elsif Call(Call'First + 1) >= '0' and Call (Call'First + 1) <= '9' then
-         if Call(Call'First + 5) /= ' ' then
+
+      if Is_Digit(Callsign(3)) then
+         Tmp := Callsign;
+      elsif Is_Digit(Callsign(2)) then
+         if Callsign(6) /= ' ' then
             Text := True;
             return;
          end if;
-         TMP := ' ' & Call(Call'First .. Call'First + 4);
+         Tmp := ' ' & Callsign(1 .. 5);
       else
          Text := True;
          return;
       end if;
 
-      for I in 1 .. 6 loop
-         C := TMP(I);
-         if C >= 'a' and C <= 'z' then
-            TMP(I) := Character'Val(Character'Pos(C)-Character'Pos('a') + Character'Pos('A'));
-         end if;
-      end loop;
+      -- Force all characters to uppercase.
+      Tmp := To_Upper(Tmp);
 
       N1 := 0;
-      if (TMP(1) >= 'A' and TMP(1) <= 'Z') or TMP(1) = ' ' then N1 := 1; end if;
-      if TMP(1) >= '0' and TMP(1) <= '9' then N1 := 1; end if;
+      if Is_Upper(Tmp(1)) or Tmp(1) = ' ' then N1 := 1; end if;
+      if Is_Digit(Tmp(1)) then N1 := 1; end if;
       N2 := 0;
-      if TMP(2) >= 'A' and TMP(2) <= 'Z' then N2 := 1; end if;
-      if TMP(2) >= '0' and TMP(2) <= '9' then N2 := 1; end if;
+      if Is_Upper(Tmp(2)) then N2 := 1; end if;
+      if Is_Digit(Tmp(2)) then N2 := 1; end if;
       N3 := 0;
-      if TMP(3) >= '0' and TMP(3) <= '9' then N3 := 1; end if;
+      if Is_Digit(Tmp(3)) then N3 := 1; end if;
       N4 := 0;
-      if (TMP(4) >= 'A' and TMP(4) <= 'Z') or TMP(4) = ' ' then N4 := 1; end if;
+      if Is_Upper(Tmp(4)) or Tmp(4) = ' ' then N4 := 1; end if;
       N5 := 0;
-      if (TMP(5) >= 'A' and TMP(5) <= 'Z') or TMP(5) = ' ' then N5 := 1; end if;
+      if Is_Upper(Tmp(5)) or Tmp(5) = ' ' then N5 := 1; end if;
       N6 := 0;
-      if (TMP(6) >= 'A' and TMP(6) <= 'Z') or TMP(6) = ' ' then N6 := 1; end if;
+      if Is_Upper(Tmp(6)) or Tmp(6) = ' ' then N6 := 1; end if;
 
       if N1 + N2 + N3 + N4 + N5 + N6 /= 6 then
          text := True;
          return;
       end if;
 
-      NCall := Unsigned_32(NChar(TMP(1)));
-      NCall := 36 * NCall + Unsigned_32(NChar(TMP(2)));
-      NCall := 10 * NCall + Unsigned_32(NChar(TMP(3)));
-      NCall := 27 * NCall + Unsigned_32(NChar(TMP(4))) - 10;
-      NCall := 27 * NCall + Unsigned_32(NChar(TMP(5))) - 10;
-      NCall := 27 * NCall + Unsigned_32(NChar(TMP(6))) - 10;
+      NCall := Unsigned_32(NChar(Tmp(1)));
+      NCall := 36 * NCall + Unsigned_32(NChar(Tmp(2)));
+      NCall := 10 * NCall + Unsigned_32(NChar(Tmp(3)));
+      NCall := 27 * NCall + Unsigned_32(NChar(Tmp(4))) - 10;
+      NCall := 27 * NCall + Unsigned_32(NChar(Tmp(5))) - 10;
+      NCall := 27 * NCall + Unsigned_32(NChar(Tmp(6))) - 10;
    end Pack_Call;
 
 
@@ -792,7 +791,7 @@ package body Pack_JT is
       -- First two checks ("KA" and "LA") never being accessed
       if Grid(Grid'First .. Grid'First + 1) = "KA" then
          --N := Integer'Value(Grid(Grid'First + 2 .. Grid'First + 3));
-         N := (if Grid(Grid'First + 2) in JT65_Callsign_Character and Grid(Grid'Last) in JT65_Callsign_Character then Integer'Value(Grid(Grid'First + 2 .. Grid'Last)) else 0);
+         N := (if Grid(Grid'First + 2) in Callsign_Character and Grid(Grid'Last) in Callsign_Character then Integer'Value(Grid(Grid'First + 2 .. Grid'Last)) else 0);
          if N >= 50 then
             N := N - 50;
             if N > 0 and N <= 49 then
@@ -1626,8 +1625,7 @@ package body Pack_JT is
    --     Grid(Grid'First + 3) := '0';
    --  end N2Grid;
 
-   --Converts ascii number, letter, or space to 0-36
-   function NChar(C : Character) return Numeric_Callsign_Type is
+   function NChar(C : Callsign_Character) return Numeric_Callsign_Type is
      (case (C) is
          when '0' .. '9' =>
             Character'Pos(C) - Character'Pos('0'),
@@ -1638,8 +1636,7 @@ package body Pack_JT is
          when ' ' =>
             36,
          when others =>
-            0);
-            --when others => raise Program_Error);  -- Why is this necessary? Compiler bug?
+            raise Program_Error);
 
    --  Pack50 is currently not used
    --  procedure Pack50(N1, N2 : Unsigned_32; Dat : out Unsigned_32_Array) is
