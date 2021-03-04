@@ -1,11 +1,13 @@
 --------------------------------------------------------------------------------
 -- FILE   : jt65string.ads
--- SUBJECT: [DESCRIBE ME!]
 -- AUTHOR : (C) Copyright 2021 by Vermont Technical College
---
 --------------------------------------------------------------------------------
 pragma SPARK_Mode(On);
 
+-- @summary
+-- This package contains type definitions (and supporting subprograms) that apply useful
+-- constraints to ordinary strings as appropriate for JT65 protocol data.
+--
 package JT65Strings is
 
    subtype JT65_Character is Character
@@ -24,16 +26,21 @@ package JT65Strings is
           JT65_String_Unconstrained(I) in JT65_Character);
 
    -- A subtype for representing only allowed characters in callsigns.
-   -- TODO: Do we really need to allow lower case letters also?
+   -- TODO: Do we need to allow lower case letters also?
    subtype Callsign_Character is Character
      with Static_Predicate =>
-       (Callsign_Character in '0' .. '9' | 'A' .. 'Z' | 'a' .. 'z' | ' ');
+       (Callsign_Character in '0' .. '9' | 'A' .. 'Z' | ' ');
 
-   -- Callsigns are at most six characters, but may contain trailing spaces.
-   -- TODO: Should we create a dynamic predicate that more precisely constrains this type?
-   subtype Callsign_Type is String(1 .. 6);
-     --with Dynamic_Predicate =>
-     --  (for all I in Callsign_Type'Range => Callsign_Type(I) in Callsign_Character);
+   subtype Callsign_Type is String(1 .. 6)
+     with Dynamic_Predicate =>
+       (for all I in Callsign_Type'Range => Callsign_Type(I) in Callsign_Character);
+   -- Callsigns are at most six characters, but may contain leading or trailing spaces.
+   -- Note: There are places where Callsign_Type is used to hold temporarly invalid callsigns.
+
+   function Is_Valid_Callsign(Callsign : Callsign_Type) return Boolean;
+   -- Returns True if the Callsign follows the rules of valid callsigns; False otherwise.
+   -- Callsign_Type does not assert this in a dynamic predicate because there are cases where
+   -- temporarly invalid callsigns are stored in Callsign_Type objects.
 
 end JT65Strings;
 

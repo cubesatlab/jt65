@@ -88,12 +88,6 @@ package body Pack_JT is
    is
       NBASE : constant Unsigned_32 := 37*36*10*27*27*27;
       Tmp   : Callsign_Type;
-      N1    : Integer;
-      N2    : Integer;
-      N3    : Integer;
-      N4    : Integer;
-      N5    : Integer;
-      N6    : Integer;
       NFreq : Unsigned_32;
    begin
       Text := False;
@@ -131,26 +125,17 @@ package body Pack_JT is
          return;
       end if;
 
+      -- In the original WSJT program there was code here to ensure every character in Tmp was
+      -- uppercase. However, the subtype Callsign_Type is currently constrained to only contain
+      -- uppercase letters. Consequently the equivalent Ada code below has been commented out.
+      -- Using a subtype constraint is a cleaner way to go, but it might have unintended
+      -- consequences that are yet to be understood.
+      --
       -- Force all characters to uppercase.
-      Tmp := To_Upper(Tmp);
+      --Tmp := To_Upper(Tmp);
 
-      N1 := 0;
-      if Is_Upper(Tmp(1)) or Tmp(1) = ' ' then N1 := 1; end if;
-      if Is_Digit(Tmp(1)) then N1 := 1; end if;
-      N2 := 0;
-      if Is_Upper(Tmp(2)) then N2 := 1; end if;
-      if Is_Digit(Tmp(2)) then N2 := 1; end if;
-      N3 := 0;
-      if Is_Digit(Tmp(3)) then N3 := 1; end if;
-      N4 := 0;
-      if Is_Upper(Tmp(4)) or Tmp(4) = ' ' then N4 := 1; end if;
-      N5 := 0;
-      if Is_Upper(Tmp(5)) or Tmp(5) = ' ' then N5 := 1; end if;
-      N6 := 0;
-      if Is_Upper(Tmp(6)) or Tmp(6) = ' ' then N6 := 1; end if;
-
-      if N1 + N2 + N3 + N4 + N5 + N6 /= 6 then
-         text := True;
+      if not Is_Valid_Callsign(Tmp) then
+         Text := True;
          return;
       end if;
 
