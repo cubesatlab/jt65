@@ -25,22 +25,26 @@ package JT65Strings is
        (for all I in JT65_String_Unconstrained'Range =>
           JT65_String_Unconstrained(I) in JT65_Character);
 
-   -- A subtype for representing only allowed characters in callsigns.
-   -- TODO: Do we need to allow lower case letters also?
    subtype Callsign_Character is Character
      with Static_Predicate =>
        (Callsign_Character in '0' .. '9' | 'A' .. 'Z' | ' ');
+   -- A subtype for representing only allowed characters in callsigns.
+   -- TODO: Do we need to allow lower case letters also?
 
    subtype Callsign_Type is String(1 .. 6)
      with Dynamic_Predicate =>
        (for all I in Callsign_Type'Range => Callsign_Type(I) in Callsign_Character);
-   -- Callsigns are at most six characters, but may contain leading or trailing spaces.
-   -- Note: There are places where Callsign_Type is used to hold temporarly invalid callsigns.
+   -- A subtype for strings of Callsign_Character of a specific size. Actual callsigns require
+   -- additional constraints as expressed by function Is_Valid_Callsign.
 
    function Is_Valid_Callsign(Callsign : Callsign_Type) return Boolean;
    -- Returns True if the Callsign follows the rules of valid callsigns; False otherwise.
    -- Callsign_Type does not assert this in a dynamic predicate because there are cases where
-   -- temporarly invalid callsigns are stored in Callsign_Type objects.
+   -- temporarily invalid callsigns are stored in Callsign_Type objects.
+   --
+   -- Valid callsigns have the form 'ppNsss' where 'pp' is one or two letters or digits, N is a
+   -- digit, and 'sss' is one to three letters. Only a single digit is allowed in 'pp'. Spaces,
+   -- if present, must be leading (one 'p') or trailing (one or two 's').
 
 end JT65Strings;
 

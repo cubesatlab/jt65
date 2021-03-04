@@ -80,46 +80,55 @@ package body Pack_JT is
    end Unpack_Bits;
 
 
-   --Packs a valid callsign into a 28-bit integer
-   procedure Pack_Call
-     (Callsign  : in out Callsign_Type;
-      NCall     : in out Unsigned_32;
-      Text      :    out Boolean)
+   procedure Pack_Callsign
+     (Callsign         : in out Callsign_Type;
+      Encoded_Callsign :    out Unsigned_32;
+      Text             :    out Boolean)
    is
-      NBASE : constant Unsigned_32 := 37*36*10*27*27*27;
-      Tmp   : Callsign_Type;
-      NFreq : Unsigned_32;
+      Base      : constant := 37*36*10*27*27*27;
+      Temp      : Callsign_Type;
+      Frequency : Unsigned_32;
    begin
-      Text := False;
+      Encoded_Callsign := 0;  -- Return this when Callsign string is invalid.
+      Text := False;          -- Set to True for invalid Callsign strings.
+
+      -- Work-around for Swaziland prefix.
       if Callsign(1 .. 4) = "3DA0" then
          Callsign := "3D0" & Callsign(5 .. 6) & ' ';
       end if;
+
+      -- Work-around for Guinea prefixes
       if Callsign(1 .. 2) = "3X" and Is_Upper(Callsign(3)) then
          Callsign := 'Q' & Callsign(3 .. 6) & ' ';
       end if;
+
       if Callsign(1 .. 3) = "CQ " then
-         NCall := NBASE + 1;
+         Encoded_Callsign := Base + 1;
          if Is_Digit(Callsign(4)) and Is_Digit(Callsign(5)) and Is_Digit(Callsign(6)) then
-            NFreq := Unsigned_32'Value(Callsign(4 .. 6));
-            NCall := NBASE + 3 + NFreq;
+            -- SPARK complains about this, but I believe the code is correct (peter).
+            Frequency := Unsigned_32'Value(Callsign(4 .. 6));
+            Encoded_Callsign := Base + 3 + Frequency;
          end if;
          return;
       elsif Callsign(1 .. 4) = "QRZ " then
-         NCall := NBASE + 2;
+         Encoded_Callsign := Base + 2;
          return;
       elsif Callsign(1 .. 3) = "DE " then
-         NCall := 267796945;
+         Encoded_Callsign := 267796945;
          return;
       end if;
 
+      -- Change callsigns such as "K1JT  " to " K1JT " so that the central digit is always at
+      -- position 3. This is done without actually modifying Callsign (which means the Callsign
+      -- returned doesn't benefit from Is_Valid_Callsign checking below).
       if Is_Digit(Callsign(3)) then
-         Tmp := Callsign;
+         Temp := Callsign;
       elsif Is_Digit(Callsign(2)) then
          if Callsign(6) /= ' ' then
             Text := True;
             return;
          end if;
-         Tmp := ' ' & Callsign(1 .. 5);
+         Temp := ' ' & Callsign(1 .. 5);
       else
          Text := True;
          return;
@@ -134,18 +143,18 @@ package body Pack_JT is
       -- Force all characters to uppercase.
       --Tmp := To_Upper(Tmp);
 
-      if not Is_Valid_Callsign(Tmp) then
+      if not Is_Valid_Callsign(Temp) then
          Text := True;
          return;
       end if;
 
-      NCall := Unsigned_32(NChar(Tmp(1)));
-      NCall := 36 * NCall + Unsigned_32(NChar(Tmp(2)));
-      NCall := 10 * NCall + Unsigned_32(NChar(Tmp(3)));
-      NCall := 27 * NCall + Unsigned_32(NChar(Tmp(4))) - 10;
-      NCall := 27 * NCall + Unsigned_32(NChar(Tmp(5))) - 10;
-      NCall := 27 * NCall + Unsigned_32(NChar(Tmp(6))) - 10;
-   end Pack_Call;
+      Encoded_Callsign := Unsigned_32(NChar(Temp(1)));
+      Encoded_Callsign := 36 * Encoded_Callsign + Unsigned_32(NChar(Temp(2)));
+      Encoded_Callsign := 10 * Encoded_Callsign + Unsigned_32(NChar(Temp(3)));
+      Encoded_Callsign := 27 * Encoded_Callsign + Unsigned_32(NChar(Temp(4))) - 10;
+      Encoded_Callsign := 27 * Encoded_Callsign + Unsigned_32(NChar(Temp(5))) - 10;
+      Encoded_Callsign := 27 * Encoded_Callsign + Unsigned_32(NChar(Temp(6))) - 10;
+   end Pack_Callsign;
 
 
    procedure Unpack_Call
@@ -884,13 +893,13 @@ package body Pack_JT is
             --Ten;
             return;
          end if;
-         Pack_Call(C1(1 .. 6), Nc1, Text1);
+         Pack_Callsign(C1(1 .. 6), Nc1, Text1);
          if Text1 then
            --Ten;
             return;
          end if;
          Get_Pfx1(C2, K2, Nv2b);
-         Pack_Call(C2(1 .. 6), Nc2, text2);
+         Pack_Callsign(C2(1 .. 6), Nc2, text2);
          if Text2 then
             --Ten;
             return;
@@ -1229,23 +1238,6 @@ package body Pack_JT is
             for I in 1 .. 4 loop
                if J <= 21 then
                   J := J + 1;
-                  --if I = 1 and grid(I) = '-' then
-                  --   case (grid(I + 1)) is
-                  --   when '0' .. '9' =>
-                  --      case (grid(I + 2)) is
-                  --      when ' ' =>
-                  --         Flag := True;
-                  --      when others =>
-                  --         Flag := False;
-                  --      end case;
-                  --   when others =>
-                  --      Flag := False;
-                  --   end case;
-                  --   if Flag and J <= 20 then
-                  --      Msg(J) := grid(I);
-                  --      Msg(J + 2) := grid(I+1);
-                  --      exit;
-                  --   end if;
                end if;
                Msg(J) := grid(I);
             end loop;
@@ -1616,8 +1608,6 @@ package body Pack_JT is
             Character'Pos(C) - Character'Pos('0'),
          when 'A' .. 'Z' =>
             Character'Pos(C) - Character'Pos('A') + 10,
-         when 'a' .. 'z' =>
-            Character'Pos(C) - Character'Pos('a') + 10,
          when ' ' =>
             36,
          when others =>

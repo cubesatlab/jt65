@@ -22,14 +22,6 @@ package Pack_JT is
    add_pfx : String(1 .. 8);
    -- [DESCRIBE ME!]
 
-   -- Packs an array of single bit values into an array of words. The first element of the input
-   -- array is the most significant bit. It is currently believed that there are no usages of
-   -- this procedure in the codebase.
-   --
-   -- @param Bit_Array An array where each element contains a single bit of information.
-   -- @param Word_Count The number of words generated into the output array.
-   -- @param Bits_Per_Word The number of bits in each output word.
-   -- @param Word_Array The output array.
    procedure Pack_Bits
      (Bit_Array     : in     Unsigned_8_Array;
       Word_Count    : in     Positive;
@@ -42,16 +34,15 @@ package Pack_JT is
          (Word_Count <= Positive'Last/Bit_Count_Type'Last and then
             (Bit_Array'First = 1 and then Bit_Array'Length >= Word_Count * Bits_Per_Word)) and
          (for all I in Bit_Array'Range => Bit_Array(I) in 0 .. 1);
-
-   -- Unpacks an array of Unsigned_32 values, taking Bits_Per_Word bits from each value, and
-   -- writes those bits into the elements of Bit_Array with one bit in each output element. The
-   -- most significant bit of interest in each input word is written to the first output element.
-   -- It is currently believed that there are no usages of this procedure in the codebase.
+   -- Packs an array of single bit values into an array of words. The first element of the input
+   -- array is the most significant bit. It is currently believed that there are no usages of
+   -- this procedure in the codebase.
    --
-   -- @param Word_Array An array containing the bits to unpack.
-   -- @param Word_Count The number of elements in Word_Array to process.
-   -- @param Bits_Per_Word The number of bits to take out of each element of Word_Array.
-   -- @param Bit_Array The array to be filled with the bits (one bit in each element).
+   -- @param Bit_Array An array where each element contains a single bit of information.
+   -- @param Word_Count The number of words generated into the output array.
+   -- @param Bits_Per_Word The number of bits in each output word.
+   -- @param Word_Array The output array.
+
    procedure Unpack_Bits
      (Word_Array    : in     Unsigned_32_Array;
       Word_Count    : in     Positive;
@@ -67,14 +58,31 @@ package Pack_JT is
        Post =>
          (for all I in 1 .. Word_Count * Bits_Per_Word => Bit_Array(I) in 0 .. 1) and
          (for all I in Word_Count * Bits_Per_Word + 1 .. Bit_Array'Last => Bit_Array(I) = 0);
+   -- Unpacks an array of Unsigned_32 values, taking Bits_Per_Word bits from each value, and
+   -- writes those bits into the elements of Bit_Array with one bit in each output element. The
+   -- most significant bit of interest in each input word is written to the first output element.
+   -- It is currently believed that there are no usages of this procedure in the codebase.
+   --
+   -- @param Word_Array An array containing the bits to unpack.
+   -- @param Word_Count The number of elements in Word_Array to process.
+   -- @param Bits_Per_Word The number of bits to take out of each element of Word_Array.
+   -- @param Bit_Array The array to be filled with the bits (one bit in each element).
 
-   -- Pack a valid callsign into a 28-bit integer.
-   procedure Pack_Call
-     (Callsign  : in out Callsign_Type;
-      NCall     : in out Unsigned_32;
-      Text      :    out Boolean)
+   procedure Pack_Callsign
+     (Callsign         : in out Callsign_Type;
+      Encoded_Callsign :    out Unsigned_32;
+      Text             :    out Boolean)
      with
        Global => null;
+   -- Validates the Callsign, possibly adjusting it, and (if valid) packs it into a 28 bit integer.
+   --
+   -- @param Callsign The callsign string to validate and encode. Some callsign strings can be
+   -- adjusted as part of the validation process. Upon return Callsign contains the adjusted
+   -- string. Note that the returned Callsign isn't fully validated, and it may lack needed leading
+   -- spaces for full validation. TODO: Fix this?
+   -- @param Encoded_Callsign The 28 bit encoding of the callsign (if the Callsign was valid). If
+   -- Callsign is not valid the return value is zero. TODO: Is that appropriate?
+   -- @param Text Upon return, True if Callsign is invalid (hence "just text"); False otherwise.
 
    procedure Unpack_Call
      (NCall : in     Unsigned_32;
@@ -170,15 +178,15 @@ private
    --      Global => null,
    --      Pre => Grid'Length = 4 and N in -70 .. -31;
 
-   -- Used as the return type from NChar.
    subtype Numeric_Callsign_Type is Natural range 0 .. 36;
+   -- Used as the return type from NChar.
 
+   function NChar(C : Callsign_Character) return Numeric_Callsign_Type
+     with Global => null;
    -- Convert ASCII number, letter, or space to 0 .. 36 for callsign packing.
    --
    -- @param C A character from some callsign string.
    -- @return A numeric code in the range 0 .. 36 representing that character in packed callsigns.
-   function NChar(C : Callsign_Character) return Numeric_Callsign_Type
-     with Global => null;
 
    --  Pack50 - unused
    --  procedure Pack50(N1, N2 : Unsigned_32; Dat : out Unsigned_32_Array)
