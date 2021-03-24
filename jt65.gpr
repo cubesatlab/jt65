@@ -12,5 +12,8 @@ project JT65 is
       for Switches ("ada") use ("-g", "-gnata", "-gnatn", "-gnatwa");
    end Compiler;
 
+   package Check is
+      for Default_Switches ("ada") use ("-rules", "-from=jt65-rules.txt");
+   end Check;
 end JT65;
 

@@ -37,7 +37,7 @@ package JT65Strings is
    -- A subtype for strings of Callsign_Character of a specific size. Actual callsigns require
    -- additional constraints as expressed by function Is_Valid_Callsign.
 
-   function Is_Valid_Callsign(Callsign : Callsign_Type) return Boolean;
+   function Is_Valid_Callsign(Callsign : in Callsign_Type) return Boolean;
    -- Returns True if the Callsign follows the rules of valid callsigns; False otherwise.
    -- Callsign_Type does not assert this in a dynamic predicate because there are cases where
    -- temporarily invalid callsigns are stored in Callsign_Type objects.
@@ -47,4 +47,3 @@ package JT65Strings is
    -- if present, must be leading (one 'p') or trailing (one or two 's').
 
 end JT65Strings;
-
