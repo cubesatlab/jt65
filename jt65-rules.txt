@@ -1,6 +1,5 @@
 +RStyle_Checks:3
 +RWarnings:a
-+RNumeric_Literals:2
 +RToo_Many_Dependencies:8
 +RImplicit_IN_Mode_Parameters
 +RMetrics_Cyclomatic_Complexity:8
