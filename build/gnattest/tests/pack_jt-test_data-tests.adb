@@ -41,17 +41,32 @@ package body Pack_JT.Test_Data.Tests is
 
       type Test_Case is
          record
-            Input_Bits        : Unsigned_8_Array(1 .. 48);
-            Word_Count        : Positive;
-            Bits_Per_Word     : Bit_Count_Type;
-            Output_Word_Array : Unsigned_32_Array(1 .. 3);
+            Input_Bits          : Unsigned_8_Array(1 .. 64);
+            Word_Count          : Positive;
+            Bits_Per_Word       : Bit_Count_Type;
+            Expected_Word_Array : Unsigned_32_Array(1 .. 3);
          end record;
 
-      Test_Cases : array (1 .. 1) of Test_Case :=
+      Test_Cases : array (1 .. 4) of Test_Case :=
         (1 => (Input_Bits        => (1, others => 0),
                Word_Count        => 1,
                Bits_Per_Word     => 1,
-               Output_Word_Array => (16#0000_0001#, 16#0000_0000#, 16#0000_0000#)));
+               Expected_Word_Array => (16#0000_0001#, 16#0000_0000#, 16#0000_0000#)),
+         2 => (Input_Bits        => (1, 0, 1, 0, 1, 0, others => 0),
+               Word_Count        => 2,
+               Bits_Per_Word     => 3,
+               Expected_Word_Array => (16#0000_0005#, 16#0000_0002#, 16#0000_0000#)),
+         3 => (Input_Bits        => (1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, others => 0),
+               Word_Count        => 3,
+               Bits_Per_Word     => 6,
+               Expected_Word_Array => (16#0000_002A#, 16#0000_003F#, 16#0000_0021#)),
+         4 => (Input_Bits        => (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                     1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+               Word_Count        => 2,
+               Bits_Per_Word     => 32,
+               Expected_Word_Array => (16#FFFF_FFFF#, 16#8000_0001#, 16#0000_0000#)));
 
       Result : Unsigned_32_Array(1 .. 3);
    begin
@@ -63,7 +78,7 @@ package body Pack_JT.Test_Data.Tests is
             Test_Cases(I).Bits_Per_Word,
             Result);
          AUnit.Assertions.Assert
-           (Result = Test_Cases(I).Output_Word_Array,
+           (Result = Test_Cases(I).Expected_Word_Array,
             "Test case #" & Integer'Image(I) & " failed.");
       end loop;
 
