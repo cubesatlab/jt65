@@ -39,11 +39,43 @@ package body JT65Strings.Test_Data.Tests is
 
       pragma Unreferenced (Gnattest_T);
 
+      type Test_Case is
+         record
+            Callsign        : Callsign_Type;
+            Expected_Result : Boolean;
+         end record;
+
+      -- From the JT65 paper, "The JT65 Communications Protocol" by Joe Taylor.
+      --
+      -- "An amateur callsign consists of a one- or two-character prefix, at least one of which must be a
+      -- letter, followed by a digit and a suffix of one to three letters."
+      --
+      -- Note that Is_Valid_Callsign expects the digit between the prefix and the suffix to always be at
+      -- position #3 in the string.
+
+      Test_Cases : constant array (1 .. 11) of Test_Case :=
+         -- Start with valid callsigns.
+        ( 1 => (Callsign => " K1JT ", Expected_Result => True),
+          2 => (Callsign => "AA1A  ", Expected_Result => True),
+          3 => (Callsign => "AA1AA ", Expected_Result => True),
+          4 => (Callsign => "AA1AAA", Expected_Result => True),
+          5 => (Callsign => "A11A  ", Expected_Result => True),
+          6 => (Callsign => "1A1A  ", Expected_Result => True),
+
+          -- Now check some invalid callsigns.
+          7 => (Callsign => "AAXAAA", Expected_Result => False),   -- Non-digit at position 3.
+          8 => (Callsign => "111AAA", Expected_Result => False),   -- No letters in prefix.
+          9 => (Callsign => "AA11  ", Expected_Result => False),   -- Digits in suffix.
+         10 => (Callsign => "K 1JT ", Expected_Result => False),   -- Space in prefix.
+         11 => (Callsign => " K1J T", Expected_Result => False));  -- Space in suffix.
+
    begin
 
-      AUnit.Assertions.Assert
-        (Gnattest_Generated.Default_Assert_Value,
-         "Test not implemented.");
+      for I in Test_Cases'Range loop
+         AUnit.Assertions.Assert
+           (Is_Valid_Callsign(Test_Cases(I).Callsign) = Test_Cases(I).Expected_Result,
+            "Test case #" & Integer'Image(I) & " failed.");
+      end loop;
 
 --  begin read only
    end Test_Is_Valid_Callsign;

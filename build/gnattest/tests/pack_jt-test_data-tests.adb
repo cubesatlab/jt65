@@ -47,7 +47,7 @@ package body Pack_JT.Test_Data.Tests is
             Expected_Word_Array : Unsigned_32_Array(1 .. 3);
          end record;
 
-      Test_Cases : array (1 .. 4) of Test_Case :=
+      Test_Cases : constant array (1 .. 4) of Test_Case :=
         (1 => (Input_Bits        => (1, others => 0),
                Word_Count        => 1,
                Bits_Per_Word     => 1,
@@ -97,11 +97,48 @@ package body Pack_JT.Test_Data.Tests is
 
       pragma Unreferenced (Gnattest_T);
 
-   begin
+      type Test_Case is
+         record
+            Word_Array         : Unsigned_32_Array(1 .. 3);
+            Word_Count         : Positive;
+            Bits_Per_Word      : Bit_Count_Type;
+            Expected_Bit_Array : Unsigned_8_Array(1 .. 64);
+         end record;
 
-      AUnit.Assertions.Assert
-        (Gnattest_Generated.Default_Assert_Value,
-         "Test not implemented.");
+      Test_Cases : constant array (1 .. 4) of Test_Case :=
+        (1 => (Word_Array         => (16#0000_0001#, 16#0000_0000#, 16#0000_0000#),
+               Word_Count         => 1,
+               Bits_Per_Word      => 1,
+               Expected_Bit_Array => (1, others => 0)),
+         2 => (Word_Array         => (16#0000_0005#, 16#0000_0002#, 16#0000_0000#),
+               Word_Count         => 2,
+               Bits_Per_Word      => 3,
+               Expected_Bit_Array => (1, 0, 1, 0, 1, 0, others => 0)),
+         3 => (Word_Array         => (16#0000_002A#, 16#0000_003F#, 16#0000_0021#),
+               Word_Count         => 3,
+               Bits_Per_Word      => 6,
+               Expected_Bit_Array => (1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, others => 0)),
+         4 => (Word_Array         => (16#FFFF_FFFF#, 16#8000_0001#, 16#0000_0000#),
+               Word_Count         => 2,
+               Bits_Per_Word      => 32,
+               Expected_Bit_Array => (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                      1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1)));
+
+      Result : Unsigned_8_Array(1 .. 64);
+   begin
+      for I in Test_Cases'Range loop
+         Result := (others => 0);
+         Unpack_Bits
+           (Test_Cases(I).Word_Array,
+            Test_Cases(I).Word_Count,
+            Test_Cases(I).Bits_Per_Word,
+            Result);
+         AUnit.Assertions.Assert
+           (Result = Test_Cases(I).Expected_Bit_Array,
+            "Test case #" & Integer'Image(I) & " failed.");
+      end loop;
 
 --  begin read only
    end Test_Unpack_Bits;
@@ -118,11 +155,64 @@ package body Pack_JT.Test_Data.Tests is
 
       pragma Unreferenced (Gnattest_T);
 
-   begin
+      type Test_Case is
+         record
+            Callsign          : Callsign_Type;  -- This gets updated by Pack_Callsign.
+            Expected_Callsign : Callsign_Type;
+            Expected_Encoded_Callsign : Unsigned_32;
+            Expected_Text     : Boolean;
+         end record;
 
-      AUnit.Assertions.Assert
-        (Gnattest_Generated.Default_Assert_Value,
-         "Test not implemented.");
+      Test_Cases : array (1 .. 9) of Test_Case :=
+        (1 => (Callsign          => "K1JT  ",
+               Expected_Callsign => "K1JT  ",
+               Expected_Encoded_Callsign => 259_055_063,
+               Expected_Text     => False),
+         2 => (Callsign          => "3DA0XY",   -- The Swaziland work-around.
+               Expected_Callsign => "3D0XY ",
+               Expected_Encoded_Callsign =>  23_833_871,
+               Expected_Text     => False),
+         3 => (Callsign          => "3XA1XY",   -- The Guinea prefix work-around.
+               Expected_Callsign => "QA1XY ",
+               Expected_Encoded_Callsign => 186_238_304,
+               Expected_Text     => False),
+         4 => (Callsign          => "CQ 123",   -- Special case #1
+               Expected_Callsign => "CQ 123",
+               Expected_Encoded_Callsign => 262_177_686,
+               Expected_Text     => False),
+         5 => (Callsign          => "QRZ   ",   -- Special case #2
+               Expected_Callsign => "QRZ   ",
+               Expected_Encoded_Callsign => 262_177_562,
+               Expected_Text     => False),
+         6 => (Callsign          => "DE    ",   -- Special case #3
+               Expected_Callsign => "DE    ",
+               Expected_Encoded_Callsign => 267_796_945,
+               Expected_Text     => False),
+         7 => (Callsign          => "K1XYZZ",  -- Not a valid callsign (too many suffix characters).
+               Expected_Callsign => "K1XYZZ",
+               Expected_Encoded_Callsign => 0,
+               Expected_Text     => True),
+         8 => (Callsign          => "ABCDEF",  -- Not a valid callsign (no digit between prefix and suffix).
+               Expected_Callsign => "ABCDEF",
+               Expected_Encoded_Callsign => 0,
+               Expected_Text     => True),
+         9 => (Callsign          => "K1JT1 ",  -- Not a valid callsign (fails Is_Valid_Callsign).
+               Expected_Callsign => "K1JT1 ",
+               Expected_Encoded_Callsign => 0,
+               Expected_Text     => True));
+
+      Result_Encoded_Callsign : Unsigned_32;
+      Result_Text : Boolean;
+
+   begin
+      for I in Test_Cases'Range loop
+         Pack_Callsign(Test_Cases(I).Callsign, Result_Encoded_Callsign, Result_Text);
+         AUnit.Assertions.Assert
+           (Test_Cases(I).Callsign = Test_Cases(I).Expected_Callsign and
+                Result_Encoded_Callsign = Test_Cases(I).Expected_Encoded_Callsign and
+                Result_Text = Test_Cases(I).Expected_Text,
+            "Test case #" & Integer'Image(I) & " failed.");
+      end loop;
 
 --  begin read only
    end Test_Pack_Callsign;
